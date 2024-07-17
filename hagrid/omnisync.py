@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from pygwarts.magical.time_turner			import TimeTurner
 from pygwarts.magical.time_turner.timers	import Timestamp
 from pygwarts.irma.contrib					import LibraryContrib
@@ -11,7 +10,7 @@ from pygwarts.hagrid.planting.peels			import GrowingPeel
 from pygwarts.hagrid.planting.peeks			import BlindPeek
 from pygwarts.hagrid.planting				import Flourish
 from pygwarts.hagrid.planting.leafs			import LeafGrowth
-from pygwarts.hagrid.planting.twigs			import TwigThrive
+from pygwarts.hagrid.planting.twigs			import TwigProbe
 from pygwarts.hagrid.planting.weeds			import SprigTrimmer
 from pygwarts.hagrid.bloom.twigs			import Germination
 from pygwarts.hagrid.bloom.leafs			import Rejuvenation
@@ -88,12 +87,6 @@ class Omni(Copse):
 			bough	= "/media/vla/longdata/pcfrn3/rmp"
 
 		class leafs(SiftingController):
-			include	= (
-
-				r"/home/vla/rmp/.*",
-				r"/mnt/container/vlaSync/rmp/.+",
-				r"/media/vla/longdata/pcfrn3/rmp/.+",
-			)
 			exclude	= (
 
 				r"/home/vla/rmp/pcs/.+",
@@ -102,13 +95,13 @@ class Omni(Copse):
 				r"/home/vla/rmp/TLG2/.+",
 				r"/home/vla/rmp/CanonManual/.+",
 			)
-		class twigs(SiftingController):
 			include	= (
 
-				r"/home/vla/rmp/.+",
+				r"/home/vla/rmp/.*",
 				r"/mnt/container/vlaSync/rmp/.+",
 				r"/media/vla/longdata/pcfrn3/rmp/.+",
 			)
+		class twigs(SiftingController):
 			exclude	= (
 
 				r"/home/vla/rmp/pcs(/.+)?",
@@ -116,6 +109,12 @@ class Omni(Copse):
 				r"/home/vla/rmp/xerox3315(/.+)?",
 				r"/home/vla/rmp/TLG2(/.+)?",
 				r"/home/vla/rmp/CanonManual(/.+)?",
+			)
+			include	= (
+
+				r"/home/vla/rmp/.+",
+				r"/mnt/container/vlaSync/rmp/.+",
+				r"/media/vla/longdata/pcfrn3/rmp/.+",
 			)
 
 
@@ -140,47 +139,40 @@ class Omni(Copse):
 			bough	= "/media/vla/longdata/ArrestedDevelopment"
 
 		class leafs(SiftingController):
+			exclude	= (
 
+				r"/home/vla/ArrestedDevelopment/omnisync/.+",
+				r"/mnt/container/ArrestedDevelopment/pygwarts/development/.+",
+				r"/media/vla/longdata/ArrestedDevelopment/pygwarts/development/.+",
+			)
 			include	= (
 
 				r"/home/vla/ArrestedDevelopment/.*",
 				r"/mnt/container/ArrestedDevelopment/.+",
 				r"/media/vla/longdata/ArrestedDevelopment/.+",
 			)
+		class twigs(SiftingController):
 			exclude	= (
 
-				r"/home/vla/ArrestedDevelopment/pygwarts/local/.*",
-				r"/home/vla/ArrestedDevelopment/pygwarts/development/filch/.*",
-				r"/home/vla/ArrestedDevelopment/pygwarts/development/hagrid/.*",
-				r"/home/vla/ArrestedDevelopment/pygwarts/development/hedwig/.*",
-				r"/home/vla/ArrestedDevelopment/pygwarts/development/irma/.*",
-				r"/home/vla/ArrestedDevelopment/pygwarts/development/magical/.*",
-				r"/home/vla/ArrestedDevelopment/omnisync/.+\.loggy",
-				r"/home/vla/ArrestedDevelopment/omnisync/.+\.Shelf",
+				r"/home/vla/ArrestedDevelopment/omnisync(/.+)?",
 
-				r"/mnt/container/ArrestedDevelopment/pygwarts/local/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/filch/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/hagrid/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/hedwig/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/irma/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/magical/.+",
+				# All stuff about development just collecting, means no cleaning for boughs.
+				r"/mnt/container/ArrestedDevelopment/pygwarts/development/.+",
+				"/mnt/container/ArrestedDevelopment/pygwarts/global_testing",
+				"/mnt/container/ArrestedDevelopment/pygwarts/olds",
+				"/mnt/container/ArrestedDevelopment/pygwarts/readyops",
+				"/mnt/container/ArrestedDevelopment/pygwarts/exp",
+
+				r"/media/vla/longdata/ArrestedDevelopment/pygwarts/development/.+",
+				"/media/vla/longdata/ArrestedDevelopment/pygwarts/olds",
+				"/media/vla/longdata/ArrestedDevelopment/pygwarts/readyops",
+				"/media/vla/longdata/ArrestedDevelopment/pygwarts/exp",
 			)
-		class twigs(SiftingController):
-
 			include	= (
 
 				r"/home/vla/ArrestedDevelopment/.+",
 				r"/mnt/container/ArrestedDevelopment/.+",
 				r"/media/vla/longdata/ArrestedDevelopment/.+",
-			)
-			exclude	= (
-
-				"/mnt/container/ArrestedDevelopment/pygwarts/global_testing",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/filch/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/hagrid/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/hedwig/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/irma/.+",
-				r"/mnt/container/ArrestedDevelopment/pygwarts/development/magical/.+",
 			)
 
 
@@ -198,7 +190,7 @@ class Omni(Copse):
 
 
 	@GrowingPeel
-	class thrive(TwigThrive):		pass
+	class thrive(TwigProbe):		pass
 	class germinate(Germination):	pass
 
 	@GrowingPeel
