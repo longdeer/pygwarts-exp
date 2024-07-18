@@ -10,7 +10,7 @@ from pygwarts.hagrid.planting.peels			import GrowingPeel
 from pygwarts.hagrid.planting.peeks			import BlindPeek
 from pygwarts.hagrid.planting				import Flourish
 from pygwarts.hagrid.planting.leafs			import LeafGrowth
-from pygwarts.hagrid.planting.twigs			import TwigProbe
+from pygwarts.hagrid.planting.twigs			import TwigThrive
 from pygwarts.hagrid.planting.weeds			import SprigTrimmer
 from pygwarts.hagrid.bloom.twigs			import Germination
 from pygwarts.hagrid.bloom.leafs			import Rejuvenation
@@ -190,7 +190,7 @@ class Omni(Copse):
 
 
 	@GrowingPeel
-	class thrive(TwigProbe):		pass
+	class thrive(TwigThrive):		pass
 	class germinate(Germination):	pass
 
 	@GrowingPeel
