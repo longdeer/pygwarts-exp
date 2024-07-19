@@ -15,6 +15,10 @@ from pygwarts.hagrid.planting.weeds						import TrimProbe
 from pygwarts.hagrid.planting.weeds						import SprigTrimmer
 from pygwarts.hagrid.cultivation.sifting				import SiftingController
 from pygwarts.hagrid.cultivation.navtex_preprocessor	import Navpreprocessor
+from pygwarts.hedwig.telegram.announce_decor			import Announcer
+# telegram creditor to be obtained furhter and used as Announcer arguments
+from credistr											import longrabitbot
+from credistr											import rabitChannel
 
 
 
@@ -26,8 +30,10 @@ from pygwarts.hagrid.cultivation.navtex_preprocessor	import Navpreprocessor
 class Navdrop(Copse):
 
 	@ContribInterceptor
+	@Announcer(longrabitbot(), rabitChannel()).strneg
 	class loggy(LibraryContrib):
 
+		pool_timer		= .5
 		init_name		= "navdrop"
 		init_level		= 10
 		handover_mode	= True
