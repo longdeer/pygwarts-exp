@@ -14,7 +14,7 @@ from pygwarts.magical.philosophers_stone.transmutations	import ControlledTransmu
 from pygwarts.magical.patronus							import CAST
 from pygwarts.magical.time_turner						import TimeTurner
 from pygwarts.hagrid.thrivables							import Tree
-from pygwarts.hagrid.cultivation.navtex_analyzer		import Navanalyzer
+from NavtexBoWAnalyzer.navtex_analyzer					import Navanalyzer
 from pygwarts.irma.shelve								import LibraryShelf
 
 
@@ -57,6 +57,10 @@ class Navpreprocessor(ControlledTransmutation):
 		analyzer	= Navanalyzer(self.station, self.categories)
 
 
+		# Modifying Navtex message structure regex to comply UDK2
+		analyzer.TEXT_MSG_STRUCT = pmake(r"^\n(?:[ =!\"'\(\)\+,\-\./0-9:;A-Z]+\n)+$")
+
+
 
 
 		def transmutation(upper_layer :Transmutable) -> Transmutable :
@@ -75,11 +79,10 @@ class Navpreprocessor(ControlledTransmutation):
 					# TO DO:	check file name (leaf) to be in uppercase - done in previous vesrion
 					# TO DO:	separate (prioritize) "=" check - done by adding "=" to word regex
 					# TO DO:	ensure KB00 replacing granted checking (that might means "seeds" maintaining)
-					#			- implemented
-					#			by maintaining "is_new_message" variable as a boolean flag of inequality of
-					#			previously shelved and currently parsed CDT's, which guarantee processing
-					#			for exectaly situation of KB00 (when there is an old message and new one
-					#			replaces it) and so on.
+					#			- implemented by maintaining "is_new_message" variable as a boolean flag of
+					#			inequality of previously shelved and currently parsed CDT's, which guarantee
+					#			processing for exectaly situation of KB00 (when there is an old message and
+					#			new one replaces it) and so on.
 					# TO DO:	mb some messages order check (KE99 must go after KE98).
 					# TO DO:	only done (with seeds) if fully processed (like sent to telegram).
 
@@ -366,7 +369,7 @@ class Navpreprocessor(ControlledTransmutation):
 						if	dispatcher : print("\n\n%s\n"%dispatcher.strip("\n"))
 
 
-					analyzer.update_BoW(Navbow())
+					analyzer.update_BoW(Navbow)
 
 
 					# Repacking plants for Flourish. As making generator means make use of variables pointers,
