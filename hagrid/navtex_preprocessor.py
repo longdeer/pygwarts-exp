@@ -375,6 +375,9 @@ class Navpreprocessor(ControlledTransmutation):
 						if	dispatcher : pool(("\n%s\n"%dispatcher).strip("\n"))
 
 
+					# Passing inner shelf so every new word will be stored in both shelfs and "modified"
+					# flag will be successfully triggered for LibraryShelf object. The "produce" method for
+					# NavBow must be invoked with from_outer flag set to True to maintain only new words.
 					analyzer.update_BoW(Navbow)
 
 

@@ -122,34 +122,39 @@ class NavdropTest(PygwartsTestCase):
 		cls.fmake(cls, cls.MESSAGE_3, cls.text_3)
 
 
+		cls.make_loggy_file(cls, cls.NAVDROP_LOGGY)
 
+
+
+
+	def setUp(self):
 
 		class Navdrop(Copse):
 			class loggy(LibraryContrib):
 
 				init_level		= 10
 				init_name		= "Navdrop"
-				handler			= str(cls.NAVDROP_LOGGY)
-				force_warning	= "*.outer_shelf", "*.inner_shelf",
+				handler			= str(self.NAVDROP_LOGGY)
+				# force_warning	= "*.outer_shelf", "*.inner_shelf",
 
 				# Dummy method that must verify "pool" receive correct message
 				def pool(self, message :str): self.current_pool = message
 
 			class Targets(Copse):
-				class one(Tree):	bough = cls.MESSAGES_DST1
-				class two(Tree):	bough = cls.MESSAGES_DST2
+				class one(Tree):	bough = self.MESSAGES_DST1
+				class two(Tree):	bough = self.MESSAGES_DST2
 				class leafs(SiftingController):
 					include = (
 
 						rf".+{os.sep}[Kk][A-Za-z]\d\d\.[Tt][Ll][Xx]",
-						rf"{cls.MESSAGES_DST1}{os.sep}.+",
-						rf"{cls.MESSAGES_DST2}{os.sep}.+",
+						rf"{self.MESSAGES_DST1}{os.sep}.+",
+						rf"{self.MESSAGES_DST2}{os.sep}.+",
 					)
 				class twigs(SiftingController):
 					include = (
 
-						rf"{cls.MESSAGES_DST1}{os.sep}.+",
-						rf"{cls.MESSAGES_DST2}{os.sep}.+",
+						rf"{self.MESSAGES_DST1}{os.sep}.+",
+						rf"{self.MESSAGES_DST2}{os.sep}.+",
 					)
 
 			@DraftPeek(renew=False, cache=False)
@@ -160,30 +165,27 @@ class NavdropTest(PygwartsTestCase):
 			class effloresce(Efflorescence):
 				branches = {
 
-					str(cls.MESSAGES_DST1):	( str(cls.MESSAGES_SRC), ),
-					str(cls.MESSAGES_DST2):	( str(cls.MESSAGES_SRC), ),
+					str(self.MESSAGES_DST1):	( str(self.MESSAGES_SRC), ),
+					str(self.MESSAGES_DST2):	( str(self.MESSAGES_SRC), ),
 				}
 
-			@fssprout(str(cls.MESSAGES_SRC))
+			@fssprout(str(self.MESSAGES_SRC))
 			@Navpreprocessor("K")
 			class perform(Flourish):
 
 				class Navfiles(SiftingController):	include = r".+/[Kk][A-Za-z]\d\d\.[tT][lL][xX]",
 				class Navbow(LibraryShelf):
 
-					grabbing	= str(cls.NAVDROP_BOW)
+					grabbing	= str(self.NAVDROP_BOW)
 					reclaiming	= True
 
 				class Navshelf(LibraryShelf):
 
-					grabbing	= str(cls.NAVDROP_SHELF)
+					grabbing	= str(self.NAVDROP_SHELF)
 					reclaiming	= True
 
 
-
-
-		cls.make_loggy_file(cls, cls.NAVDROP_LOGGY)
-		cls.case_object = Navdrop
+		self.case_object = Navdrop
 
 
 
@@ -206,7 +208,9 @@ class NavdropTest(PygwartsTestCase):
 			self.test_case = self.case_object()
 			self.test_case.perform()
 
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
 			self.assertEqual(len(self.test_case.perform.Navbow()),48)
+			self.assertEqual(len(self.test_case.perform.Navshelf),0)
 			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
 
 			self.test_case.perform.Navbow.produce(from_outer=True)
@@ -457,7 +461,9 @@ class NavdropTest(PygwartsTestCase):
 			self.test_case = self.case_object()
 			self.test_case.perform()
 
-			self.assertEqual(len(self.test_case.perform.Navbow()),48)
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
 			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
 
 			self.test_case.perform.Navbow.produce(from_outer=True)
@@ -535,7 +541,9 @@ class NavdropTest(PygwartsTestCase):
 			self.test_case = self.case_object()
 			self.test_case.perform()
 
-			self.assertEqual(len(self.test_case.perform.Navbow()),48)
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
 			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
 
 			self.test_case.perform.Navbow.produce(from_outer=True)
@@ -611,7 +619,9 @@ class NavdropTest(PygwartsTestCase):
 			for word,_ in self.test_case.perform.Navbow : self.test_case.perform.Navbow[word] = 1
 			self.test_case.perform()
 
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
 			self.assertEqual(len(self.test_case.perform.Navbow()),48)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
 			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
 
 			self.test_case.perform.Navbow.produce(from_outer=True)
@@ -682,9 +692,73 @@ class NavdropTest(PygwartsTestCase):
 
 
 
-	@unittest.skip("under construction")
 	def test_E_knowns_notouch(self):
 		sleep(1)
+
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "E_knowns_notouch"
+		with self.assertLogs("E_knowns_notouch", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+
+			for word,_ in self.test_case.perform.Navbow:
+				with self.subTest(word=word): self.assertEqual(self.test_case.perform.Navbow[word],1)
+
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertFalse(hasattr(self.test_case.loggy, "current_pool"))
+
+
+		self.assertIn(
+			f"DEBUG:E_knowns_notouch:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
+		)
+		self.assertIn(
+			f"DEBUG:E_knowns_notouch:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output
+		)
+		self.assertIn(
+			f"DEBUG:E_knowns_notouch:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output
+		)
+
+
+		self.assertNotIn(f"INFO:E_knowns_notouch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:E_knowns_notouch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:E_knowns_notouch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:E_knowns_notouch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:E_knowns_notouch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:E_knowns_notouch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(f"DEBUG:E_knowns_notouch:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:E_knowns_notouch:Shelf was not modified"),2)
+
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
 
 
