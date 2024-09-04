@@ -46,7 +46,7 @@ class NavdropTest(PygwartsTestCase):
 		cls.now = TimeTurner(timepoint="0420")
 
 		# All messages are well structured (for UDK2) and actual at the first place
-		text_1 = str(
+		cls.text_1 = str(
 
 			"\n"
 			"ZCZC KE42\n"
@@ -60,7 +60,7 @@ class NavdropTest(PygwartsTestCase):
 		)
 
 
-		text_2 = str(
+		cls.text_2 = str(
 
 			"\n"
 			"ZCZC KA69\n"
@@ -85,7 +85,7 @@ class NavdropTest(PygwartsTestCase):
 		)
 
 
-		text_3 = str(
+		cls.text_3 = str(
 
 			"\n"
 			"ZCZC KB00\n"
@@ -107,9 +107,19 @@ class NavdropTest(PygwartsTestCase):
 		cls.MESSAGE_3 = cls.MESSAGES_SRC /"KB00.TLX"
 
 
-		cls.fmake(cls, cls.MESSAGE_1, text_1)
-		cls.fmake(cls, cls.MESSAGE_2, text_2)
-		cls.fmake(cls, cls.MESSAGE_3, text_3)
+		cls.DST1_MESSAGE_1 = cls.MESSAGES_DST1 /"KE42.TLX"
+		cls.DST1_MESSAGE_2 = cls.MESSAGES_DST1 /"KA69.TLX"
+		cls.DST1_MESSAGE_3 = cls.MESSAGES_DST1 /"KB00.TLX"
+
+
+		cls.DST2_MESSAGE_1 = cls.MESSAGES_DST2 /"KE42.TLX"
+		cls.DST2_MESSAGE_2 = cls.MESSAGES_DST2 /"KA69.TLX"
+		cls.DST2_MESSAGE_3 = cls.MESSAGES_DST2 /"KB00.TLX"
+
+
+		cls.fmake(cls, cls.MESSAGE_1, cls.text_1)
+		cls.fmake(cls, cls.MESSAGE_2, cls.text_2)
+		cls.fmake(cls, cls.MESSAGE_3, cls.text_3)
 
 
 
@@ -117,16 +127,17 @@ class NavdropTest(PygwartsTestCase):
 		class Navdrop(Copse):
 			class loggy(LibraryContrib):
 
-				init_level	= 10
-				init_name	= "Navdrop"
-				handler		= str(cls.NAVDROP_LOGGY)
+				init_level		= 10
+				init_name		= "Navdrop"
+				handler			= str(cls.NAVDROP_LOGGY)
+				force_warning	= "*.outer_shelf", "*.inner_shelf",
 
 				# Dummy method that must verify "pool" receive correct message
 				def pool(self, message :str): self.current_pool = message
 
-			class Boughs(Copse):
-				class dst1(Tree):	bough = cls.MESSAGES_DST1
-				class dst2(Tree):	bough = cls.MESSAGES_DST2
+			class Targets(Copse):
+				class one(Tree):	bough = cls.MESSAGES_DST1
+				class two(Tree):	bough = cls.MESSAGES_DST2
 				class leafs(SiftingController):
 					include = (
 
@@ -141,7 +152,7 @@ class NavdropTest(PygwartsTestCase):
 						rf"{cls.MESSAGES_DST2}{os.sep}.+",
 					)
 
-			@DraftPeek(renew=False)
+			@DraftPeek(renew=False, cache=False)
 			class grow(LeafGrowth):		pass
 			class rejuve(Rejuvenation):	pass
 
@@ -331,6 +342,7 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn(f"INFO:A_strict_init:Bough \"{self.MESSAGES_DST1}\" is invalid", case_loggy.output)
 		self.assertIn(f"INFO:A_strict_init:Bough \"{self.MESSAGES_DST2}\" is invalid", case_loggy.output)
 
+
 		self.assertIn(
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_3}\", marked as new", case_loggy.output
 		)
@@ -340,6 +352,9 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn("WARNING:A_strict_init:Unknown word \"NORTH-EASTERN\" in KB00 line 5", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"NORTHERN\" in KB00 line 5", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"GUST\" in KB00 line 5", case_loggy.output)
+		self.assertNotIn(f"INFO:A_strict_init:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:A_strict_init:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
 
 		self.assertIn(
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_1}\", marked as new", case_loggy.output
@@ -361,6 +376,9 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn("WARNING:A_strict_init:Unknown word \"KM\" in KE42 line 7", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"SEAS\" in KE42 line 7", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"M\" in KE42 line 7", case_loggy.output)
+		self.assertNotIn(f"INFO:A_strict_init:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:A_strict_init:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+
 
 		self.assertIn(
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_2}\", marked as new", case_loggy.output
@@ -393,6 +411,17 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn("WARNING:A_strict_init:Unknown word \"THIS\" in KA69 line 18", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"MESSAGE\" in KA69 line 18", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"SEP\" in KA69 line 18", case_loggy.output)
+		self.assertNotIn(f"INFO:A_strict_init:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:A_strict_init:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(
+			f"INFO:A_strict_init:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
+		)
+		self.assertIn(
+			f"INFO:A_strict_init:Shelf \"{self.NAVDROP_BOW}\" successfully produced", case_loggy.output
+		)
+
 
 		self.assertFalse(self.MESSAGES_DST1.is_dir())
 		self.assertFalse(self.MESSAGES_DST2.is_dir())
@@ -451,26 +480,110 @@ class NavdropTest(PygwartsTestCase):
 			f"INFO:B_no_touch_boughs:Bough \"{self.MESSAGES_DST2}\" is invalid", case_loggy.output
 		)
 
+
 		self.assertIn(
 			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
 		)
-
 		self.assertIn(
 			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output
 		)
-
 		self.assertIn(
 			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output
 		)
 
+
+		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
+
 		self.assertIn(f"DEBUG:B_no_touch_boughs:Shelf was not modified", case_loggy.output)
 		self.assertEqual(case_loggy.output.count(f"DEBUG:B_no_touch_boughs:Shelf was not modified"),2)
+
 
 		self.assertTrue(self.MESSAGE_1.is_file())
 		self.assertTrue(self.MESSAGE_2.is_file())
 		self.assertTrue(self.MESSAGE_3.is_file())
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
+
+
+
+
+
+
+	def test_C_simple_touch(self):
+		sleep(1)
+
+		self.fmake(self.MESSAGE_1, self.text_1)
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "C_simple_touch"
+		with self.assertLogs("C_simple_touch", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow()),48)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertFalse(hasattr(self.test_case.loggy, "current_pool"))
+
+
+		self.assertIn(f"DEBUG:C_simple_touch:KE42 created by {self.now}", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"WEATHER\" in KE42 line 3", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"FORECAST\" in KE42 line 3", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"ON\" in KE42 line 4", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"MURMAN\" in KE42 line 4", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"COAST\" in KE42 line 4", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"AT\" in KE42 line 4", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"WIND\" in KE42 line 5", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"NORTH-WESTERN\" in KE42 line 5", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"WESTERN\" in KE42 line 6", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"M/S\" in KE42 line 6", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"VISIBILITY\" in KE42 line 6", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"GOOD\" in KE42 line 6", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"MIST\" in KE42 line 7", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"KM\" in KE42 line 7", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"SEAS\" in KE42 line 7", case_loggy.output)
+		self.assertIn("INFO:C_simple_touch:Pending word \"M\" in KE42 line 7", case_loggy.output)
+		self.assertIn(f"INFO:C_simple_touch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertIn(f"INFO:C_simple_touch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:C_simple_touch:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:C_simple_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:C_simple_touch:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:C_simple_touch:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:C_simple_touch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:C_simple_touch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:C_simple_touch:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:C_simple_touch:Shelf was not modified"),1)
+		self.assertIn(
+			f"INFO:C_simple_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
+		)
 
 
 
