@@ -435,7 +435,7 @@ class NavdropTest(PygwartsTestCase):
 
 
 
-	def test_B_no_touch_boughs(self):
+	def test_B_notouch_boughs(self):
 		sleep(1)
 
 		self.assertFalse(self.MESSAGES_DST1.is_dir())
@@ -451,8 +451,8 @@ class NavdropTest(PygwartsTestCase):
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 
 
-		self.case_object.loggy.init_name = "B_no_touch_boughs"
-		with self.assertLogs("B_no_touch_boughs", 10) as case_loggy:
+		self.case_object.loggy.init_name = "B_notouch_boughs"
+		with self.assertLogs("B_notouch_boughs", 10) as case_loggy:
 
 			self.test_case = self.case_object()
 			self.test_case.perform()
@@ -474,34 +474,34 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertNotIn(
-			f"INFO:B_no_touch_boughs:Bough \"{self.MESSAGES_DST1}\" is invalid", case_loggy.output
+			f"INFO:B_notouch_boughs:Bough \"{self.MESSAGES_DST1}\" is invalid", case_loggy.output
 		)
 		self.assertNotIn(
-			f"INFO:B_no_touch_boughs:Bough \"{self.MESSAGES_DST2}\" is invalid", case_loggy.output
+			f"INFO:B_notouch_boughs:Bough \"{self.MESSAGES_DST2}\" is invalid", case_loggy.output
 		)
 
 
 		self.assertIn(
-			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
+			f"DEBUG:B_notouch_boughs:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
 		)
 		self.assertIn(
-			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output
+			f"DEBUG:B_notouch_boughs:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output
 		)
 		self.assertIn(
-			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output
+			f"DEBUG:B_notouch_boughs:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output
 		)
 
 
-		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
-		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
-		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
-		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
-		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
-		self.assertIn(f"INFO:B_no_touch_boughs:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
 
 
-		self.assertIn(f"DEBUG:B_no_touch_boughs:Shelf was not modified", case_loggy.output)
-		self.assertEqual(case_loggy.output.count(f"DEBUG:B_no_touch_boughs:Shelf was not modified"),2)
+		self.assertIn(f"DEBUG:B_notouch_boughs:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:B_notouch_boughs:Shelf was not modified"),2)
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
@@ -584,6 +584,120 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn(
 			f"INFO:C_simple_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
 		)
+
+
+
+
+
+
+
+
+	def test_D_knowns_touch(self):
+		sleep(1)
+
+		self.fmake(self.MESSAGE_2, self.text_2)
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "D_knowns_touch"
+		with self.assertLogs("D_knowns_touch", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+			for word,_ in self.test_case.perform.Navbow : self.test_case.perform.Navbow[word] = 1
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow()),48)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertFalse(hasattr(self.test_case.loggy, "current_pool"))
+
+
+		self.assertIn(f"DEBUG:D_knowns_touch:KA69 created by {self.now}", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"UTC\" in KA69 line 2", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"COASTAL\" in KA69 line 3", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"WARNING\" in KA69 line 3", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"MURMANSK\" in KA69 line 3", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"WEST\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"OF\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"NOVAYA\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"ZEMLYA\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"ISLANDS\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"SPECIAL\" in KA69 line 5", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"ACTIVITIES\" in KA69 line 5", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"AUG\" in KA69 line 5", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"TO\" in KA69 line 5", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"NAVIGATION\" in KA69 line 6", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"PROHIBITED\" in KA69 line 6", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"TERRITORIAL\" in KA69 line 6", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"WATERS\" in KA69 line 6", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"DANGEROUS\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"OUTSIDE\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"IN\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"AREA\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"BOUNDED\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"BY\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"CANCEL\" in KA69 line 18", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"THIS\" in KA69 line 18", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"MESSAGE\" in KA69 line 18", case_loggy.output)
+		self.assertIn("DEBUG:D_knowns_touch:Known word \"SEP\" in KA69 line 18", case_loggy.output)
+		self.assertIn(f"INFO:D_knowns_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertIn(f"INFO:D_knowns_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(f"DEBUG:D_knowns_touch:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:D_knowns_touch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:D_knowns_touch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:D_knowns_touch:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:D_knowns_touch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:D_knowns_touch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
+
+		self.assertIn(
+			f"INFO:D_knowns_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
+		)
+		self.assertIn(
+			f"INFO:D_knowns_touch:Shelf \"{self.NAVDROP_BOW}\" successfully produced", case_loggy.output
+		)
+
+
+
+
+
+
+
+
+	@unittest.skip("under construction")
+	def test_E_knowns_notouch(self):
+		sleep(1)
+
+
+
+
+
+
+
+
+	@unittest.skip("under construction")
+	def test_F_sanitize_touch(self):
+		sleep(1)
+
+		self.fmake(self.MESSAGE_1, self.text_1)
 
 
 
