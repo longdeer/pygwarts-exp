@@ -1,6 +1,7 @@
 import	os
 import	unittest
 from	pathlib								import Path
+from	time								import sleep
 from	shutil								import rmtree
 from	pygwarts.magical.time_turner		import TimeTurner
 from	pygwarts.irma.contrib				import LibraryContrib
@@ -120,6 +121,9 @@ class NavdropTest(PygwartsTestCase):
 				init_name	= "Navdrop"
 				handler		= str(cls.NAVDROP_LOGGY)
 
+				# Dummy method that must verify "pool" receive correct message
+				def pool(self, message :str): self.current_pool = message
+
 			class Boughs(Copse):
 				class dst1(Tree):	bough = cls.MESSAGES_DST1
 				class dst2(Tree):	bough = cls.MESSAGES_DST2
@@ -145,8 +149,8 @@ class NavdropTest(PygwartsTestCase):
 			class effloresce(Efflorescence):
 				branches = {
 
-					str(cls.MESSAGES_DST1):	str(cls.MESSAGES_SRC),
-					str(cls.MESSAGES_DST2):	str(cls.MESSAGES_SRC),
+					str(cls.MESSAGES_DST1):	( str(cls.MESSAGES_SRC), ),
+					str(cls.MESSAGES_DST2):	( str(cls.MESSAGES_SRC), ),
 				}
 
 			@fssprout(str(cls.MESSAGES_SRC))
@@ -168,26 +172,8 @@ class NavdropTest(PygwartsTestCase):
 
 
 		cls.make_loggy_file(cls, cls.NAVDROP_LOGGY)
-		cls.test_case = Navdrop
+		cls.case_object = Navdrop
 
-
-
-
-
-
-
-
-	# @classmethod
-	# def tearDownClass(cls):
-
-	# 	if	hasattr(cls, "MESSAGE_1") and isinstance(Path, cls.MESSAGE_1) and cls.MESSAGE_1.is_file():
-	# 		cls.MESSAGE_1.unlink()
-
-	# 	if	hasattr(cls, "MESSAGE_2") and isinstance(Path, cls.MESSAGE_2) and cls.MESSAGE_2.is_file():
-	# 		cls.MESSAGE_2.unlink()
-
-	# 	if	hasattr(cls, "MESSAGE_3") and isinstance(Path, cls.MESSAGE_3) and cls.MESSAGE_3.is_file():
-	# 		cls.MESSAGE_3.unlink()
 
 
 
@@ -197,7 +183,7 @@ class NavdropTest(PygwartsTestCase):
 
 	def test_A_strict_init(self):
 
-		self.test_case.loggy.init_name = "A_strict_init"
+		self.case_object.loggy.init_name = "A_strict_init"
 		self.assertFalse(self.MESSAGES_DST1.is_dir())
 		self.assertFalse(self.MESSAGES_DST2.is_dir())
 		self.assertFalse(self.NAVDROP_SHELF.is_file())
@@ -206,7 +192,7 @@ class NavdropTest(PygwartsTestCase):
 
 		with self.assertLogs("A_strict_init", 10) as case_loggy:
 
-			self.test_case = self.test_case()
+			self.test_case = self.case_object()
 			self.test_case.perform()
 
 			self.assertEqual(len(self.test_case.perform.Navbow()),48)
@@ -219,6 +205,127 @@ class NavdropTest(PygwartsTestCase):
 				rewrite=True,
 				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
 			)
+
+
+		self.assertTrue(hasattr(self.test_case.loggy, "current_pool"))
+		self.assertEqual(
+
+			self.test_case.loggy.current_pool,
+			str(
+				"new message KB00\n"
+				"1    ZCZC KB00\n"
+				f"2    {self.now.dHM_asjoin} UTC {self.now.b.upper()}\n"
+				"3    GALE WARNING MURMANSK NR85\n"
+				"4    ON MURMAN COAST 01 MAR 17-21 UTC\n"
+				"5    WIND NORTH-EASTERN NORTHERN GUST\n"
+				"6    15-20 M/S\n"
+				"7    NNNN\n"
+				"\n"
+				"Unknown word \"UTC\" in KB00 line 2\n"
+				"Unknown word \"SEP\" in KB00 line 2\n"
+				"Unknown word \"GALE\" in KB00 line 3\n"
+				"Unknown word \"WARNING\" in KB00 line 3\n"
+				"Unknown word \"MURMANSK\" in KB00 line 3\n"
+				"Unknown word \"ON\" in KB00 line 4\n"
+				"Unknown word \"MURMAN\" in KB00 line 4\n"
+				"Unknown word \"COAST\" in KB00 line 4\n"
+				"Unknown word \"MAR\" in KB00 line 4\n"
+				"Unknown word \"UTC\" in KB00 line 4\n"
+				"Unknown word \"WIND\" in KB00 line 5\n"
+				"Unknown word \"NORTH-EASTERN\" in KB00 line 5\n"
+				"Unknown word \"NORTHERN\" in KB00 line 5\n"
+				"Unknown word \"GUST\" in KB00 line 5\n"
+				"Unknown word \"M/S\" in KB00 line 6\n"
+				"\n\n"
+				"new message KE42\n"
+				"1    ZCZC KE42\n"
+				f"2    {self.now.dHM_asjoin} UTC {self.now.b.upper()}\n"
+				"3    MURMANSK WEATHER FORECAST\n"
+				"4    ON MURMAN COAST AT 06 UTC\n"
+				"5    TO 18 UTC 01 SEP WIND NORTH-WESTERN\n"
+				"6    WESTERN 8-13 M/S VISIBILITY GOOD\n"
+				"7    IN TO MIST 1-2 KM SEAS 1,5-2,0 M\n"
+				"8    NNNN\n"
+				"\n"
+				"Unknown word \"UTC\" in KE42 line 2\n"
+				"Unknown word \"SEP\" in KE42 line 2\n"
+				"Unknown word \"MURMANSK\" in KE42 line 3\n"
+				"Unknown word \"WEATHER\" in KE42 line 3\n"
+				"Unknown word \"FORECAST\" in KE42 line 3\n"
+				"Unknown word \"ON\" in KE42 line 4\n"
+				"Unknown word \"MURMAN\" in KE42 line 4\n"
+				"Unknown word \"COAST\" in KE42 line 4\n"
+				"Unknown word \"AT\" in KE42 line 4\n"
+				"Unknown word \"UTC\" in KE42 line 4\n"
+				"Unknown word \"TO\" in KE42 line 5\n"
+				"Unknown word \"UTC\" in KE42 line 5\n"
+				"Unknown word \"SEP\" in KE42 line 5\n"
+				"Unknown word \"WIND\" in KE42 line 5\n"
+				"Unknown word \"NORTH-WESTERN\" in KE42 line 5\n"
+				"Unknown word \"WESTERN\" in KE42 line 6\n"
+				"Unknown word \"M/S\" in KE42 line 6\n"
+				"Unknown word \"VISIBILITY\" in KE42 line 6\n"
+				"Unknown word \"GOOD\" in KE42 line 6\n"
+				"Unknown word \"IN\" in KE42 line 7\n"
+				"Unknown word \"TO\" in KE42 line 7\n"
+				"Unknown word \"MIST\" in KE42 line 7\n"
+				"Unknown word \"KM\" in KE42 line 7\n"
+				"Unknown word \"SEAS\" in KE42 line 7\n"
+				"Unknown word \"M\" in KE42 line 7\n"
+				"\n\n"
+				"new message KA69\n"
+				"1    ZCZC KA69\n"
+				f"2    {self.now.dHM_asjoin} UTC {self.now.b.upper()} {self.now.y}\n"
+				"3    COASTAL WARNING MURMANSK 270\n"
+				"4    WEST OF NOVAYA ZEMLYA ISLANDS\n"
+				"5    1. SPECIAL ACTIVITIES 312100 AUG TO 302100 SEP\n"
+				"6    NAVIGATION PROHIBITED IN TERRITORIAL WATERS\n"
+				"7    DANGEROUS OUTSIDE IN AREA BOUNDED BY\n"
+				"8    76-00.0N 056-30.0E\n"
+				"9    76-00.0N 058-00.0E\n"
+				"10   75-23.0N 056-00.0E\n"
+				"11   75-12.0N 055-05.0E\n"
+				"12   73-45.0N 052-58.0E\n"
+				"13   72-45.0N 051-45.0E\n"
+				"14   72-00.0N 050-50.0E\n"
+				"15   72-00.0N 050-00.0E\n"
+				"16   74-00.0N 050-00.0E\n"
+				"17   75-25.0N 052-45.0E\n"
+				"18   2. CANCEL THIS MESSAGE 302200 SEP 24\n"
+				"19   NNNN\n"
+				"\n"
+				"Unknown word \"UTC\" in KA69 line 2\n"
+				"Unknown word \"SEP\" in KA69 line 2\n"
+				"Unknown word \"COASTAL\" in KA69 line 3\n"
+				"Unknown word \"WARNING\" in KA69 line 3\n"
+				"Unknown word \"MURMANSK\" in KA69 line 3\n"
+				"Unknown word \"WEST\" in KA69 line 4\n"
+				"Unknown word \"OF\" in KA69 line 4\n"
+				"Unknown word \"NOVAYA\" in KA69 line 4\n"
+				"Unknown word \"ZEMLYA\" in KA69 line 4\n"
+				"Unknown word \"ISLANDS\" in KA69 line 4\n"
+				"Unknown word \"SPECIAL\" in KA69 line 5\n"
+				"Unknown word \"ACTIVITIES\" in KA69 line 5\n"
+				"Unknown word \"AUG\" in KA69 line 5\n"
+				"Unknown word \"TO\" in KA69 line 5\n"
+				"Unknown word \"SEP\" in KA69 line 5\n"
+				"Unknown word \"NAVIGATION\" in KA69 line 6\n"
+				"Unknown word \"PROHIBITED\" in KA69 line 6\n"
+				"Unknown word \"IN\" in KA69 line 6\n"
+				"Unknown word \"TERRITORIAL\" in KA69 line 6\n"
+				"Unknown word \"WATERS\" in KA69 line 6\n"
+				"Unknown word \"DANGEROUS\" in KA69 line 7\n"
+				"Unknown word \"OUTSIDE\" in KA69 line 7\n"
+				"Unknown word \"IN\" in KA69 line 7\n"
+				"Unknown word \"AREA\" in KA69 line 7\n"
+				"Unknown word \"BOUNDED\" in KA69 line 7\n"
+				"Unknown word \"BY\" in KA69 line 7\n"
+				"Unknown word \"CANCEL\" in KA69 line 18\n"
+				"Unknown word \"THIS\" in KA69 line 18\n"
+				"Unknown word \"MESSAGE\" in KA69 line 18\n"
+				"Unknown word \"SEP\" in KA69 line 18"
+			)
+		)
 
 
 		self.assertIn(f"INFO:A_strict_init:Bough \"{self.MESSAGES_DST1}\" is invalid", case_loggy.output)
@@ -289,6 +396,79 @@ class NavdropTest(PygwartsTestCase):
 
 		self.assertFalse(self.MESSAGES_DST1.is_dir())
 		self.assertFalse(self.MESSAGES_DST2.is_dir())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
+
+
+
+
+
+
+	def test_B_no_touch_boughs(self):
+		sleep(1)
+
+		self.assertFalse(self.MESSAGES_DST1.is_dir())
+		self.assertFalse(self.MESSAGES_DST2.is_dir())
+
+		self.MESSAGES_DST1.mkdir()
+		self.MESSAGES_DST2.mkdir()
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "B_no_touch_boughs"
+		with self.assertLogs("B_no_touch_boughs", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow()),48)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertFalse(hasattr(self.test_case.loggy, "current_pool"))
+
+
+		self.assertNotIn(
+			f"INFO:B_no_touch_boughs:Bough \"{self.MESSAGES_DST1}\" is invalid", case_loggy.output
+		)
+		self.assertNotIn(
+			f"INFO:B_no_touch_boughs:Bough \"{self.MESSAGES_DST2}\" is invalid", case_loggy.output
+		)
+
+		self.assertIn(
+			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
+		)
+
+		self.assertIn(
+			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output
+		)
+
+		self.assertIn(
+			f"DEBUG:B_no_touch_boughs:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output
+		)
+
+		self.assertIn(f"DEBUG:B_no_touch_boughs:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:B_no_touch_boughs:Shelf was not modified"),2)
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.MESSAGE_3.is_file())
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 

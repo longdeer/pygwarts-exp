@@ -335,6 +335,10 @@ class Navpreprocessor(ControlledTransmutation):
 
 										message_pool,
 										current_dispatch,
+
+										# NL indents multiplications means 1 if "current_dispatch" is empty,
+										# so no troubles just a new message notification, otherwise 2 NL
+										# to ensure proper space between neighbor messages.
 										"\n" *(int(bool(current_dispatch)) +1)
 									)
 
@@ -365,8 +369,10 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 					if	callable(pool := getattr(self.loggy, "pool", None)):
-						# if	dispatcher : pool("\n%s\n"%dispatcher.strip("\n"))
-						if	dispatcher : print("\n\n%s\n"%dispatcher.strip("\n"))
+
+						# All NL that wrapps final message over top and bottom must be stripped
+						# before message will be pushed to the pool.
+						if	dispatcher : pool(("\n%s\n"%dispatcher).strip("\n"))
 
 
 					analyzer.update_BoW(Navbow)
