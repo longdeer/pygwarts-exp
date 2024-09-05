@@ -283,15 +283,10 @@ class Navpreprocessor(ControlledTransmutation):
 											self.loggy.info(f"Failed to convert CDT for {repr_name}")
 										else:
 											self.loggy.debug(f"{repr_name} created by {CDT}")
-											if	shelved_CDT is not None:
-												is_new_message = CDT != shelved_CDT
-												# self.loggy.info(f"shelved_CDT = {shelved_CDT}")
-												# self.loggy.info(f"CDT = {CDT}")
-												# self.loggy.info(f"{is_new_message = }")
-											# is_new_message = shelved_CDT <CDT if shelved_CDT is not None else
+											self.loggy.debug(f"shelved CDT is {shelved_CDT}")
 
-									else:
-										self.loggy.info(f"CDT obtaining problem in {repr_name}")
+											if	shelved_CDT is not None : is_new_message = shelved_CDT <CDT
+									else:	self.loggy.info(f"CDT obtaining problem in {repr_name}")
 								else:
 
 									# As Navtex manual doesn't assumes CDT is mandatory line, user must
