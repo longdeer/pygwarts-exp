@@ -228,28 +228,30 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 
-								valid_file_name		= file.name.upper()
-								has_valid_name		= file.name.isupper()
-								valid_source_path	= file.with_name(valid_file_name)
-								repr_name			= valid_file_name.rstrip(".TLX")
+								repr_name = file
+								for _ in range(len(file.suffixes)) : repr_name = Path(repr_name.stem)
+								repr_name = str(repr_name)
 
 
 
 
-								if	not has_valid_name:	self.loggy.info(f"{repr_name} failed filename check")
 								if	not is_structured:	self.loggy.info(f"{repr_name} failed structure check")
 								if	is_sanitized:		self.loggy.info(f"{repr_name} failed layout check")
 
 
-								if	is_sanitized or not is_structured or not has_valid_name:
+								if	is_sanitized or not is_structured:
 									if	self.rewrite_source(
 
-											valid_source_path,
-											proper_message,
-											header=separator,
-											footer=separator,
-										):	self.cleanup(file, has_valid_name)
-									else:
+										file,
+										proper_message,
+										header=separator,
+										footer=separator,
+
+									)	is None:
+
+										# In case source cannot be rewritten, corresponding message will be
+										# logged by "rewrite_source" and further processing will be skipped.
+										# Hagrid will receive such file anyway.
 										valid_navtex_files.append(file)
 										continue
 
@@ -348,9 +350,9 @@ class Navpreprocessor(ControlledTransmutation):
 								if	Navshelf is not None:
 									Navshelf(
 
-										str(valid_source_path),
+										str(file),
 										{
-											"FMT": valid_source_path.stat().st_mtime,
+											"FMT": file.stat().st_mtime,
 											"CDT": CDT
 										}
 									)
@@ -358,7 +360,7 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 
-								valid_navtex_files.append(valid_source_path)
+								valid_navtex_files.append(file)
 								self.loggy.debug(f"Processed {repr_name}")
 							else:
 								processed.append([ sprout,( branch, [], valid_navtex_files )])
@@ -391,7 +393,7 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 				def rewrite_source(	self,
-									valid_path			:Path,
+									file_path			:Path,
 									message				:str,
 									header				:str	="",
 									footer				:str	="",
@@ -402,7 +404,7 @@ class Navpreprocessor(ControlledTransmutation):
 
 						This is the place, where source file is claimed to have a special structure.
 						As Navtex message transmitting automation require two new lines between
-						messages, and some modems might have wrong pre/post key settings, which lead
+						messages, and some modems might have wrong pre/post key settings, tath may lead
 						to very first message header corruption, current implementation maintains
 						the structure like first new line in the beggining -----and second at the end
 						of message. The argument "wrapper" must be a new line, that is to be provided
@@ -412,34 +414,14 @@ class Navpreprocessor(ControlledTransmutation):
 						None must be returned only if write to file failed.
 					"""
 
-					try:	valid_path.write_text(f"{header}{message}{footer}")
+					try:	file_path.write_text(f"{header}{message}{footer}")
 					except	Exception as E:
 
-						self.loggy.warning(f"Failed to rewrite \"{valid_path}\" due to {CAST(E)}")
+						self.loggy.warning(f"Failed to rewrite \"{file_path}\" due to {CAST(E)}")
 					else:
-						self.loggy.info(f"Source file \"{valid_path}\" rewritten")
-
+						self.loggy.info(f"Source file \"{file_path}\" rewritten")
 
 						return	True
-
-
-
-
-				def cleanup(self, source_path :Path, flag :bool):
-
-					"""
-						Method to use in pair with "rewrite_source" to ensure the old source file will be
-						removed if new valid source file name is different
-					"""
-
-					if	not flag:
-
-						try:	source_path.unlink()
-						except	Exception as E:
-
-							self.loggy.warning(f"Failed to remove \"{source_path}\" due to {CAST(E)}")
-						else:
-							self.loggy.info(f"Removed rewritten \"{source_path}\"")
 
 
 

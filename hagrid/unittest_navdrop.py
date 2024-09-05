@@ -351,7 +351,6 @@ class NavdropTest(PygwartsTestCase):
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_3}\", marked as new", case_loggy.output
 		)
 		self.assertIn(f"DEBUG:A_strict_init:KB00 created by {self.now}", case_loggy.output)
-		self.assertNotIn("INFO:A_strict_init:KB00 failed filename check", case_loggy.output)
 		self.assertNotIn("INFO:A_strict_init:KB00 failed structure check", case_loggy.output)
 		self.assertNotIn("INFO:A_strict_init:KB00 failed layout check", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"GALE\" in KB00 line 3", case_loggy.output)
@@ -367,7 +366,6 @@ class NavdropTest(PygwartsTestCase):
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_1}\", marked as new", case_loggy.output
 		)
 		self.assertIn(f"DEBUG:A_strict_init:KE42 created by {self.now}", case_loggy.output)
-		self.assertNotIn("INFO:A_strict_init:KE42 failed filename check", case_loggy.output)
 		self.assertNotIn("INFO:A_strict_init:KE42 failed structure check", case_loggy.output)
 		self.assertNotIn("INFO:A_strict_init:KE42 failed layout check", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"WEATHER\" in KE42 line 3", case_loggy.output)
@@ -393,7 +391,6 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn(
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_2}\", marked as new", case_loggy.output
 		)
-		self.assertNotIn("INFO:A_strict_init:KA69 failed filename check", case_loggy.output)
 		self.assertNotIn("INFO:A_strict_init:KA69 failed structure check", case_loggy.output)
 		self.assertNotIn("INFO:A_strict_init:KA69 failed layout check", case_loggy.output)
 		self.assertIn(f"DEBUG:A_strict_init:KA69 created by {self.now}", case_loggy.output)
@@ -573,7 +570,6 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertIn(f"DEBUG:C_simple_touch:KE42 created by {self.now}", case_loggy.output)
-		self.assertNotIn("INFO:C_simple_touch:KE42 failed filename check", case_loggy.output)
 		self.assertNotIn("INFO:C_simple_touch:KE42 failed structure check", case_loggy.output)
 		self.assertNotIn("INFO:C_simple_touch:KE42 failed layout check", case_loggy.output)
 		self.assertIn("INFO:C_simple_touch:Pending word \"WEATHER\" in KE42 line 3", case_loggy.output)
@@ -654,7 +650,6 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertIn(f"DEBUG:D_knowns_touch:KA69 created by {self.now}", case_loggy.output)
-		self.assertNotIn("INFO:D_knowns_touch:KA69 failed filename check", case_loggy.output)
 		self.assertNotIn("INFO:D_knowns_touch:KA69 failed structure check", case_loggy.output)
 		self.assertNotIn("INFO:D_knowns_touch:KA69 failed layout check", case_loggy.output)
 		self.assertIn("DEBUG:D_knowns_touch:Known word \"UTC\" in KA69 line 2", case_loggy.output)
@@ -843,7 +838,6 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertIn(f"DEBUG:F_sanitize_touch:KB00 created by {self.now}", case_loggy.output)
-		self.assertNotIn("INFO:F_sanitize_touch:KB00 failed filename check", case_loggy.output)
 		self.assertNotIn("INFO:F_sanitize_touch:KB00 failed structure check", case_loggy.output)
 		self.assertIn("INFO:F_sanitize_touch:KB00 failed layout check", case_loggy.output)
 
@@ -945,7 +939,6 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertIn(f"DEBUG:G_structure_touch:KE42 created by {self.now}", case_loggy.output)
-		self.assertNotIn("INFO:G_structure_touch:KE42 failed filename check", case_loggy.output)
 		self.assertIn("INFO:G_structure_touch:KE42 failed structure check", case_loggy.output)
 		self.assertNotIn("INFO:G_structure_touch:KE42 failed layout check", case_loggy.output)
 
@@ -1001,6 +994,33 @@ class NavdropTest(PygwartsTestCase):
 		self.assertTrue(self.MESSAGE_3.is_file())
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
+
+
+
+
+
+
+	@unittest.skip("under construction")
+	def test_H_sanitize_touch(self):
+		sleep(1)
+
+		# # According to 
+		# self.fmake(
+
+		# 	self.MESSAGE_2,
+
+
+
+
+
+
+
+
+	@unittest.skip("under construction")
+	def test__different_names(self):
+		sleep(1)
 
 
 
