@@ -473,6 +473,7 @@ class NavdropTest(PygwartsTestCase):
 			self.assertEqual(len(self.test_case.perform.Navbow),48)
 			self.assertEqual(len(self.test_case.perform.Navbow()),0)
 			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			# Navshelf.outer_shelf will always have all of them cause silent put.
 			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
 
 			self.test_case.perform.Navbow.produce(from_outer=True)
@@ -867,18 +868,131 @@ class NavdropTest(PygwartsTestCase):
 		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
 
 
-		self.assertIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
-		self.assertIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
-		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
-		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
-		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
-		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
-
-
 		self.assertIn(f"DEBUG:F_sanitize_touch:Shelf was not modified", case_loggy.output)
 		self.assertEqual(case_loggy.output.count(f"DEBUG:F_sanitize_touch:Shelf was not modified"),1)
 		self.assertIn(
 			f"INFO:F_sanitize_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
+		)
+
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
+
+
+
+
+
+
+	def test_G_structure_touch(self):
+		sleep(1)
+
+		# Now message will have structure that will no match regex
+		self.fmake(
+
+			self.MESSAGE_1,
+			str(
+
+				"ZCZC KE42\n"
+				f"{self.now.dHM_asjoin} UTC {self.now.b.upper()}\n"
+				"MURMANSK WEATHER FORECAST\n"
+				"ON MURMAN COAST AT 06 UTC\n"
+				"TO 18 UTC 01 SEP WIND NORTH-WESTERN\n"
+				"WESTERN 8-13 M/S VISIBILITY GOOD\n"
+				"IN TO MIST 1-2 KM SEAS 1,5-2,0 M\n"
+				"NNNN"
+			)
+		)
+
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "G_structure_touch"
+		with self.assertLogs("G_structure_touch", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+
+			for word,_ in self.test_case.perform.Navbow:
+				with self.subTest(word=word): self.assertEqual(self.test_case.perform.Navbow[word],1)
+
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertFalse(hasattr(self.test_case.loggy, "current_pool"))
+
+
+		self.assertIn(f"DEBUG:G_structure_touch:KE42 created by {self.now}", case_loggy.output)
+		self.assertNotIn("INFO:G_structure_touch:KE42 failed filename check", case_loggy.output)
+		self.assertIn("INFO:G_structure_touch:KE42 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:G_structure_touch:KE42 failed layout check", case_loggy.output)
+
+
+		self.assertIn("DEBUG:G_structure_touch:Known word \"WEATHER\" in KE42 line 3", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"FORECAST\" in KE42 line 3", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"ON\" in KE42 line 4", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"MURMAN\" in KE42 line 4", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"COAST\" in KE42 line 4", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"AT\" in KE42 line 4", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"WIND\" in KE42 line 5", case_loggy.output)
+		self.assertIn(
+			"DEBUG:G_structure_touch:Known word \"NORTH-WESTERN\" in KE42 line 5", case_loggy.output
+		)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"WESTERN\" in KE42 line 6", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"M/S\" in KE42 line 6", case_loggy.output)
+		self.assertIn(
+			"DEBUG:G_structure_touch:Known word \"VISIBILITY\" in KE42 line 6", case_loggy.output
+		)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"GOOD\" in KE42 line 6", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"MIST\" in KE42 line 7", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"KM\" in KE42 line 7", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"SEAS\" in KE42 line 7", case_loggy.output)
+		self.assertIn("DEBUG:G_structure_touch:Known word \"M\" in KE42 line 7", case_loggy.output)
+
+
+		self.assertIn(f"INFO:G_structure_touch:Source file \"{self.MESSAGE_1}\" rewritten", case_loggy.output)
+		self.assertIn(f"INFO:G_structure_touch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertIn(f"INFO:G_structure_touch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+
+		self.assertIn(
+			f"DEBUG:G_structure_touch:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output
+		)
+		self.assertNotIn(f"INFO:G_structure_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:G_structure_touch:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
+
+		self.assertIn(
+			f"DEBUG:G_structure_touch:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
+		)
+		self.assertNotIn(f"INFO:G_structure_touch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:G_structure_touch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
+
+		self.assertIn(f"DEBUG:G_structure_touch:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:G_structure_touch:Shelf was not modified"),1)
+		self.assertIn(
+			f"INFO:G_structure_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
 		)
 
 
