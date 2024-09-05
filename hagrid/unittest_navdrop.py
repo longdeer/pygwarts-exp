@@ -135,7 +135,7 @@ class NavdropTest(PygwartsTestCase):
 				init_level		= 10
 				init_name		= "Navdrop"
 				handler			= str(self.NAVDROP_LOGGY)
-				# force_warning	= "*.outer_shelf", "*.inner_shelf",
+				force_warning	= "*.outer_shelf", "*.inner_shelf",
 
 				# Dummy method that must verify "pool" receive correct message
 				def pool(self, message :str): self.current_pool = message
@@ -351,6 +351,9 @@ class NavdropTest(PygwartsTestCase):
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_3}\", marked as new", case_loggy.output
 		)
 		self.assertIn(f"DEBUG:A_strict_init:KB00 created by {self.now}", case_loggy.output)
+		self.assertNotIn("INFO:A_strict_init:KB00 failed filename check", case_loggy.output)
+		self.assertNotIn("INFO:A_strict_init:KB00 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:A_strict_init:KB00 failed layout check", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"GALE\" in KB00 line 3", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"MAR\" in KB00 line 4", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"NORTH-EASTERN\" in KB00 line 5", case_loggy.output)
@@ -364,6 +367,9 @@ class NavdropTest(PygwartsTestCase):
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_1}\", marked as new", case_loggy.output
 		)
 		self.assertIn(f"DEBUG:A_strict_init:KE42 created by {self.now}", case_loggy.output)
+		self.assertNotIn("INFO:A_strict_init:KE42 failed filename check", case_loggy.output)
+		self.assertNotIn("INFO:A_strict_init:KE42 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:A_strict_init:KE42 failed layout check", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"WEATHER\" in KE42 line 3", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"FORECAST\" in KE42 line 3", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"ON\" in KE42 line 4", case_loggy.output)
@@ -387,6 +393,9 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn(
 			f"DEBUG:A_strict_init:No records for \"{self.MESSAGE_2}\", marked as new", case_loggy.output
 		)
+		self.assertNotIn("INFO:A_strict_init:KA69 failed filename check", case_loggy.output)
+		self.assertNotIn("INFO:A_strict_init:KA69 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:A_strict_init:KA69 failed layout check", case_loggy.output)
 		self.assertIn(f"DEBUG:A_strict_init:KA69 created by {self.now}", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"UTC\" in KA69 line 2", case_loggy.output)
 		self.assertIn("WARNING:A_strict_init:Unknown word \"COASTAL\" in KA69 line 3", case_loggy.output)
@@ -487,6 +496,7 @@ class NavdropTest(PygwartsTestCase):
 		)
 
 
+		# No modification made means message was not processed, just skipped.
 		self.assertIn(
 			f"DEBUG:B_notouch_boughs:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
 		)
@@ -498,6 +508,8 @@ class NavdropTest(PygwartsTestCase):
 		)
 
 
+		# Despite messages were not processed due to Navshelf didn't find mtime difference
+		# from the last time, DraftPeek will see target files don't exist, so grow will occur.
 		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
 		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
 		self.assertIn(f"INFO:B_notouch_boughs:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
@@ -560,6 +572,9 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertIn(f"DEBUG:C_simple_touch:KE42 created by {self.now}", case_loggy.output)
+		self.assertNotIn("INFO:C_simple_touch:KE42 failed filename check", case_loggy.output)
+		self.assertNotIn("INFO:C_simple_touch:KE42 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:C_simple_touch:KE42 failed layout check", case_loggy.output)
 		self.assertIn("INFO:C_simple_touch:Pending word \"WEATHER\" in KE42 line 3", case_loggy.output)
 		self.assertIn("INFO:C_simple_touch:Pending word \"FORECAST\" in KE42 line 3", case_loggy.output)
 		self.assertIn("INFO:C_simple_touch:Pending word \"ON\" in KE42 line 4", case_loggy.output)
@@ -638,6 +653,9 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertIn(f"DEBUG:D_knowns_touch:KA69 created by {self.now}", case_loggy.output)
+		self.assertNotIn("INFO:D_knowns_touch:KA69 failed filename check", case_loggy.output)
+		self.assertNotIn("INFO:D_knowns_touch:KA69 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:D_knowns_touch:KA69 failed layout check", case_loggy.output)
 		self.assertIn("DEBUG:D_knowns_touch:Known word \"UTC\" in KA69 line 2", case_loggy.output)
 		self.assertIn("DEBUG:D_knowns_touch:Known word \"COASTAL\" in KA69 line 3", case_loggy.output)
 		self.assertIn("DEBUG:D_knowns_touch:Known word \"WARNING\" in KA69 line 3", case_loggy.output)
@@ -767,11 +785,108 @@ class NavdropTest(PygwartsTestCase):
 
 
 
-	@unittest.skip("under construction")
 	def test_F_sanitize_touch(self):
 		sleep(1)
 
-		self.fmake(self.MESSAGE_1, self.text_1)
+		# Now message will have extra spaces to be trimmed
+		self.fmake(
+
+			self.MESSAGE_3,
+			str(
+
+				"\n"
+				"ZCZC KB00\n"
+				f"{self.now.dHM_asjoin} UTC {self.now.b.upper()}\n"
+				" GALE WARNING MURMANSK NR85\n"
+				"ON MURMAN COAST  01 MAR 17-21 UTC\n"
+				"WIND  NORTH-EASTERN NORTHERN GUST\n"
+				"15-20 M/S\n"
+				"NNNN\n"
+			)
+		)
+
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "F_sanitize_touch"
+		with self.assertLogs("F_sanitize_touch", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+
+			for word,_ in self.test_case.perform.Navbow:
+				with self.subTest(word=word): self.assertEqual(self.test_case.perform.Navbow[word],1)
+
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertFalse(hasattr(self.test_case.loggy, "current_pool"))
+
+
+		self.assertIn(f"DEBUG:F_sanitize_touch:KB00 created by {self.now}", case_loggy.output)
+		self.assertNotIn("INFO:F_sanitize_touch:KB00 failed filename check", case_loggy.output)
+		self.assertNotIn("INFO:F_sanitize_touch:KB00 failed structure check", case_loggy.output)
+		self.assertIn("INFO:F_sanitize_touch:KB00 failed layout check", case_loggy.output)
+
+
+		self.assertIn("DEBUG:F_sanitize_touch:Known word \"GALE\" in KB00 line 3", case_loggy.output)
+		self.assertIn("DEBUG:F_sanitize_touch:Known word \"MAR\" in KB00 line 4", case_loggy.output)
+		self.assertIn("DEBUG:F_sanitize_touch:Known word \"NORTH-EASTERN\" in KB00 line 5", case_loggy.output)
+		self.assertIn("DEBUG:F_sanitize_touch:Known word \"NORTHERN\" in KB00 line 5", case_loggy.output)
+		self.assertIn("DEBUG:F_sanitize_touch:Known word \"GUST\" in KB00 line 5", case_loggy.output)
+
+
+		self.assertIn(f"INFO:F_sanitize_touch:Source file \"{self.MESSAGE_3}\" rewritten", case_loggy.output)
+		self.assertIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:F_sanitize_touch:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:F_sanitize_touch:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:F_sanitize_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(f"DEBUG:F_sanitize_touch:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:F_sanitize_touch:Shelf was not modified"),1)
+		self.assertIn(
+			f"INFO:F_sanitize_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
+		)
+
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
 
 
