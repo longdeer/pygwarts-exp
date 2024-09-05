@@ -1245,6 +1245,162 @@ class NavdropTest(PygwartsTestCase):
 
 
 
+	# @unittest.skip("under construction")
+	def test_J_CDT_touch(self):
+		sleep(1)
+
+
+		self.fmake(
+
+			self.MESSAGE_2,
+			str(
+
+				"\n"
+				"ZCZC KA69\n"
+				f"{self.now.dHM_asjoin} {self.now.b.upper()} {self.now.y}\n"
+				"COASTAL WARNING MURMANSK 270\n"
+				"WEST OF NOVAYA ZEMLYA ISLANDS\n"
+				"1. SPECIAL ACTIVITIES 312100 AUG TO 302100 SEP\n"
+				"NAVIGATION PROHIBITED IN TERRITORIAL WATERS\n"
+				"DANGEROUS OUTSIDE IN AREA BOUNDED BY\n"
+				"76-00.0N 056-30.0E\n"
+				"76-00.0N 058-00.0E\n"
+				"75-23.0N 056-00.0E\n"
+				"75-12.0N 055-05.0E\n"
+				"73-45.0N 052-58.0E\n"
+				"72-45.0N 051-45.0E\n"
+				"72-00.0N 050-50.0E\n"
+				"72-00.0N 050-00.0E\n"
+				"74-00.0N 050-00.0E\n"
+				"75-25.0N 052-45.0E\n"
+				"2. CANCEL THIS MESSAGE 302200 SEP 24\n"
+				"NNNN\n"
+			)
+		)
+
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "J_CDT_touch"
+		with self.assertLogs("J_CDT_touch", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+
+			for word,_ in self.test_case.perform.Navbow:
+				with self.subTest(word=word): self.assertEqual(self.test_case.perform.Navbow[word],1)
+
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertTrue(hasattr(self.test_case.loggy, "current_pool"))
+		self.assertEqual(
+
+			self.test_case.loggy.current_pool,
+			str(
+				"KA69\n"
+				"1    ZCZC KA69\n"
+				f"2    {self.now.dHM_asjoin} {self.now.b.upper()} {self.now.y}\n"
+				"3    COASTAL WARNING MURMANSK 270\n"
+				"4    WEST OF NOVAYA ZEMLYA ISLANDS\n"
+				"5    1. SPECIAL ACTIVITIES 312100 AUG TO 302100 SEP\n"
+				"6    NAVIGATION PROHIBITED IN TERRITORIAL WATERS\n"
+				"7    DANGEROUS OUTSIDE IN AREA BOUNDED BY\n"
+				"8    76-00.0N 056-30.0E\n"
+				"9    76-00.0N 058-00.0E\n"
+				"10   75-23.0N 056-00.0E\n"
+				"11   75-12.0N 055-05.0E\n"
+				"12   73-45.0N 052-58.0E\n"
+				"13   72-45.0N 051-45.0E\n"
+				"14   72-00.0N 050-50.0E\n"
+				"15   72-00.0N 050-00.0E\n"
+				"16   74-00.0N 050-00.0E\n"
+				"17   75-25.0N 052-45.0E\n"
+				"18   2. CANCEL THIS MESSAGE 302200 SEP 24\n"
+				"19   NNNN\n"
+				"\n"
+				"CDT not found in KA69\n"
+				"No line looks like message creation timestamp in KA69"
+			)
+		)
+
+
+		self.assertIn(f"INFO:J_CDT_touch:CDT not found in KA69", case_loggy.output)
+		self.assertIn(
+			f"INFO:J_CDT_touch:No line looks like message creation timestamp in KA69", case_loggy.output
+		)
+
+
+		self.assertNotIn("INFO:J_CDT_touch:KA69 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:J_CDT_touch:KA69 failed layout check", case_loggy.output)
+
+
+		self.assertIn(f"INFO:J_CDT_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertIn(f"INFO:J_CDT_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(
+			f"DEBUG:J_CDT_touch:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output
+		)
+		self.assertNotIn(f"INFO:J_CDT_touch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:J_CDT_touch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+
+		self.assertIn(
+			f"DEBUG:J_CDT_touch:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
+		)
+		self.assertNotIn(f"INFO:J_CDT_touch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:J_CDT_touch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
+
+		self.assertIn(f"DEBUG:J_CDT_touch:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:J_CDT_touch:Shelf was not modified"),1)
+		self.assertIn(
+			f"INFO:J_CDT_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
+		)
+
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
+
+
+
+
+
+
+	@unittest.skip("under construction")
+	def test_K_CDT_out_touch(self):
+		sleep(1)
+
+
+
+
+
+
+
+
 	@unittest.skip("under construction")
 	def test__different_names(self):
 		sleep(1)

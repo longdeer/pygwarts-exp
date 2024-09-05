@@ -273,26 +273,25 @@ class Navpreprocessor(ControlledTransmutation):
 								# Technically it is better to wrap actual "CDT" obtaining in try-except,
 								# but if "message_CDT" is not None it must means it was already validated.
 								if	message_CDT is not None:
-									if	(
-											len(message_CDT) == 3 and
-											isinstance((D := message_CDT[1]), str) and
-											isinstance((T := message_CDT[2]), str)
-										):
-											
-											try:	CDT = TimeTurner(D,T)
-											except	Exception as E:
-												self.loggy.info(f"Failed to convert CDT for {repr_name}")
-											else:
-												self.loggy.debug(f"{repr_name} created by {CDT}")
-												if	shelved_CDT is not None:
-													is_new_message = CDT != shelved_CDT
+									if(
+										len(message_CDT) == 3 and
+										isinstance((D := message_CDT[1]), str) and
+										isinstance((T := message_CDT[2]), str)
+									):
+										try:	CDT = TimeTurner(D,T)
+										except	Exception as E:
+											self.loggy.info(f"Failed to convert CDT for {repr_name}")
+										else:
+											self.loggy.debug(f"{repr_name} created by {CDT}")
+											if	shelved_CDT is not None:
+												is_new_message = CDT != shelved_CDT
 									else:
 										self.loggy.info(f"CDT obtaining problem in {repr_name}")
 								else:
 
 									# As Navtex manual doesn't assumes CDT is mandatory line, user must
 									# be notified CDT wether absent or incorrect.
-									self.loggy.debug(f"CDT not found in {repr_name}")
+									self.loggy.info(f"CDT not found in {repr_name}")
 									current_dispatch += f"CDT not found in {repr_name}\n"
 
 
@@ -301,7 +300,7 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 										self.loggy.info(f"{issue} in {repr_name}")
-										current_dispatch += f"{issue}\n"
+										current_dispatch += f"{issue} in {repr_name}\n"
 
 
 
