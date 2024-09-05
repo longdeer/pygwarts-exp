@@ -163,6 +163,7 @@ class Navpreprocessor(ControlledTransmutation):
 								shelved_CDT = None
 								is_new_message = False
 								current_dispatch = str()
+								repr_name = self.get_repr_name(file)
 								self.loggy.debug(f"Considering NAVTEX file \"{file}\"")
 
 
@@ -224,13 +225,6 @@ class Navpreprocessor(ControlledTransmutation):
 									self.loggy.warning(f"Failed to analyze \"{file}\" due to {CAST(E)}")
 									valid_navtex_files.append(file)
 									continue
-
-
-
-
-								repr_name = file
-								for _ in range(len(file.suffixes)) : repr_name = Path(repr_name.stem)
-								repr_name = str(repr_name)
 
 
 
@@ -422,6 +416,29 @@ class Navpreprocessor(ControlledTransmutation):
 						self.loggy.info(f"Source file \"{file_path}\" rewritten")
 
 						return	True
+
+
+
+
+				def get_repr_name(self, full_path :Path) -> str | None :
+
+					"""
+						Helper method to obtain a suffixless file name
+						(file name that comes right before very first dot)
+					"""
+
+					if	isinstance(full_path, Path):
+						if	(suffs := full_path.suffixes):
+
+
+							# Getting rid of any references.
+							repr_name = Path(full_path)
+							for _ in range(len(suffs)) : repr_name = Path(repr_name.stem)
+
+
+							return	str(repr_name)
+						return		full_path.name.rstrip(".")
+					else:			self.loggy.warning(f"Incorrect path \"{full_path}\" received")
 
 
 

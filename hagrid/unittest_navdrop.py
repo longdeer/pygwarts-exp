@@ -1003,7 +1003,7 @@ class NavdropTest(PygwartsTestCase):
 
 
 	@unittest.skip("under construction")
-	def test_H_sanitize_touch(self):
+	def test_H_header_touch(self):
 		sleep(1)
 
 		# # According to 
@@ -1021,6 +1021,27 @@ class NavdropTest(PygwartsTestCase):
 	@unittest.skip("under construction")
 	def test__different_names(self):
 		sleep(1)
+
+
+
+
+
+
+
+
+	def test_1_repr_name_getter(self):
+
+		self.test_case = self.case_object()
+		for path,result in (
+
+			( Path.home() /"suffs",		"suffs" 	),
+			( Path.home() /"suff.s",	"suff"		),
+			( Path.home() /"su.f.f.s",	"su"		),
+			( Path.home() /"su.f.f.s.",	"su.f.f.s"	),
+			( Path.home() /"suffs.",	"suffs"		),
+		):
+			with self.subTest(path=path):
+				self.assertEqual(self.test_case.perform.get_repr_name(path), result)
 
 
 
