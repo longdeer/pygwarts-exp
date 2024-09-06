@@ -191,8 +191,8 @@ class Navpreprocessor(ControlledTransmutation):
 											continue
 									else:
 
-										self.loggy.debug(f"No records for \"{file}\", marked as new")
 										is_new_message = True
+										self.loggy.debug(f"No records for \"{file}\", marked as new")
 								else:	self.loggy.debug("Navshelf was not found")
 
 
@@ -286,7 +286,11 @@ class Navpreprocessor(ControlledTransmutation):
 											self.loggy.debug(f"shelved CDT is {shelved_CDT}")
 
 											if	shelved_CDT is not None : is_new_message = shelved_CDT <CDT
-									else:	self.loggy.info(f"CDT obtaining problem in {repr_name}")
+											if	shelved_CDT is not None and shelved_CDT <CDT:
+
+												is_new_message = True
+												self.loggy.debug(f"Younger CDT found, marked as new")
+									else:		self.loggy.info(f"CDT obtaining problem in {repr_name}")
 								else:
 
 									# As Navtex manual doesn't assumes CDT is mandatory line, user must

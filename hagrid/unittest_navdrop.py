@@ -219,7 +219,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -479,7 +479,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -562,7 +562,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -642,7 +642,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -738,7 +738,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -830,7 +830,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -931,7 +931,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -1062,7 +1062,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -1200,7 +1200,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -1305,7 +1305,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -1479,7 +1479,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -1639,7 +1639,6 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.case_object.loggy.init_name = "L_CDT_out_repeat_touch"
-		self.case_object.loggy.force_warning = tuple()
 		with self.assertLogs("L_CDT_out_repeat_touch", 10) as case_loggy:
 
 			self.test_case = self.case_object()
@@ -1659,7 +1658,7 @@ class NavdropTest(PygwartsTestCase):
 
 				from_outer=True,
 				rewrite=True,
-				ignore_mod=(len(self.test_case.perform.Navshelf) != len(self.test_case.perform.Navshelf()))
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
 			)
 
 
@@ -1780,6 +1779,156 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn(
 
 			f"INFO:L_CDT_out_repeat_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced",
+			case_loggy.output
+		)
+
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
+
+
+
+
+
+
+	def test_M_CDT_back_touch(self):
+
+		sleep(1)
+		self.fmake(self.MESSAGE_2, self.text_2)
+
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "M_CDT_back_touch"
+		# self.case_object.loggy.force_warning = tuple()
+		with self.assertLogs("M_CDT_back_touch", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+
+			for word,_ in self.test_case.perform.Navbow:
+				with self.subTest(word=word): self.assertEqual(self.test_case.perform.Navbow[word],1)
+
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertTrue(hasattr(self.test_case.loggy, "current_pool"))
+		self.assertEqual(
+
+			self.test_case.loggy.current_pool,
+			str(
+				"new message KA69\n"
+				"1    ZCZC KA69\n"
+				f"2    {self.now.dHM_asjoin} UTC {self.now.b.upper()} {self.now.y}\n"
+				"3    COASTAL WARNING MURMANSK 270\n"
+				"4    WEST OF NOVAYA ZEMLYA ISLANDS\n"
+				"5    1. SPECIAL ACTIVITIES 312100 AUG TO 302100 SEP\n"
+				"6    NAVIGATION PROHIBITED IN TERRITORIAL WATERS\n"
+				"7    DANGEROUS OUTSIDE IN AREA BOUNDED BY\n"
+				"8    76-00.0N 056-30.0E\n"
+				"9    76-00.0N 058-00.0E\n"
+				"10   75-23.0N 056-00.0E\n"
+				"11   75-12.0N 055-05.0E\n"
+				"12   73-45.0N 052-58.0E\n"
+				"13   72-45.0N 051-45.0E\n"
+				"14   72-00.0N 050-50.0E\n"
+				"15   72-00.0N 050-00.0E\n"
+				"16   74-00.0N 050-00.0E\n"
+				"17   75-25.0N 052-45.0E\n"
+				"18   2. CANCEL THIS MESSAGE 302200 SEP 24\n"
+				"19   NNNN"
+			)
+		)
+
+
+
+		self.assertIn(f"DEBUG:M_CDT_back_touch:KA69 created by {self.now}", case_loggy.output)
+		self.assertNotIn("INFO:M_CDT_back_touch:KA69 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:M_CDT_back_touch:KA69 failed layout check", case_loggy.output)
+
+
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"UTC\" in KA69 line 2", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"COASTAL\" in KA69 line 3", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"WARNING\" in KA69 line 3", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"MURMANSK\" in KA69 line 3", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"WEST\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"OF\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"NOVAYA\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"ZEMLYA\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"ISLANDS\" in KA69 line 4", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"SPECIAL\" in KA69 line 5", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"ACTIVITIES\" in KA69 line 5", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"AUG\" in KA69 line 5", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"TO\" in KA69 line 5", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"NAVIGATION\" in KA69 line 6", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"PROHIBITED\" in KA69 line 6", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"TERRITORIAL\" in KA69 line 6", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"WATERS\" in KA69 line 6", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"DANGEROUS\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"OUTSIDE\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"IN\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"AREA\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"BOUNDED\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"BY\" in KA69 line 7", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"CANCEL\" in KA69 line 18", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"THIS\" in KA69 line 18", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"MESSAGE\" in KA69 line 18", case_loggy.output)
+		self.assertIn("DEBUG:M_CDT_back_touch:Known word \"SEP\" in KA69 line 18", case_loggy.output)
+
+
+		self.assertIn(f"INFO:M_CDT_back_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertIn(f"INFO:M_CDT_back_touch:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(
+			f"DEBUG:M_CDT_back_touch:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output
+		)
+		self.assertNotIn(
+			f"INFO:M_CDT_back_touch:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output
+		)
+		self.assertNotIn(
+			f"INFO:M_CDT_back_touch:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output
+		)
+
+		self.assertIn(
+			f"DEBUG:M_CDT_back_touch:No modification made on \"{self.MESSAGE_3}\"", case_loggy.output
+		)
+		self.assertNotIn(
+			f"INFO:M_CDT_back_touch:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output
+		)
+		self.assertNotIn(
+			f"INFO:M_CDT_back_touch:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output
+		)
+
+
+		self.assertIn(f"DEBUG:M_CDT_back_touch:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:M_CDT_back_touch:Shelf was not modified"),1)
+		self.assertIn(
+
+			f"INFO:M_CDT_back_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced",
 			case_loggy.output
 		)
 
