@@ -522,8 +522,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -605,6 +614,22 @@ class NavdropTest(PygwartsTestCase):
 		self.assertIn(
 			f"INFO:C_simple_touch:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
 		)
+
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
 
 
@@ -701,6 +726,22 @@ class NavdropTest(PygwartsTestCase):
 		)
 
 
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
 
 
 
@@ -770,8 +811,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -871,8 +921,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -991,8 +1050,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -1157,8 +1225,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -1233,8 +1310,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -1405,8 +1491,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -1583,8 +1678,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -1784,8 +1888,17 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
@@ -1934,10 +2047,121 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
 		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
 		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
+
+
+
+
+
+
+	@unittest.skip("under construction")
+	def test_N_one_out(self):pass
+
+
+
+
+
+
+
+
+	@unittest.skip("under construction")
+	def test_O_EOS_touch(self):
+		sleep(1)
+
+
+		# No EOS (NNNN)
+		self.fmake(
+
+			self.MESSAGE_3,
+			str(
+
+				"\n"
+				"ZCZC KB00\n"
+				f"{self.now.dHM_asjoin} UTC {self.now.b.upper()}\n"
+				" GALE WARNING MURMANSK NR85\n"
+				"ON MURMAN COAST  01 MAR 17-21 UTC\n"
+				"WIND  NORTH-EASTERN NORTHERN GUST\n"
+				"15-20 M/S\n"
+			)
+		)
+
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "N_EOS_touch"
+		with self.assertLogs("N_EOS_touch", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+
+			for word,_ in self.test_case.perform.Navbow:
+				with self.subTest(word=word): self.assertEqual(self.test_case.perform.Navbow[word],1)
+
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertTrue(hasattr(self.test_case.loggy, "current_pool"))
+		self.assertEqual(
+
+			self.test_case.loggy.current_pool,
+			str(
+				"KA69\n"
+				"1    ZCZC KA69\n"
+				f"2    {before.dHM_asjoin} UTC {before.b.upper()} {before.y}\n"
+				"3    COASTAL WARNING MURMANSK 270\n"
+				"4    WEST OF NOVAYA ZEMLYA ISLANDS\n"
+				"5    1. SPECIAL ACTIVITIES 312100 AUG TO 302100 SEP\n"
+				"6    NAVIGATION PROHIBITED IN TERRITORIAL WATERS\n"
+				"7    DANGEROUS OUTSIDE IN AREA BOUNDED BY\n"
+				"8    76-00.0N 056-30.0E\n"
+				"9    76-00.0N 058-00.0E\n"
+				"10   75-23.0N 056-00.0E\n"
+				"11   75-12.0N 055-05.0E\n"
+				"12   73-45.0N 052-58.0E\n"
+				"13   72-45.0N 051-45.0E\n"
+				"14   72-00.0N 050-50.0E\n"
+				"15   72-00.0N 050-00.0E\n"
+				"16   74-00.0N 050-00.0E\n"
+				"17   75-25.0N 052-45.0E\n"
+				"18   2. CANCEL THIS MESSAGE 302200 SEP 24\n"
+				"19   NNNN\n"
+				"\n"
+				f"CDT line \"{before.dHM_asjoin} UTC {before.b.upper()} {before.y}\" "
+				"doesn't match current date in KA69"
+			)
+		)
 
 
 
