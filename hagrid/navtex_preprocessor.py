@@ -285,7 +285,6 @@ class Navpreprocessor(ControlledTransmutation):
 											self.loggy.debug(f"{repr_name} created by {CDT}")
 											self.loggy.debug(f"shelved CDT is {shelved_CDT}")
 
-											if	shelved_CDT is not None : is_new_message = shelved_CDT <CDT
 											if	shelved_CDT is not None and shelved_CDT <CDT:
 
 												is_new_message = True

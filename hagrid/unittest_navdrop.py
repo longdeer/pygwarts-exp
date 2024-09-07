@@ -2182,8 +2182,7 @@ class NavdropTest(PygwartsTestCase):
 
 
 
-	@unittest.skip("under construction")
-	def test_O_EOS_touch(self):
+	def test_O_src_back_EOS(self):
 		sleep(1)
 
 
@@ -2196,9 +2195,9 @@ class NavdropTest(PygwartsTestCase):
 				"\n"
 				"ZCZC KB00\n"
 				f"{self.now.dHM_asjoin} UTC {self.now.b.upper()}\n"
-				" GALE WARNING MURMANSK NR85\n"
-				"ON MURMAN COAST  01 MAR 17-21 UTC\n"
-				"WIND  NORTH-EASTERN NORTHERN GUST\n"
+				"GALE WARNING MURMANSK NR85\n"
+				"ON MURMAN COAST 01 MAR 17-21 UTC\n"
+				"WIND NORTH-EASTERN NORTHERN GUST\n"
 				"15-20 M/S\n"
 			)
 		)
@@ -2211,8 +2210,8 @@ class NavdropTest(PygwartsTestCase):
 		self.assertTrue(self.NAVDROP_BOW.is_file())
 
 
-		self.case_object.loggy.init_name = "N_EOS_touch"
-		with self.assertLogs("N_EOS_touch", 10) as case_loggy:
+		self.case_object.loggy.init_name = "O_src_back_EOS"
+		with self.assertLogs("O_src_back_EOS", 10) as case_loggy:
 
 			self.test_case = self.case_object()
 
@@ -2223,7 +2222,7 @@ class NavdropTest(PygwartsTestCase):
 
 			self.assertEqual(len(self.test_case.perform.Navbow),48)
 			self.assertEqual(len(self.test_case.perform.Navbow()),0)
-			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			self.assertEqual(len(self.test_case.perform.Navshelf),2)
 			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
 
 			self.test_case.perform.Navbow.produce(from_outer=True)
@@ -2241,31 +2240,71 @@ class NavdropTest(PygwartsTestCase):
 
 			self.test_case.loggy.current_pool,
 			str(
-				"KA69\n"
-				"1    ZCZC KA69\n"
-				f"2    {before.dHM_asjoin} UTC {before.b.upper()} {before.y}\n"
-				"3    COASTAL WARNING MURMANSK 270\n"
-				"4    WEST OF NOVAYA ZEMLYA ISLANDS\n"
-				"5    1. SPECIAL ACTIVITIES 312100 AUG TO 302100 SEP\n"
-				"6    NAVIGATION PROHIBITED IN TERRITORIAL WATERS\n"
-				"7    DANGEROUS OUTSIDE IN AREA BOUNDED BY\n"
-				"8    76-00.0N 056-30.0E\n"
-				"9    76-00.0N 058-00.0E\n"
-				"10   75-23.0N 056-00.0E\n"
-				"11   75-12.0N 055-05.0E\n"
-				"12   73-45.0N 052-58.0E\n"
-				"13   72-45.0N 051-45.0E\n"
-				"14   72-00.0N 050-50.0E\n"
-				"15   72-00.0N 050-00.0E\n"
-				"16   74-00.0N 050-00.0E\n"
-				"17   75-25.0N 052-45.0E\n"
-				"18   2. CANCEL THIS MESSAGE 302200 SEP 24\n"
-				"19   NNNN\n"
+
+				"new message KB00\n"
+				"1    ZCZC KB00\n"
+				f"2    {self.now.dHM_asjoin} UTC {self.now.b.upper()}\n"
+				"3    GALE WARNING MURMANSK NR85\n"
+				"4    ON MURMAN COAST 01 MAR 17-21 UTC\n"
+				"5    WIND NORTH-EASTERN NORTHERN GUST\n"
+				"6    15-20 M/S\n"
 				"\n"
-				f"CDT line \"{before.dHM_asjoin} UTC {before.b.upper()} {before.y}\" "
-				"doesn't match current date in KA69"
+				"Incorrect EOS line \"15-20 M/S\" in KB00"
 			)
 		)
+
+
+		self.assertIn(
+			f"DEBUG:O_src_back_EOS:No records for \"{self.MESSAGE_3}\", marked as new", case_loggy.output
+		)
+		self.assertNotIn("INFO:O_src_back_EOS:KB00 failed structure check", case_loggy.output)
+		self.assertNotIn("INFO:O_src_back_EOS:KB00 failed layout check", case_loggy.output)
+		self.assertIn(f"DEBUG:O_src_back_EOS:KB00 created by {self.now}", case_loggy.output)
+
+
+		self.assertIn("DEBUG:O_src_back_EOS:Known word \"GALE\" in KB00 line 3", case_loggy.output)
+		self.assertIn("DEBUG:O_src_back_EOS:Known word \"MAR\" in KB00 line 4", case_loggy.output)
+		self.assertIn("DEBUG:O_src_back_EOS:Known word \"NORTH-EASTERN\" in KB00 line 5", case_loggy.output)
+		self.assertIn("DEBUG:O_src_back_EOS:Known word \"NORTHERN\" in KB00 line 5", case_loggy.output)
+		self.assertIn("DEBUG:O_src_back_EOS:Known word \"GUST\" in KB00 line 5", case_loggy.output)
+
+
+		self.assertIn("INFO:O_src_back_EOS:Incorrect EOS line \"15-20 M/S\" in KB00", case_loggy.output)
+
+
+		self.assertIn(f"INFO:O_src_back_EOS:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertIn(f"INFO:O_src_back_EOS:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:O_src_back_EOS:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:O_src_back_EOS:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:O_src_back_EOS:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:O_src_back_EOS:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:O_src_back_EOS:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:O_src_back_EOS:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(f"DEBUG:O_src_back_EOS:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:O_src_back_EOS:Shelf was not modified"),1)
+		self.assertIn(
+			f"INFO:O_src_back_EOS:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
+		)
+
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
 
 
 
