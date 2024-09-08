@@ -118,34 +118,16 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 
-							# Yeah-yeah-yeah, sifting before sifting, then sifting after sifting...
-							# Not quit yet! Cause the names of SiftingControllers have changed
+							# Preprocessor files filter, that must be tuned to only allow certain files
+							# with NAVTEX messages texts. For a single NAVTEX files flourish might
+							# be sufficient sifting for all sprouts, so this SiftingController has a
+							# special name that help in isolation from any other "sifters".
 							if	callable((Navfiles := getattr(self, "Navfiles", None))):
 
 								sifted_files = Navfiles(nav_files)
 								Navfiles.loggy.debug(f"Files after sifting: {len(sifted_files)}")
 							else:
 								sifted_files = nav_files
-
-
-							# # As extra (redundant) sifting is no more a subject, the twigs sifting must
-							# # happen here. So basically, this might a simple popping out all twigs, cause
-							# # in terms of simplification, the sprout must be just a root with NAVTEX files
-							# # and any other folders will be popped, cause obviously it's not a NAVTEX files
-							# # containers. But, in agile purposes, twigs sifting will do the same interface
-							# # as usual for SiftinController. But, there will be the some difference, if no
-							# # folder's filter ("Navfolders" in this case) provided, the "sifted_folders"
-							# # will be an empty list and repacked to Flourish in that way. This is because
-							# # NAVTEX implies not large amount of files to be processed and it might be
-							# # simplificated to sprout-filtering.
-							# if	callable((Navfolders := getattr(self, "Navfolders", None))):
-
-							# 	sifted_folders = Navfolders(nav_folders)
-							# 	Navfolders.loggy.debug(f"Folders after sifting: {len(sifted_folders)}")
-							# else:
-							# 	sifted_folders = list()
-
-
 
 
 							if	not len(sifted_files):
@@ -180,13 +162,10 @@ class Navpreprocessor(ControlledTransmutation):
 											self.loggy.debug(f"No modification made on \"{file}\"")
 											Navshelf(str(file), current_shelf, silent=True)
 
-											# HERE IS A TROUBLE!
-											# This shelved-check must only prevent "Navanalyzer" job
-											# for current file. All files must proceed to dispatcher
-											# and be DraftPeek'ed to decide copying, cause the DraftPeek
-											# grants files bough persistance!
-											#
-											# This must solve trouble above
+
+											# Messages that have not been modified since last processing will
+											# be anyway sent to hagrid by appending to messages list, despite
+											# the processing for such files will be stoped.
 											valid_navtex_files.append(file)
 											continue
 									else:
@@ -213,34 +192,24 @@ class Navpreprocessor(ControlledTransmutation):
 										CDT_issues		= current_check["CDT_issues"]
 										body_issues		= current_check["body_issues"]
 										EOS_issue		= current_check["EOS_issue"]
-
-
-										self.loggy.debug(
-											"Raw message symbols count: %s"%len(current_check["raw_message"])
-										)
-
-
 								except	Exception as E:
 
 									self.loggy.warning(f"Failed to analyze \"{file}\" due to {CAST(E)}")
 									valid_navtex_files.append(file)
+
 									continue
+								else:
+									repr_name = header_id or repr_name
+									raw_count = len(current_check["raw_message"])
+
+									self.loggy.debug(f"{repr_name} raw message symbols: {raw_count}")
 
 
 
 
-								repr_name = header_id or repr_name
-
-
-
-
-								#
 								# Section of decision wether source file must be rewritten or not.
-								#
 								if	not is_structured:	self.loggy.info(f"{repr_name} failed structure check")
 								if	is_sanitized:		self.loggy.info(f"{repr_name} failed layout check")
-
-
 								if	is_sanitized or not is_structured:
 									if	self.rewrite_source(
 
@@ -274,18 +243,25 @@ class Navpreprocessor(ControlledTransmutation):
 								# but if "message_CDT" is not None it must means it was already validated.
 								if	message_CDT is not None:
 									if(
-										len(message_CDT) == 3 and
-										isinstance((D := message_CDT[1]), str) and
+
+										isinstance(message_CDT, tuple)			and
+										len(message_CDT) == 3					and
+										isinstance((D := message_CDT[1]), str)	and
 										isinstance((T := message_CDT[2]), str)
+
 									):
+
 										try:	CDT = TimeTurner(D,T)
 										except	Exception as E:
+
 											self.loggy.info(f"Failed to convert CDT for {repr_name}")
 										else:
 											self.loggy.debug(f"{repr_name} created by {CDT}")
 											self.loggy.debug(f"shelved CDT is {shelved_CDT}")
 
+
 											if	shelved_CDT is not None and shelved_CDT <CDT:
+
 
 												is_new_message = True
 												self.loggy.debug(f"Younger CDT found, marked as new")
@@ -310,7 +286,6 @@ class Navpreprocessor(ControlledTransmutation):
 
 								if	body_issues is not None:
 									for level,N,item,message in body_issues:
-
 
 										if	20 <level:
 

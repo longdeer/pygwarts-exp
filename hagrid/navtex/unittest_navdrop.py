@@ -26,6 +26,19 @@ from	navtex_preprocessor					import Navpreprocessor
 
 
 
+# Uncomment below statement to provide custom testing folder as a string
+# ATTENTION!
+# After root directory change there might be some FAIL because of fs file sorting.
+# Pay attention for the "pool" messages order!
+# PygwartsTestCase._PygwartsTestCase__WFOLDER = 
+
+
+
+
+
+
+
+
 class NavdropTest(PygwartsTestCase):
 
 	"""
@@ -1923,7 +1936,6 @@ class NavdropTest(PygwartsTestCase):
 
 
 		self.case_object.loggy.init_name = "M_CDT_back_touch"
-		# self.case_object.loggy.force_warning = tuple()
 		with self.assertLogs("M_CDT_back_touch", 10) as case_loggy:
 
 			self.test_case = self.case_object()
@@ -2424,46 +2436,7 @@ class NavdropTest(PygwartsTestCase):
 
 
 
-	@unittest.skip("under construction")
-	def test__different_names(self):
-		sleep(1)
-
-
-
-
-
-
-
-
-	@unittest.skip("deprecated")
-	def test_1_repr_name_getter(self):
-
-		self.test_case = self.case_object()
-		for path,result in (
-
-			( Path.home() /"suffs",		"suffs" 	),
-			( Path.home() /"suff.s",	"suff"		),
-			( Path.home() /"su.f.f.s",	"su"		),
-			( Path.home() /"su.f.f.s.",	"su.f.f.s"	),
-			( Path.home() /"suffs.",	"suffs"		),
-		):
-			with self.subTest(path=path):
-				self.assertEqual(self.test_case.perform.get_repr_name(path), result)
-
-
-
-
-
-
-
-
-if	__name__ == "__main__":
-
-	# Uncomment below statement to provide custom testing folder as a string
-	# PygwartsTestCase._PygwartsTestCase__WFOLDER = 
-
-
-	unittest.main(verbosity=2)
+if	__name__ == "__main__" : unittest.main(verbosity=2)
 
 
 
