@@ -2313,6 +2313,117 @@ class NavdropTest(PygwartsTestCase):
 
 
 
+	def test_P_EOS_sanit(self):
+		sleep(1)
+
+
+		self.fmake(
+
+			self.MESSAGE_3,
+			str(
+
+				"\n"
+				"ZCZC  KB00\n"
+				f"{self.now.dHM_asjoin} UTC {self.now.b.upper()}\n"
+				"\n"
+				"GALE WARNING MURMANSK NR85\n"
+				"ON MURMAN COAST 01 MAR 17-21 UTC\n"
+				"	WIND NORTH-EASTERN NORTHERN GUST\n"
+				" 15-20 M/S\n"
+				"NNNN\n"
+			)
+		)
+
+
+		self.assertTrue(self.MESSAGES_DST1.is_dir())
+		self.assertTrue(self.MESSAGES_DST2.is_dir())
+
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+
+
+		self.case_object.loggy.init_name = "P_EOS_sanit"
+		with self.assertLogs("P_EOS_sanit", 10) as case_loggy:
+
+			self.test_case = self.case_object()
+
+			for word,_ in self.test_case.perform.Navbow:
+				with self.subTest(word=word): self.assertEqual(self.test_case.perform.Navbow[word],1)
+
+			self.test_case.perform()
+
+			self.assertEqual(len(self.test_case.perform.Navbow),48)
+			self.assertEqual(len(self.test_case.perform.Navbow()),0)
+			self.assertEqual(len(self.test_case.perform.Navshelf),3)
+			self.assertEqual(len(self.test_case.perform.Navshelf()),3)
+
+			self.test_case.perform.Navbow.produce(from_outer=True)
+			self.test_case.perform.Navshelf.produce(
+
+				from_outer=True,
+				rewrite=True,
+				ignore_mod=(self.test_case.perform.Navshelf.diff)
+			)
+
+
+		self.no_loggy_levels(case_loggy.output, 30,40,50)
+		self.assertFalse(hasattr(self.test_case.loggy, "current_pool"))
+
+
+		self.assertIn("INFO:P_EOS_sanit:KB00 failed structure check", case_loggy.output)
+		self.assertIn("INFO:P_EOS_sanit:KB00 failed layout check", case_loggy.output)
+		self.assertIn(f"DEBUG:P_EOS_sanit:KB00 created by {self.now}", case_loggy.output)
+
+
+		self.assertIn("DEBUG:P_EOS_sanit:Known word \"GALE\" in KB00 line 3", case_loggy.output)
+		self.assertIn("DEBUG:P_EOS_sanit:Known word \"MAR\" in KB00 line 4", case_loggy.output)
+		self.assertIn("DEBUG:P_EOS_sanit:Known word \"NORTH-EASTERN\" in KB00 line 5", case_loggy.output)
+		self.assertIn("DEBUG:P_EOS_sanit:Known word \"NORTHERN\" in KB00 line 5", case_loggy.output)
+		self.assertIn("DEBUG:P_EOS_sanit:Known word \"GUST\" in KB00 line 5", case_loggy.output)
+
+
+		self.assertIn(f"INFO:P_EOS_sanit:Source file \"{self.MESSAGE_3}\" rewritten", case_loggy.output)
+		self.assertIn(f"INFO:P_EOS_sanit:Grown leaf \"{self.DST1_MESSAGE_3}\"", case_loggy.output)
+		self.assertIn(f"INFO:P_EOS_sanit:Grown leaf \"{self.DST2_MESSAGE_3}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:P_EOS_sanit:No modification made on \"{self.MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:P_EOS_sanit:Grown leaf \"{self.DST1_MESSAGE_1}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:P_EOS_sanit:Grown leaf \"{self.DST2_MESSAGE_1}\"", case_loggy.output)
+
+		self.assertIn(f"DEBUG:P_EOS_sanit:No modification made on \"{self.MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:P_EOS_sanit:Grown leaf \"{self.DST1_MESSAGE_2}\"", case_loggy.output)
+		self.assertNotIn(f"INFO:P_EOS_sanit:Grown leaf \"{self.DST2_MESSAGE_2}\"", case_loggy.output)
+
+
+		self.assertIn(f"DEBUG:P_EOS_sanit:Shelf was not modified", case_loggy.output)
+		self.assertEqual(case_loggy.output.count(f"DEBUG:P_EOS_sanit:Shelf was not modified"),1)
+		self.assertIn(
+			f"INFO:P_EOS_sanit:Shelf \"{self.NAVDROP_SHELF}\" successfully produced", case_loggy.output
+		)
+
+
+		self.assertTrue(self.MESSAGE_1.is_file())
+		self.assertTrue(self.DST1_MESSAGE_1.is_file())
+		self.assertTrue(self.DST2_MESSAGE_1.is_file())
+
+		self.assertTrue(self.MESSAGE_2.is_file())
+		self.assertTrue(self.DST1_MESSAGE_2.is_file())
+		self.assertTrue(self.DST2_MESSAGE_2.is_file())
+
+		self.assertTrue(self.MESSAGE_3.is_file())
+		self.assertTrue(self.DST1_MESSAGE_3.is_file())
+		self.assertTrue(self.DST2_MESSAGE_3.is_file())
+
+		self.assertTrue(self.NAVDROP_BOW.is_file())
+		self.assertTrue(self.NAVDROP_SHELF.is_file())
+
+
+
+
+
+
+
+
 	@unittest.skip("under construction")
 	def test__different_names(self):
 		sleep(1)
