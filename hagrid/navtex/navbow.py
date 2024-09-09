@@ -1,0 +1,1 @@
+# Navtex BoW handler
