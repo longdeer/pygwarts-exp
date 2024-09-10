@@ -42,7 +42,7 @@ from	navtex_preprocessor					import Navpreprocessor
 class NavdropTest(PygwartsTestCase):
 
 	"""
-		Testing cases for large Navtex processing object
+		Testing cases for large Navtex processing wrapper
 	"""
 
 	MESSAGES_SRC	= Path(PygwartsTestCase._PygwartsTestCase__WFOLDER) /"Navdrop" /"messages_src"
@@ -56,6 +56,7 @@ class NavdropTest(PygwartsTestCase):
 	@classmethod
 	def setUpClass(cls):
 
+		# maxDiff sets the string comparison output in test cases
 		cls.maxDiff = None
 		cls.now = TimeTurner(timepoint="0420")
 
