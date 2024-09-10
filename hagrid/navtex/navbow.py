@@ -22,17 +22,18 @@ class NavbowController(Transmutable):
 			Convert words arguments, that must be 
 		"""
 
-		counter		= 0
+		original	= len(words)
 		processed	= set()
+		counter		= 0
 		conversion	= {
 
 			"converted":	list(),
 			"skipped":		list(),
-			"unknown":		list(),
+			"undefined":	list(),
 		}
 
 
-		if	words:
+		if	original:
 			if	mode == 1 or mode == 0:
 
 
@@ -48,7 +49,7 @@ class NavbowController(Transmutable):
 							target	= self.NavbowShelve[current]
 
 
-							if		target is None:		conversion["unknown"].append(current)
+							if		target is None:		conversion["undefined"].append(current)
 							elif	target == mode:		conversion["skipped"].append(current)
 							elif	target == state1:
 
@@ -61,9 +62,56 @@ class NavbowController(Transmutable):
 							else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
 						else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
 					else:			self.loggy.info(f"Incorrect word \"{word}\" for conversion")
-				else:				self.loggy.info(f"Done conversion for {counter} words")
+				else:				self.loggy.info(f"Done conversion for {counter}/{original} words")
 			else:					self.loggy.info(f"Improper conversion mode {mode}")
 		else:						self.loggy.info("No words provided for conversion")
+
+
+		return	conversion
+
+
+
+
+	def inspect(self, *words :Tuple[str,]) -> Dict[str,List[str]] :
+
+		"""
+			Inspection of some words
+		"""
+
+		original	= len(words)
+		processed	= set()
+		counter		= 0
+		conversion	= {
+
+			"known":		list(),
+			"unknown":		list(),
+			"undefined":	list(),
+		}
+
+
+		if	original:
+			for word in words:
+
+
+				if	isinstance(word, str):
+					if	(current := word.upper()) not in processed:
+
+
+						counter += 1
+						processed.add(current)
+						target	= self.NavbowShelve[current]
+
+
+						if		target is None:		conversion["undefined"].append(current)
+						elif	target == 0:		conversion["unknown"].append(current)
+						elif	target == 1:		conversion["known"].append(current)
+
+
+						else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
+					else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
+				else:			self.loggy.info(f"Incorrect word \"{word}\" for inspection")
+			else:				self.loggy.info(f"Done inspection for {counter}/{original} words")
+		else:					self.loggy.info("No words provided for inspection")
 
 
 		return	conversion
