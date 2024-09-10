@@ -87,7 +87,7 @@ class NavbowTest(PygwartsTestCase):
 			self.test_case.NavbowShelve.produce(str(self.NAVBOW_SHELF))
 
 
-		self.assertIn("DEBUG:A_conversion:Converted \"ooh\" to known", case_loggy.output)
+		self.assertIn("DEBUG:A_conversion:Converted \"OOH\" to known", case_loggy.output)
 		self.assertIn("DEBUG:A_conversion:Converted \"EEH\" to known", case_loggy.output)
 		self.assertIn("INFO:A_conversion:Done conversion for 2 words", case_loggy.output)
 		self.assertIn(
@@ -97,7 +97,7 @@ class NavbowTest(PygwartsTestCase):
 
 		self.assertIsNotNone(result.get("converted"))
 		self.assertIsInstance(result["converted"], list)
-		self.assertEqual(result["converted"], [ "ooh", "EEH" ])
+		self.assertEqual(result["converted"], [ "OOH", "EEH" ])
 		self.assertIsNotNone(result.get("skipped"))
 		self.assertIsInstance(result["skipped"], list)
 		self.assertFalse(result["skipped"])
@@ -117,14 +117,12 @@ class NavbowTest(PygwartsTestCase):
 
 
 
-	@unittest.skip("under construction")
+
+
 	def test_B_conversion(self):
 
 		sleep(1)
 		self.assertTrue(self.NAVBOW_SHELF.is_file())
-		self.assertEqual(len(self.test_case.NavbowShelve),0)
-
-
 		self.test_case = NavbowController(
 
 			LibraryContrib(
@@ -135,8 +133,110 @@ class NavbowTest(PygwartsTestCase):
 		)
 
 
-		self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
-		self.assertEqual(len(self.test_case.NavbowShelve),8)
+		with self.assertLogs("B_conversion", 10) as case_loggy:
+
+			self.assertEqual(len(self.test_case.NavbowShelve),0)
+			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
+			self.assertEqual(len(self.test_case.NavbowShelve),8)
+
+			for word,state in self.test_case.NavbowShelve:
+				with self.subTest(word=word, state=state):
+
+					if		word in ( "OOH","EEH" ): self.assertEqual(state,1)
+					else:	self.assertEqual(state,0)
+
+			result = self.test_case("he", "Said", "OOH", "eeh", "ooh", "AaH", "aAh", mode=1)
+			self.test_case.NavbowShelve.produce(str(self.NAVBOW_SHELF))
+
+
+		self.assertIn("DEBUG:B_conversion:Converted \"AAH\" to known", case_loggy.output)
+		self.assertIn("DEBUG:B_conversion:Duplicate word \"ooh\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:B_conversion:Duplicate word \"aAh\" skipped", case_loggy.output)
+		self.assertIn("INFO:B_conversion:Done conversion for 1 words", case_loggy.output)
+		self.assertIn(
+			f"INFO:B_conversion:Shelf \"{self.NAVBOW_SHELF}\" successfully produced", case_loggy.output
+		)
+
+
+		self.assertIsNotNone(result.get("converted"))
+		self.assertIsInstance(result["converted"], list)
+		self.assertEqual(result["converted"], [ "AAH" ])
+		self.assertIsNotNone(result.get("skipped"))
+		self.assertIsInstance(result["skipped"], list)
+		self.assertEqual(result["skipped"], [ "OOH", "EEH" ])
+		self.assertIsNotNone(result.get("unknown"))
+		self.assertIsInstance(result["unknown"], list)
+		self.assertEqual(result["unknown"], [ "HE", "SAID" ])
+
+
+		for word,state in self.test_case.NavbowShelve:
+				with self.subTest(word=word, state=state):
+
+					if		word in ( "OOH","EEH", "AAH" ): self.assertEqual(state,1)
+					else:	self.assertEqual(state,0)
+
+
+
+
+
+
+
+
+	def test_C_conversion(self):
+
+		sleep(1)
+		self.assertTrue(self.NAVBOW_SHELF.is_file())
+		self.test_case = NavbowController(
+
+			LibraryContrib(
+				init_name="C_conversion",
+				init_level=10,
+				handler=str(self.NAVBOW_LOGGY)
+			)
+		)
+
+
+		with self.assertLogs("C_conversion", 10) as case_loggy:
+
+			self.assertEqual(len(self.test_case.NavbowShelve),0)
+			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
+			self.assertEqual(len(self.test_case.NavbowShelve),8)
+
+			for word,state in self.test_case.NavbowShelve:
+				with self.subTest(word=word, state=state):
+
+					if		word in ( "OOH","EEH", "AAH" ): self.assertEqual(state,1)
+					else:	self.assertEqual(state,0)
+
+			result = self.test_case(
+				"OOH", "eeh", "ooh", "AaH", "aAh", "ting", "TANG", "WALLA", "WALLA", "Bing", "BANg", mode=0
+			)
+			self.test_case.NavbowShelve.produce(str(self.NAVBOW_SHELF))
+
+
+		self.assertIn("DEBUG:C_conversion:Converted \"OOH\" to unknown", case_loggy.output)
+		self.assertIn("DEBUG:C_conversion:Converted \"EEH\" to unknown", case_loggy.output)
+		self.assertIn("DEBUG:C_conversion:Duplicate word \"ooh\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:C_conversion:Converted \"AAH\" to unknown", case_loggy.output)
+		self.assertIn("DEBUG:C_conversion:Duplicate word \"aAh\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:C_conversion:Duplicate word \"WALLA\" skipped", case_loggy.output)
+		self.assertIn("INFO:C_conversion:Done conversion for 3 words", case_loggy.output)
+		self.assertIn(
+			f"INFO:C_conversion:Shelf \"{self.NAVBOW_SHELF}\" successfully produced", case_loggy.output
+		)
+
+
+		self.assertIsNotNone(result.get("converted"))
+		self.assertIsInstance(result["converted"], list)
+		self.assertEqual(result["converted"], [ "OOH", "EEH", "AAH" ])
+		self.assertIsNotNone(result.get("skipped"))
+		self.assertIsInstance(result["skipped"], list)
+		self.assertEqual(result["skipped"], [ "TING", "TANG", "WALLA", "BING", "BANG" ])
+		self.assertIsNotNone(result.get("unknown"))
+		self.assertIsInstance(result["unknown"], list)
+		self.assertFalse(result["unknown"])
+
+
 		for word,state in self.test_case.NavbowShelve:
 			with self.subTest(word=word, state=state): self.assertEqual(state,0)
 

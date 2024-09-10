@@ -23,6 +23,7 @@ class NavbowController(Transmutable):
 		"""
 
 		counter		= 0
+		processed	= set()
 		conversion	= {
 
 			"converted":	list(),
@@ -39,28 +40,30 @@ class NavbowController(Transmutable):
 
 
 					if	isinstance(word, str):
-
-						counter	+= 1
-						current	= word.upper()
-						target	= self.NavbowShelve[current]
-						state1	= int(not mode)
+						if	(current := word.upper()) not in processed:
 
 
-						if		target is None:conversion["unknown"].append(word)
-						elif	target == mode:conversion["skipped"].append(word)
-						elif	target == state1:
+							processed.add(current)
+							state1	= int(not mode)
+							target	= self.NavbowShelve[current]
 
-							self.NavbowShelve[current] = mode
-							conversion["converted"].append(word)
-							self.loggy.debug(f"Converted \"{word}\" to {'' if mode else 'un'}known")
 
-						else:
+							if		target is None:		conversion["unknown"].append(current)
+							elif	target == mode:		conversion["skipped"].append(current)
+							elif	target == state1:
 
-							self.loggy.warning(f"Invalid state for \"{word}\"")
-					else:	self.loggy.info(f"Incorrect \"{word}\" for conversion")
-				else:		self.loggy.info(f"Done conversion for {counter} words")
-			else:			self.loggy.info(f"Improper conversion mode {mode}")
-		else:				self.loggy.info("No words provided for conversion")
+								counter	+= 1
+								self.NavbowShelve[current] = mode
+								conversion["converted"].append(current)
+								self.loggy.debug(f"Converted \"{current}\" to {'' if mode else 'un'}known")
+
+
+							else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
+						else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
+					else:			self.loggy.info(f"Incorrect word \"{word}\" for conversion")
+				else:				self.loggy.info(f"Done conversion for {counter} words")
+			else:					self.loggy.info(f"Improper conversion mode {mode}")
+		else:						self.loggy.info("No words provided for conversion")
 
 
 		return	conversion
@@ -68,44 +71,6 @@ class NavbowController(Transmutable):
 
 
 
-	# def convert_120(self, *words :Tuple[str,]) -> Dict[str,List[str]] :
-
-	# 	"""
-	# 		Convert words arguments, that must be 
-	# 	"""
-
-	# 	counter		= 0
-	# 	conversion	= {
-
-	# 		"converted":	list(),
-	# 		"skipped":		list(),
-	# 		"unknown":		list(),
-	# 	}
 
 
-	# 	if	words:
-	# 		for word in words:
 
-
-	# 			if	isinstance(word, str):
-
-	# 				counter	+= 1
-	# 				current = word.upper()
-
-
-	# 				match self.NavbowShelve[current]:
-
-	# 					case 1:		conversion["skipped"].append(word)
-	# 					case None:	conversion["unknown"].append(word)
-	# 					case 0:
-
-	# 						self.NavbowShelve[current] = 1
-	# 						conversion["converted"].append(word)
-
-	# 						self.loggy.debug(f"Converted \"{wor}d\" to known")
-	# 			else:		self.loggy.info(f"Incorrect \"{word}\" for conversion")
-	# 		else:			self.loggy.info(f"Done conversion for {coutner} words")
-	# 	else:				self.loggy.info("No words provided for conversion")
-
-
-	# 	return	conversion
