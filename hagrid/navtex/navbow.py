@@ -1,6 +1,7 @@
+from typing									import Dict
 from typing									import List
 from typing									import Tuple
-from typing									import Dict
+from typing									import Literal
 from pygwarts.magical.philosophers_stone	import Transmutable
 from pygwarts.irma.contrib					import LibraryContrib
 from pygwarts.irma.shelve					import LibraryShelf
@@ -13,61 +14,52 @@ from pygwarts.irma.shelve					import LibraryShelf
 
 
 class NavbowController(Transmutable):
+
+	"""
+		Transmutable object that serves as a maintainer for Navtex Bag of Words LibraryShelf produced files.
+		Provides such operations as conversion of words between two states and inspection of every word and
+		corresponding state for Shelf file.
+	"""
+
 	class NavbowShelve(LibraryShelf):	pass
-
-
-	def __call__(self, *words :Tuple[str,], mode :int) -> Dict[str,List[str]] :
+	def inspect_state(self, state :Literal[1|0]) -> List[str] :
 
 		"""
-			Convert words arguments, that must be 
+			Inspection of certain state words.
+			Accepts "state" integer that represents:
+				1 - "known" state words;
+				0 - "unknown" state words.
+			Every word that is string obtained from "NavbowShelve" that mapped to "state" will be
+			gathered to a list and returned. If no words found empty list returned.
 		"""
 
-		original	= len(words)
-		processed	= set()
 		counter		= 0
-		conversion	= {
-
-			"converted":	list(),
-			"skipped":		list(),
-			"undefined":	list(),
-		}
+		inspection	= list()
 
 
-		if	original:
-			if	mode == 1 or mode == 0:
+		if	state == 1 or state == 0:
+
+			words = self.NavbowShelve.keysof(state)
+			original = len(words)
 
 
+			if	original:
 				for word in words:
 
 
 					if	isinstance(word, str):
-						if	(current := word.upper()) not in processed:
+
+						counter += 1
+						inspection.append(word)
 
 
-							processed.add(current)
-							state1	= int(not mode)
-							target	= self.NavbowShelve[current]
+					else:	self.loggy.warning(f"Invalid key \"{word}\" in {self.NavbowShelve}")
+				else:		self.loggy.info(f"Done state inspection for {counter}/{original} words")
+			else:			self.loggy.info(f"No words with {'' if state else 'un'}known state")
+		else:				self.loggy.info(f"Improper state \"{state}\" for inspection")
 
 
-							if		target is None:		conversion["undefined"].append(current)
-							elif	target == mode:		conversion["skipped"].append(current)
-							elif	target == state1:
-
-								counter	+= 1
-								self.NavbowShelve[current] = mode
-								conversion["converted"].append(current)
-								self.loggy.debug(f"Converted \"{current}\" to {'' if mode else 'un'}known")
-
-
-							else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
-						else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
-					else:			self.loggy.info(f"Incorrect word \"{word}\" for conversion")
-				else:				self.loggy.info(f"Done conversion for {counter}/{original} words")
-			else:					self.loggy.info(f"Improper conversion mode {mode}")
-		else:						self.loggy.info("No words provided for conversion")
-
-
-		return	conversion
+		return	inspection
 
 
 
@@ -75,13 +67,21 @@ class NavbowController(Transmutable):
 	def inspect(self, *words :Tuple[str,]) -> Dict[str,List[str]] :
 
 		"""
-			Inspection of some words
+			Inspection of words.
+			Accepts "words" strings, that must represent words with states to be checked. The result of
+			inspection is a dictionary with corresponding keys.
+			Every word that is string will be searched in Shelf by the "NavbowShelve" object, and placed
+			to the list mapped with:
+				"known" if current word state is 1 in Shelf,
+				"unknown" if current word state is 0 in Shelf,
+				"undefined" if Shelf doesn't content such word as a key mapping.
+			Returns populated or empty dictionary.
 		"""
 
 		original	= len(words)
 		processed	= set()
 		counter		= 0
-		conversion	= {
+		inspection	= {
 
 			"known":		list(),
 			"unknown":		list(),
@@ -102,9 +102,9 @@ class NavbowController(Transmutable):
 						target	= self.NavbowShelve[current]
 
 
-						if		target is None:		conversion["undefined"].append(current)
-						elif	target == 0:		conversion["unknown"].append(current)
-						elif	target == 1:		conversion["known"].append(current)
+						if		target is None:		inspection["undefined"].append(current)
+						elif	target == 0:		inspection["unknown"].append(current)
+						elif	target == 1:		inspection["known"].append(current)
 
 
 						else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
@@ -112,6 +112,70 @@ class NavbowController(Transmutable):
 				else:			self.loggy.info(f"Incorrect word \"{word}\" for inspection")
 			else:				self.loggy.info(f"Done inspection for {counter}/{original} words")
 		else:					self.loggy.info("No words provided for inspection")
+
+
+		return	inspection
+
+
+
+
+	def __call__(self, *words :Tuple[str,], state :int) -> Dict[str,List[str]] :
+
+		"""
+			Conversion of words.
+			Accepts "words", that must represent words to be converted, and final state for every word
+			"state". The result of conversion is a dictionary with corresponding keys.
+			Every word that is string will be searched in Shelf by "NavbowShelve" object, the "state"
+			will be set if possible and word will be placed to the list mapped with:
+				"converted" if current word was in opposite state, so current state was actually changed,
+				"skipped" if current word state is already set to the "state" and no conversion done,
+				"undefined" if Shelf doesn't content such word as a key mapping.
+			Returns populated or empty dictionary.
+		"""
+
+		original	= len(words)
+		processed	= set()
+		counter		= 0
+		conversion	= {
+
+			"converted":	list(),
+			"skipped":		list(),
+			"undefined":	list(),
+		}
+
+
+		if	original:
+			if	state == 1 or state == 0:
+
+
+				for word in words:
+
+
+					if	isinstance(word, str):
+						if	(current := word.upper()) not in processed:
+
+
+							processed.add(current)
+							prestate= int(not state)
+							target	= self.NavbowShelve[current]
+
+
+							if		target is None:		conversion["undefined"].append(current)
+							elif	target == state:	conversion["skipped"].append(current)
+							elif	target == prestate:
+
+								counter	+= 1
+								self.NavbowShelve[current] = state
+								conversion["converted"].append(current)
+								self.loggy.debug(f"Converted \"{current}\" to {'' if state else 'un'}known")
+
+
+							else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
+						else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
+					else:			self.loggy.info(f"Incorrect word \"{word}\" for conversion")
+				else:				self.loggy.info(f"Done conversion for {counter}/{original} words")
+			else:					self.loggy.info(f"Improper conversion state \"{state}\"")
+		else:						self.loggy.info("No words provided for conversion")
 
 
 		return	conversion
