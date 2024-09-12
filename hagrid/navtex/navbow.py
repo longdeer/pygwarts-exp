@@ -17,7 +17,7 @@ class NavbowController(Transmutable):
 
 	"""
 		Transmutable object that serves as a maintainer for Navtex Bag of Words LibraryShelf produced files.
-		Provides such operations as conversion of words between two states and inspection of every word and
+		Provides such operations as conversion of words between two states and inspection of any word or
 		corresponding state for Shelf file.
 	"""
 
@@ -75,7 +75,7 @@ class NavbowController(Transmutable):
 				"known" if current word state is 1 in Shelf,
 				"unknown" if current word state is 0 in Shelf,
 				"undefined" if Shelf doesn't content such word as a key mapping.
-			Returns populated or empty dictionary.
+			Returns populated or empty empty-lists values dictionary.
 		"""
 
 		original	= len(words)
@@ -119,7 +119,7 @@ class NavbowController(Transmutable):
 
 
 
-	def __call__(self, *words :Tuple[str,], state :int) -> Dict[str,List[str]] :
+	def convert(self, *words :Tuple[str,], state :Literal[1|0]) -> Dict[str,List[str]] :
 
 		"""
 			Conversion of words.
@@ -130,7 +130,7 @@ class NavbowController(Transmutable):
 				"converted" if current word was in opposite state, so current state was actually changed,
 				"skipped" if current word state is already set to the "state" and no conversion done,
 				"undefined" if Shelf doesn't content such word as a key mapping.
-			Returns populated or empty dictionary.
+			Returns populated or empty empty-lists values dictionary.
 		"""
 
 		original	= len(words)
@@ -179,6 +179,57 @@ class NavbowController(Transmutable):
 
 
 		return	conversion
+
+
+
+
+	def __call__(self):
+
+		"""
+			Inspection of every single word in Shelf and it's corresponding state.
+			Accepts no arguments. The result of inspection is a dictionary with corresponding keys.
+			Every word that is string found in Shelf by the "NavbowShelve" object, will be placed
+			to the list mapped with:
+				"known" if current word state is 1 in Shelf,
+				"unknown" if current word state is 0 in Shelf,
+				"undefined" if current word state neither 0 nor 1 in Shelf.
+			Returns populated or empty-lists values dictionary.
+		"""
+
+		original	= len(self.NavbowShelve)
+		counter		= 0
+		total		= {
+
+			"known":		list(),
+			"unknown":		list(),
+			"undefined":	list(),
+		}
+
+
+		if	original:
+			for word,state in self.NavbowShelve:
+
+
+				if	isinstance(word, str):
+					match state:
+
+						case 1:
+							total["known"].append(word)
+							counter += 1
+
+						case 0:
+							total["unknown"].append(word)
+							counter += 1
+
+						case _: total["undefined"].append(word)
+
+
+				else:	self.loggy.warning(f"Incorrect word \"{word}\" encountered")
+			else:		self.loggy.info(f"Total {counter}/{original} stated words")
+		else:			self.loggy.info("No words in total")
+
+
+		return	total
 
 
 
