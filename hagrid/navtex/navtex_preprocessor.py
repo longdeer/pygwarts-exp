@@ -14,6 +14,7 @@ from pygwarts.magical.philosophers_stone.transmutations	import ControlledTransmu
 from pygwarts.magical.patronus							import CAST
 from pygwarts.magical.time_turner						import TimeTurner
 from pygwarts.hagrid.thrivables							import Tree
+from pygwarts.hagrid.planting							import unplantable
 from NavtexBoWAnalyzer.navtex_analyzer					import Navanalyzer
 from pygwarts.irma.shelve								import LibraryShelf
 
@@ -27,23 +28,25 @@ from pygwarts.irma.shelve								import LibraryShelf
 class Navpreprocessor(ControlledTransmutation):
 
 	"""
-		Special navtex version of LeafGrowth
-		name pending... LOL! It is absolutle clear now (05/04/2024 v0.6.1.6) that it is terrible idea...
-		How dumb might one be to neglect the work done in previous release (0.5.1.8), where it is absolutly
-		clear, that navtex processing must take place in dispatching time, and not after, because when
-		it designed for two boughs the second bough is out of line... So now it is a decorator for
-		Flourish. It might appear a little wierd, but the idea must be acceaptable... Predispatcher,
-		before-Flourish...
-
-		KS10 exluded from regular expression, so it must be hanlded in code.
-
-		Notes:
-		- the message structure, that is checked by "MSG_STRUCT" accounts for header and footer newlines
-		and for empty lines (\\n only, not lines with spaces);
-		- 
+		pygwarts.hagrid utility decorator, that serves as a planting dispatching interceptor for files
+		preprocessing purposes.
+		This class is designed to process NAVTEX messages in the way that comply with UDK2 station.
+		The processing relies on Navanalyzer class tool (https://github.com/longdeer/NavtexBoWAnalyzer).
+		As ControlledTransmutation class, accepts following arguments:
+			"station"	-	positional argument that is used by Navanalyzer class;
+			"categories"-	key-word argument that is used by Navanalyzer class (defaulted to None);
+			"separator"	-	key-word argument that in used by preprocessor to reconstruct messages.
+		In mutable chain acts as a mutation - takes decorated planting dispatching class and extends it by
+		declaring meta __call__ to invoke decorated __call__. Meat __call__ will act as a planting dispatching
+		in terms of accepting "plant", processing it and pass it to the decorated dispatcher.
+		It is assumed, that this dispatching layer will only receive NAVTEX messages files, which are to be
+		filtered out before processing start. The preprocessing may result source file rewriting and some sort
+		of report message sending via "loggy.pool" tool.
 	"""
 
+
 	def __init__(self, station :str, categories :str | List[str] =None, separator :str ="\n"):
+
 
 		self.separator	= separator
 		self.station	= station
@@ -51,6 +54,7 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 	def __call__(self, chained_layer :Transmutable) -> Callable[Transmutable, Transmutable] :
+
 
 		chained		= super().__call__(chained_layer)
 		separator	= self.separator
@@ -66,25 +70,8 @@ class Navpreprocessor(ControlledTransmutation):
 		def transmutation(upper_layer :Transmutable) -> Transmutable :
 			class Preprocessor(chained(upper_layer)):
 
-				def __call__(
-								self,
-								*plants	:Tuple[
-									Tuple[
-										str, Generator[Tuple[Path, List[Path], List[Path]], None,None]
-									],	...
-								]
-							):
 
-
-					# TO DO:	check file name (leaf) to be in uppercase - done in previous vesrion
-					# TO DO:	separate (prioritize) "=" check - done by adding "=" to word regex
-					# TO DO:	ensure KB00 replacing granted checking (that might means "seeds" maintaining)
-					#			- implemented by maintaining "is_new_message" variable as a boolean flag of
-					#			inequality of previously shelved and currently parsed CDT's, which guarantee
-					#			processing for exectaly situation of KB00 (when there is an old message and
-					#			new one replaces it) and so on.
-					# TO DO:	mb some messages order check (KE99 must go after KE98).
-					# TO DO:	only done (with seeds) if fully processed (like sent to telegram).
+				def __call__(self, *plant :Tuple[str, Path, List[Path], List[Path]], **kwargs):
 
 
 					processed	= list()
@@ -97,23 +84,13 @@ class Navpreprocessor(ControlledTransmutation):
 						self.loggy.warning(f"No previous NAVTEX watch records found")
 
 
+					if	plant:
+						if	isinstance(reason := unplantable(*plant), str): self.loggy.warning(reason)
+						else:
 
 
-					# Unpacking sprout generators
-					for sprout, plant in plants:
-						if	isinstance(plant, GeneratorType):
-
-
-							branch, nav_folders, nav_files = next(plant)
-							valid_navtex_files = list()
-
-
-							try:	plant.send(None)
-							except	StopIteration:	pass
-
-
-							self.loggy.debug(f"Current source \"{branch}\"")
-							self.loggy.debug(f"Number of files: {len(nav_files)}")
+							*_, nav_files = plant
+							self.loggy.debug(f"Received files: {len(nav_files)}")
 
 
 
@@ -130,14 +107,9 @@ class Navpreprocessor(ControlledTransmutation):
 								sifted_files = nav_files
 
 
-							if	not len(sifted_files):
-
-								self.loggy.debug(f"No NAVTEX files at \"{sprout}\"")
-								continue
 
 
-
-
+							if	not len(sifted_files): self.loggy.debug(f"No NAVTEX files at \"{sprout}\"")
 							for file in sifted_files:
 
 
@@ -162,12 +134,8 @@ class Navpreprocessor(ControlledTransmutation):
 											self.loggy.debug(f"No modification made on \"{file}\"")
 											Navshelf(str(file), current_shelf, silent=True)
 
-
-											# Messages that have not been modified since last processing will
-											# be anyway sent to hagrid by appending to messages list, despite
-											# the processing for such files will be stoped.
-											valid_navtex_files.append(file)
 											continue
+
 									else:
 
 										is_new_message = True
@@ -195,9 +163,8 @@ class Navpreprocessor(ControlledTransmutation):
 								except	Exception as E:
 
 									self.loggy.warning(f"Failed to analyze \"{file}\" due to {CAST(E)}")
-									valid_navtex_files.append(file)
-
 									continue
+
 								else:
 									repr_name = header_id or repr_name
 									raw_count = len(current_check["raw_message"])
@@ -218,13 +185,7 @@ class Navpreprocessor(ControlledTransmutation):
 										header=separator,
 										footer=separator,
 
-									)	is None:
-
-										# In case source cannot be rewritten, corresponding message will be
-										# logged by "rewrite_source" and further processing will be skipped.
-										# Hagrid will receive such file anyway.
-										valid_navtex_files.append(file)
-										continue
+									)	is None: continue
 
 
 
@@ -339,12 +300,8 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 
-								valid_navtex_files.append(file)
 								self.loggy.debug(f"Processed {repr_name}")
-							else:
-								processed.append([ sprout,( branch, [], valid_navtex_files )])
-						else:	self.loggy.warning(f"Invalid sprout \"{plant}\", {type(plant)}")
-					else:		self.loggy.debug(f"Prepared plants: {len(processed)}")
+					else:		self.loggy.debug(f"No plants to flourish")
 
 
 
@@ -356,17 +313,19 @@ class Navpreprocessor(ControlledTransmutation):
 						if	dispatcher : pool(("\n%s\n"%dispatcher).strip("\n"))
 
 
+
+
 					# Passing inner shelf so every new word will be stored in both shelfs and "modified"
 					# flag will be successfully triggered for LibraryShelf object. The "produce" method for
 					# NavBow must be invoked with from_outer flag set to True to maintain only new words.
 					analyzer.update_BoW(Navbow)
 
 
-					# Repacking plants for Flourish. As making generator means make use of variables pointers,
-					# so once packed and then changed, at unpacking time will be the same value. That's why
-					# repacking takes place in a loop, where each generator being processed separately.
-					for _sprout, _plant in processed:
-						super().__call__(( _sprout,(( *_plant, ) for _ in range(1) )))
+
+
+					# As all processing serves just for sanytaizing and checking for messages, all received
+					# "plant" as it is must be passed to the dispatcher with all possible key-word flags.
+					super().__call__(*plant, **kwargs)
 
 
 
@@ -379,7 +338,7 @@ class Navpreprocessor(ControlledTransmutation):
 								)-> Literal[True] | None:
 
 					"""
-						Rewrite sanitaized source message file.
+						Rewrites sanitaized source message file.
 
 						This is the place, where source file is claimed to have a special structure.
 						As Navtex message transmitting automation require two new lines between
