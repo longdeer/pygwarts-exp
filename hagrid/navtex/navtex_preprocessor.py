@@ -1,22 +1,16 @@
-from os													import path		as ospath
-from os													import remove	as osremove
-from re													import compile	as pmake
-from typing												import Tuple
-from typing												import List
-from typing												import Callable
-from typing												import Literal
-from typing												import Generator
-from types												import GeneratorType
-from shutil												import copyfile
-from pathlib											import Path
-from pygwarts.magical.philosophers_stone				import Transmutable
-from pygwarts.magical.philosophers_stone.transmutations	import ControlledTransmutation
-from pygwarts.magical.patronus							import CAST
-from pygwarts.magical.time_turner						import TimeTurner
-from pygwarts.hagrid.thrivables							import Tree
-from pygwarts.hagrid.planting							import unplantable
-from NavtexBoWAnalyzer.navtex_analyzer					import Navanalyzer
-from pygwarts.irma.shelve								import LibraryShelf
+import	re
+from	typing												import Tuple
+from	typing												import List
+from	typing												import Callable
+from	typing												import Literal
+from	pathlib												import Path
+from	pygwarts.magical.philosophers_stone					import Transmutable
+from	pygwarts.magical.philosophers_stone.transmutations	import ControlledTransmutation
+from	pygwarts.magical.patronus							import CAST
+from	pygwarts.magical.time_turner						import TimeTurner
+from	pygwarts.irma.shelve								import LibraryShelf
+from	pygwarts.hagrid.planting							import unplantable
+from	NavtexBoWAnalyzer.navtex_analyzer					import Navanalyzer
 
 
 
@@ -62,7 +56,7 @@ class Navpreprocessor(ControlledTransmutation):
 
 
 		# Modifying Navtex message structure regex to comply UDK2
-		analyzer.TEXT_MSG_STRUCT = pmake(r"^\n(?:[ =!\"'\(\)\+,\-\./0-9:;A-Z]+\n)+$")
+		analyzer.TEXT_MSG_STRUCT = re.compile(r"^\n(?:[ =!\"'\(\)\+,\-\./0-9:;A-Z]+\n)+$")
 
 
 

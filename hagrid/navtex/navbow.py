@@ -3,7 +3,6 @@ from typing									import List
 from typing									import Tuple
 from typing									import Literal
 from pygwarts.magical.philosophers_stone	import Transmutable
-from pygwarts.irma.contrib					import LibraryContrib
 from pygwarts.irma.shelve					import LibraryShelf
 
 
