@@ -45,7 +45,7 @@ class NavbowController(Transmutable):
 		}
 
 		try:	state = int(state)
-		except	Exception as E : self.loggy.info(f"State must be integer, got {type(state)}")
+		except	Exception as E : self.loggy.info(f"State \"{state}\" not an integer or numeric string")
 		else:
 			if	state == 1 or state == 0:
 
@@ -162,7 +162,7 @@ class NavbowController(Transmutable):
 
 
 		try:	state = int(state)
-		except	Exception as E : self.loggy.info(f"State must be integer, got {type(state)}")
+		except	Exception as E : self.loggy.info(f"State \"{state}\" not an integer or numeric string")
 		else:
 			if	state == 1 or state == 0:
 
@@ -259,7 +259,7 @@ class NavbowController(Transmutable):
 
 
 
-	def convert(self, *words :Tuple[str,], state :Literal[1|0]) -> Dict[str,List[str]] :
+	def convert(self, *words :Tuple[str,], state :int | str) -> Dict[str,List[str]] :
 
 		"""
 			Conversion of words.
@@ -284,38 +284,43 @@ class NavbowController(Transmutable):
 		}
 
 
-		if	original:
-			if	state == 1 or state == 0:
+		try:	state = int(state)
+		except	Exception as E : self.loggy.info(f"State \"{state}\" not an integer or numeric string")
+		else:
+			if	original:
+				if	state == 1 or state == 0:
 
 
-				for word in words:
+					for word in words:
 
 
-					if	isinstance(word, str):
-						if	(current := word.upper()) not in processed:
+						if	isinstance(word, str):
+							if	(current := word.upper()) not in processed:
 
 
-							processed.add(current)
-							prestate= int(not state)
-							target	= self.NavbowShelve[current]
+								processed.add(current)
+								prestate= int(not state)
+								target	= self.NavbowShelve[current]
 
 
-							if		target is None:		conversion["undefined"].append(current)
-							elif	target == state:	conversion["skipped"].append(current)
-							elif	target == prestate:
+								if		target is None:		conversion["undefined"].append(current)
+								elif	target == state:	conversion["skipped"].append(current)
+								elif	target == prestate:
 
-								counter	+= 1
-								self.NavbowShelve[current] = state
-								conversion["converted"].append(current)
-								self.loggy.debug(f"Converted \"{current}\" to {'' if state else 'un'}known")
+									counter	+= 1
+									self.NavbowShelve[current] = state
+									conversion["converted"].append(current)
+									self.loggy.debug(
+										f"Converted \"{current}\" to {'' if state else 'un'}known"
+									)
 
 
-							else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
-						else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
-					else:			self.loggy.info(f"Incorrect word \"{word}\" for conversion")
-				else:				self.loggy.info(f"Done conversion for {counter}/{original} words")
-			else:					self.loggy.info(f"Improper conversion state \"{state}\"")
-		else:						self.loggy.info("No words provided for conversion")
+								else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
+							else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
+						else:			self.loggy.info(f"Incorrect word \"{word}\" for conversion")
+					else:				self.loggy.info(f"Done conversion for {counter}/{original} words")
+				else:					self.loggy.info(f"Improper conversion state \"{state}\"")
+			else:						self.loggy.info("No words provided for conversion")
 
 
 		return	conversion
