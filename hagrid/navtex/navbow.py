@@ -21,7 +21,7 @@ class NavbowController(Transmutable):
 	"""
 
 	class NavbowShelve(LibraryShelf):	pass
-	def inspect_state(self, state :Literal[1|0]) -> List[str] :
+	def inspect_state(self, state :int | str) -> Dict[str,List[str]] :
 
 		"""
 			Inspection of certain state words.
@@ -29,33 +29,44 @@ class NavbowController(Transmutable):
 				1 - "known" state words;
 				0 - "unknown" state words.
 			Every word that is string obtained from "NavbowShelve" that mapped to "state" will be
-			gathered to a list and returned. If no words found empty list returned.
+			gathered to a list and returned in dictionary with corresponding mapping. If no words found
+			empty dictionary will be returned.
 		"""
 
 		counter		= 0
-		inspection	= list()
+		current		= list()
+		inspection	= {
+
+			"known":		list(),
+			"unknown":		list(),
+		}
+
+		try:	state = int(state)
+		except	Exception as E : self.loggy.info(f"State must be integer, got {type(state)}")
+		else:
+			if	state == 1 or state == 0:
+
+				words = self.NavbowShelve.keysof(state)
+				original = len(words)
 
 
-		if	state == 1 or state == 0:
-
-			words = self.NavbowShelve.keysof(state)
-			original = len(words)
+				if	original:
+					for word in words:
 
 
-			if	original:
-				for word in words:
+						if	isinstance(word, str):
 
+							counter += 1
+							current.append(word)
+						else:
+							self.loggy.warning(f"Invalid key \"{word}\" in {self.NavbowShelve}")
 
-					if	isinstance(word, str):
+					else:
 
-						counter += 1
-						inspection.append(word)
-
-
-					else:	self.loggy.warning(f"Invalid key \"{word}\" in {self.NavbowShelve}")
-				else:		self.loggy.info(f"Done state inspection for {counter}/{original} words")
-			else:			self.loggy.info(f"No words with {'' if state else 'un'}known state")
-		else:				self.loggy.info(f"Improper state \"{state}\" for inspection")
+						self.loggy.info(f"Done state inspection for {counter}/{original} words")
+						inspection[f"{'' if state else 'un'}known"] = current
+				else:	self.loggy.info(f"No words with {'' if state else 'un'}known state")
+			else:		self.loggy.info(f"Improper state \"{state}\" for inspection")
 
 
 		return	inspection

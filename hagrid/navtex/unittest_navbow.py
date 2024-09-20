@@ -206,10 +206,26 @@ class NavbowTest(PygwartsTestCase):
 		self.assertIn("INFO:C_state_inspection:Done state inspection for 6/6 words", case_loggy.output)
 
 
-		self.assertIsInstance(result1, list)
-		self.assertCountEqual(result1, [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
-		self.assertIsInstance(result2, list)
-		self.assertCountEqual(result2, [ "OOH", "EEH" ])
+		self.assertIsInstance(result1, dict)
+		self.assertCountEqual(result1["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
+		self.assertIsInstance(result2, dict)
+		self.assertCountEqual(result2["known"], [ "OOH", "EEH" ])
+
+
+		with self.assertLogs("C_state_inspection", 10) as case_loggy:
+
+			result1 = self.test_case.inspect_state("0")
+			result2 = self.test_case.inspect_state("1")
+
+
+		self.assertIn("INFO:C_state_inspection:Done state inspection for 2/2 words", case_loggy.output)
+		self.assertIn("INFO:C_state_inspection:Done state inspection for 6/6 words", case_loggy.output)
+
+
+		self.assertIsInstance(result1, dict)
+		self.assertCountEqual(result1["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
+		self.assertIsInstance(result2, dict)
+		self.assertCountEqual(result2["known"], [ "OOH", "EEH" ])
 
 
 
