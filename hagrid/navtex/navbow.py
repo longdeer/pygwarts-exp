@@ -145,8 +145,8 @@ class NavbowController(Transmutable):
 		"""
 			Erasion of certain state words.
 			Accepts "state" integer or string that represents:
-				1 - "known" state words;
-				0 - "unknown" state words.
+				1 - "known erased" state words;
+				0 - "unknown erased" state words.
 			Every word that is string obtained from "NavbowShelve" that mapped to "state" will be deleted
 			from "NavbowShelve", gathered to a list and returned in dictionary with corresponding mapping.
 			If no words found empty dictionary will be returned.
@@ -207,8 +207,8 @@ class NavbowController(Transmutable):
 			dictionary with corresponding keys. Every word that is string will be searched in Shelf by the
 			"NavbowShelve" object, every valid state word will be deleted, every word found will be placed
 			to the list mapped with:
-				"known" if current word state is 1 in Shelf,
-				"unknown" if current word state is 0 in Shelf,
+				"known erased" if current word state is 1 in Shelf,
+				"unknown erased" if current word state is 0 in Shelf,
 				"undefined" if Shelf doesn't content such word as a key mapping.
 			Returns populated or empty empty-lists values dictionary.
 		"""
@@ -270,7 +270,7 @@ class NavbowController(Transmutable):
 				"converted" if current word was in opposite state, so current state was actually changed,
 				"skipped" if current word state is already set to the "state" and no conversion done,
 				"undefined" if Shelf doesn't content such word as a key mapping.
-			Returns populated or empty empty-lists values dictionary.
+			Returns populated or empty-lists values dictionary.
 		"""
 
 		original	= len(words)
@@ -327,6 +327,75 @@ class NavbowController(Transmutable):
 
 
 		return	conversion
+
+
+
+
+
+
+
+
+	def add(self, *words :Tuple[str,], state :int | str) -> Dict[str,List[str]] :
+
+		"""
+			Addition of words.
+			Accepts "words", that must represent words to be added, and corresponding state for every word
+			"state". The result of addition is a dictionary with corresponding keys.
+			Every word that is string will be searched in Shelf beforehand. Every word that already in Shelf,
+			but in opposite "state" will be converted, in same state will be skipped. Every absent word will
+			be mapped with "state". The result output mapping will as follow:
+				"added to known" if current word was absent and was now mapped with state == 1,
+				"added to unknown" if current word was absent and was now mapped with state == 0,
+				"skipped" if current word already in Shelf mapped with any valid state.
+			Returns populated or empty-lists values dictionary.
+		"""
+
+		original	= len(words)
+		processed	= set()
+		counter		= 0
+		addition	= {
+
+			"added to known":	list(),
+			"added to unknown":	list(),
+			"skipped":			list(),
+		}
+
+
+		try:	state = int(state)
+		except	Exception as E : self.loggy.info(f"State \"{state}\" not an integer or numeric string")
+		else:
+			if	original:
+				if	state == 1 or state == 0:
+
+
+					for word in words:
+
+
+						if	isinstance(word, str):
+							if	(current := word.upper()) not in processed:
+
+
+								processed.add(current)
+								prestate= int(not state)
+								target	= self.NavbowShelve[current]
+
+
+								if	target is None:
+
+									counter	+= 1
+									self.NavbowShelve[current] = state
+									addition[f"added to {'' if state else 'un'}known"].append(current)
+
+
+								else:	addition["skipped"].append(current)
+							else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
+						else:			self.loggy.info(f"Incorrect word \"{word}\" for addition")
+					else:				self.loggy.info(f"Done addition for {counter}/{original} words")
+				else:					self.loggy.info(f"Improper addition state \"{state}\"")
+			else:						self.loggy.info("No words provided for addition")
+
+
+		return	addition
 
 
 
