@@ -18,6 +18,9 @@ class NavbowController(Transmutable):
 		Transmutable object that serves as a maintainer for Navtex Bag of Words LibraryShelf produced files.
 		Provides such operations as conversion of words between two states and inspection of any word or
 		corresponding state for Shelf file.
+		It is important that none of the methods, that actually alter "NavbowShelve" in place, does not
+		perform "produce" for the Shelf, so no changes takes affect for the end Shelf file. This is up
+		to user to perform "produce" manually.
 	"""
 
 	class NavbowShelve(LibraryShelf):	pass
@@ -125,6 +128,55 @@ class NavbowController(Transmutable):
 
 
 		return	inspection
+
+
+
+
+	def erase_state(self, state :int | str) -> Dict[str,List[str]] :
+
+		"""
+			Erase certain state words
+		"""
+
+		counter	= 0
+		current	= list()
+		erasion	= {
+
+			"known":	list(),
+			"unknown":	list(),
+		}
+
+
+		try:	state = int(state)
+		except	Exception as E : self.loggy.info(f"State must be integer, got {type(state)}")
+		else:
+			if	state == 1 or state == 0:
+
+				words = self.NavbowShelve.keysof(state)
+				original = len(words)
+
+
+				if	original:
+					for word in words:
+
+
+						if	isinstance(word, str):
+
+							counter += 1
+							current.append(word)
+							del self.NavbowShelve[word]
+						else:
+							self.loggy.warning(f"Invalid key \"{word}\" in {self.NavbowShelve}")
+
+					else:
+
+						self.loggy.info(f"Done state erasion for {counter}/{original} words")
+						erasion[f"{'' if state else 'un'}known"] = current
+				else:	self.loggy.info(f"No words with {'' if state else 'un'}known state")
+			else:		self.loggy.info(f"Improper state \"{state}\" for erasion")
+
+
+		return	erasion
 
 
 
