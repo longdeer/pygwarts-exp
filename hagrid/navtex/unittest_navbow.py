@@ -234,130 +234,21 @@ class NavbowTest(PygwartsTestCase):
 
 
 
-	def test_D_state_erasion(self):
+	def test_D_erasion(self):
 
 		self.assertTrue(self.NAVBOW_SHELF.is_file())
 		self.test_case = NavbowController(
 
 			LibraryContrib(
 
-				init_name="D_state_erasion",
+				init_name="D_erasion",
 				init_level=10,
 				handler=str(self.NAVBOW_LOGGY)
 			)
 		)
 
 
-		with self.assertLogs("D_state_erasion", 10) as case_loggy:
-
-			self.assertEqual(len(self.test_case.NavbowShelve),0)
-			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
-			self.assertEqual(len(self.test_case.NavbowShelve),8)
-
-			result1 = self.test_case.erase_state(0)
-			result2 = self.test_case.erase_state(1)
-
-
-		self.assertIn("INFO:D_state_erasion:Done state erasion for 2/2 words", case_loggy.output)
-		self.assertIn("INFO:D_state_erasion:Done state erasion for 6/6 words", case_loggy.output)
-
-
-		self.assertIsInstance(result1, dict)
-		self.assertIsInstance(result1.get("unknown"), list)
-		self.assertCountEqual(result1["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
-		self.assertIsInstance(result1.get("known"), list)
-		self.assertCountEqual(result1["known"], [])
-		self.assertIsInstance(result2, dict)
-		self.assertIsInstance(result2.get("unknown"), list)
-		self.assertCountEqual(result2["known"], [ "OOH", "EEH" ])
-		self.assertIsInstance(result2.get("known"), list)
-		self.assertCountEqual(result2["unknown"], [])
-
-
-		with self.assertLogs("D_state_erasion", 10) as case_loggy:
-
-			self.assertEqual(len(self.test_case.NavbowShelve),0)
-			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
-			self.assertEqual(len(self.test_case.NavbowShelve),8)
-
-			result1 = self.test_case.erase_state("0")
-			result2 = self.test_case.erase_state("1")
-
-
-		self.assertIn("INFO:D_state_erasion:Done state erasion for 2/2 words", case_loggy.output)
-		self.assertIn("INFO:D_state_erasion:Done state erasion for 6/6 words", case_loggy.output)
-
-
-		self.assertIsInstance(result1, dict)
-		self.assertIsInstance(result1.get("unknown"), list)
-		self.assertCountEqual(result1["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
-		self.assertIsInstance(result1.get("known"), list)
-		self.assertCountEqual(result1["known"], [])
-		self.assertIsInstance(result2, dict)
-		self.assertIsInstance(result2.get("unknown"), list)
-		self.assertCountEqual(result2["known"], [ "OOH", "EEH" ])
-		self.assertIsInstance(result2.get("known"), list)
-		self.assertCountEqual(result2["unknown"], [])
-
-
-
-
-
-
-
-
-	def test_E_call_total(self):
-
-		self.assertTrue(self.NAVBOW_SHELF.is_file())
-		self.test_case = NavbowController(
-
-			LibraryContrib(
-
-				init_name="E_call_total",
-				init_level=10,
-				handler=str(self.NAVBOW_LOGGY)
-			)
-		)
-
-
-		with self.assertLogs("E_call_total", 10) as case_loggy:
-
-			self.assertEqual(len(self.test_case.NavbowShelve),0)
-			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
-			self.assertEqual(len(self.test_case.NavbowShelve),8)
-
-			result = self.test_case()
-
-
-		self.assertIn("INFO:E_call_total:Total 8/8 stated words", case_loggy.output)
-		self.assertIsInstance(result, dict)
-		self.assertCountEqual(result["known"], [ "OOH", "EEH" ])
-		self.assertCountEqual(result["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
-		self.assertFalse(result["undefined"])
-
-
-
-
-
-
-
-
-	def test_F_conversion(self):
-
-		sleep(1)
-		self.assertTrue(self.NAVBOW_SHELF.is_file())
-		self.test_case = NavbowController(
-
-			LibraryContrib(
-
-				init_name="F_conversion",
-				init_level=10,
-				handler=str(self.NAVBOW_LOGGY)
-			)
-		)
-
-
-		with self.assertLogs("F_conversion", 10) as case_loggy:
+		with self.assertLogs("D_erasion", 10) as case_loggy:
 
 			self.assertEqual(len(self.test_case.NavbowShelve),0)
 			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
@@ -369,35 +260,138 @@ class NavbowTest(PygwartsTestCase):
 					if		word in ( "OOH","EEH" ): self.assertEqual(state,1)
 					else:	self.assertEqual(state,0)
 
-			result = self.test_case.convert("he", "Said", "OOH", "eeh", "ooh", "AaH", "aAh", state=1)
-			self.test_case.NavbowShelve.produce(str(self.NAVBOW_SHELF))
+			result = self.test_case.erase("he", "Said", "OOH", "eeh", "ooh", "AaH", "aAh")
 
 
-		self.assertIn("DEBUG:F_conversion:Converted \"AAH\" to known", case_loggy.output)
-		self.assertIn("DEBUG:F_conversion:Duplicate word \"ooh\" skipped", case_loggy.output)
-		self.assertIn("DEBUG:F_conversion:Duplicate word \"aAh\" skipped", case_loggy.output)
-		self.assertIn("INFO:F_conversion:Done conversion for 1/7 words", case_loggy.output)
-		self.assertIn(
-			f"INFO:F_conversion:Shelf \"{self.NAVBOW_SHELF}\" successfully produced", case_loggy.output
-		)
+		self.assertIn("DEBUG:D_erasion:Duplicate word \"ooh\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:D_erasion:Duplicate word \"aAh\" skipped", case_loggy.output)
+		self.assertIn("INFO:D_erasion:Done erasion for 5/7 words", case_loggy.output)
 
 
-		self.assertIsNotNone(result.get("converted"))
-		self.assertIsInstance(result["converted"], list)
-		self.assertEqual(result["converted"], [ "AAH" ])
-		self.assertIsNotNone(result.get("skipped"))
-		self.assertIsInstance(result["skipped"], list)
-		self.assertEqual(result["skipped"], [ "OOH", "EEH" ])
+		self.assertIsInstance(result, dict)
+		self.assertIsNotNone(result.get("known"))
+		self.assertIsInstance(result["known"], list)
+		self.assertEqual(result["known"], [ "OOH", "EEH" ])
+		self.assertIsNotNone(result.get("unknown"))
+		self.assertIsInstance(result["unknown"], list)
+		self.assertEqual(result["unknown"], [ "AAH" ])
 		self.assertIsNotNone(result.get("undefined"))
 		self.assertIsInstance(result["undefined"], list)
 		self.assertEqual(result["undefined"], [ "HE", "SAID" ])
 
 
-		for word,state in self.test_case.NavbowShelve:
-			with self.subTest(word=word, state=state):
+		self.assertEqual(len(self.test_case.NavbowShelve),5)
+		self.assertNotIn("OOH", self.test_case.NavbowShelve)
+		self.assertNotIn("EEH", self.test_case.NavbowShelve)
+		self.assertNotIn("AAH", self.test_case.NavbowShelve)
 
-				if		word in ( "OOH","EEH", "AAH" ): self.assertEqual(state,1)
-				else:	self.assertEqual(state,0)
+
+
+
+
+
+
+
+	def test_E_state_erasion(self):
+
+		self.assertTrue(self.NAVBOW_SHELF.is_file())
+		self.test_case = NavbowController(
+
+			LibraryContrib(
+
+				init_name="E_state_erasion",
+				init_level=10,
+				handler=str(self.NAVBOW_LOGGY)
+			)
+		)
+
+
+		with self.assertLogs("E_state_erasion", 10) as case_loggy:
+
+			self.assertEqual(len(self.test_case.NavbowShelve),0)
+			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
+			self.assertEqual(len(self.test_case.NavbowShelve),8)
+
+			result1 = self.test_case.erase_state(0)
+			result2 = self.test_case.erase_state(1)
+
+
+		self.assertIn("INFO:E_state_erasion:Done state erasion for 2/2 words", case_loggy.output)
+		self.assertIn("INFO:E_state_erasion:Done state erasion for 6/6 words", case_loggy.output)
+
+
+		self.assertIsInstance(result1, dict)
+		self.assertIsInstance(result1.get("unknown"), list)
+		self.assertCountEqual(result1["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
+		self.assertIsInstance(result1.get("known"), list)
+		self.assertCountEqual(result1["known"], [])
+		self.assertIsInstance(result2, dict)
+		self.assertIsInstance(result2.get("unknown"), list)
+		self.assertCountEqual(result2["known"], [ "OOH", "EEH" ])
+		self.assertIsInstance(result2.get("known"), list)
+		self.assertCountEqual(result2["unknown"], [])
+
+
+		with self.assertLogs("E_state_erasion", 10) as case_loggy:
+
+			self.assertEqual(len(self.test_case.NavbowShelve),0)
+			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
+			self.assertEqual(len(self.test_case.NavbowShelve),8)
+
+			result1 = self.test_case.erase_state("0")
+			result2 = self.test_case.erase_state("1")
+
+
+		self.assertIn("INFO:E_state_erasion:Done state erasion for 2/2 words", case_loggy.output)
+		self.assertIn("INFO:E_state_erasion:Done state erasion for 6/6 words", case_loggy.output)
+
+
+		self.assertIsInstance(result1, dict)
+		self.assertIsInstance(result1.get("unknown"), list)
+		self.assertCountEqual(result1["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
+		self.assertIsInstance(result1.get("known"), list)
+		self.assertCountEqual(result1["known"], [])
+		self.assertIsInstance(result2, dict)
+		self.assertIsInstance(result2.get("unknown"), list)
+		self.assertCountEqual(result2["known"], [ "OOH", "EEH" ])
+		self.assertIsInstance(result2.get("known"), list)
+		self.assertCountEqual(result2["unknown"], [])
+
+
+
+
+
+
+
+
+	def test_F_call_total(self):
+
+		self.assertTrue(self.NAVBOW_SHELF.is_file())
+		self.test_case = NavbowController(
+
+			LibraryContrib(
+
+				init_name="F_call_total",
+				init_level=10,
+				handler=str(self.NAVBOW_LOGGY)
+			)
+		)
+
+
+		with self.assertLogs("F_call_total", 10) as case_loggy:
+
+			self.assertEqual(len(self.test_case.NavbowShelve),0)
+			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
+			self.assertEqual(len(self.test_case.NavbowShelve),8)
+
+			result = self.test_case()
+
+
+		self.assertIn("INFO:F_call_total:Total 8/8 stated words", case_loggy.output)
+		self.assertIsInstance(result, dict)
+		self.assertCountEqual(result["known"], [ "OOH", "EEH" ])
+		self.assertCountEqual(result["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
+		self.assertFalse(result["undefined"])
 
 
 
@@ -430,6 +424,70 @@ class NavbowTest(PygwartsTestCase):
 			for word,state in self.test_case.NavbowShelve:
 				with self.subTest(word=word, state=state):
 
+					if		word in ( "OOH","EEH" ): self.assertEqual(state,1)
+					else:	self.assertEqual(state,0)
+
+			result = self.test_case.convert("he", "Said", "OOH", "eeh", "ooh", "AaH", "aAh", state=1)
+			self.test_case.NavbowShelve.produce(str(self.NAVBOW_SHELF))
+
+
+		self.assertIn("DEBUG:G_conversion:Converted \"AAH\" to known", case_loggy.output)
+		self.assertIn("DEBUG:G_conversion:Duplicate word \"ooh\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:G_conversion:Duplicate word \"aAh\" skipped", case_loggy.output)
+		self.assertIn("INFO:G_conversion:Done conversion for 1/7 words", case_loggy.output)
+		self.assertIn(
+			f"INFO:G_conversion:Shelf \"{self.NAVBOW_SHELF}\" successfully produced", case_loggy.output
+		)
+
+
+		self.assertIsNotNone(result.get("converted"))
+		self.assertIsInstance(result["converted"], list)
+		self.assertEqual(result["converted"], [ "AAH" ])
+		self.assertIsNotNone(result.get("skipped"))
+		self.assertIsInstance(result["skipped"], list)
+		self.assertEqual(result["skipped"], [ "OOH", "EEH" ])
+		self.assertIsNotNone(result.get("undefined"))
+		self.assertIsInstance(result["undefined"], list)
+		self.assertEqual(result["undefined"], [ "HE", "SAID" ])
+
+
+		for word,state in self.test_case.NavbowShelve:
+			with self.subTest(word=word, state=state):
+
+				if		word in ( "OOH","EEH", "AAH" ): self.assertEqual(state,1)
+				else:	self.assertEqual(state,0)
+
+
+
+
+
+
+
+
+	def test_H_conversion(self):
+
+		sleep(1)
+		self.assertTrue(self.NAVBOW_SHELF.is_file())
+		self.test_case = NavbowController(
+
+			LibraryContrib(
+
+				init_name="H_conversion",
+				init_level=10,
+				handler=str(self.NAVBOW_LOGGY)
+			)
+		)
+
+
+		with self.assertLogs("H_conversion", 10) as case_loggy:
+
+			self.assertEqual(len(self.test_case.NavbowShelve),0)
+			self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
+			self.assertEqual(len(self.test_case.NavbowShelve),8)
+
+			for word,state in self.test_case.NavbowShelve:
+				with self.subTest(word=word, state=state):
+
 					if		word in ( "OOH","EEH", "AAH" ): self.assertEqual(state,1)
 					else:	self.assertEqual(state,0)
 
@@ -439,15 +497,15 @@ class NavbowTest(PygwartsTestCase):
 			self.test_case.NavbowShelve.produce(str(self.NAVBOW_SHELF))
 
 
-		self.assertIn("DEBUG:G_conversion:Converted \"OOH\" to unknown", case_loggy.output)
-		self.assertIn("DEBUG:G_conversion:Converted \"EEH\" to unknown", case_loggy.output)
-		self.assertIn("DEBUG:G_conversion:Duplicate word \"ooh\" skipped", case_loggy.output)
-		self.assertIn("DEBUG:G_conversion:Converted \"AAH\" to unknown", case_loggy.output)
-		self.assertIn("DEBUG:G_conversion:Duplicate word \"aAh\" skipped", case_loggy.output)
-		self.assertIn("DEBUG:G_conversion:Duplicate word \"WALLA\" skipped", case_loggy.output)
-		self.assertIn("INFO:G_conversion:Done conversion for 3/11 words", case_loggy.output)
+		self.assertIn("DEBUG:H_conversion:Converted \"OOH\" to unknown", case_loggy.output)
+		self.assertIn("DEBUG:H_conversion:Converted \"EEH\" to unknown", case_loggy.output)
+		self.assertIn("DEBUG:H_conversion:Duplicate word \"ooh\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:H_conversion:Converted \"AAH\" to unknown", case_loggy.output)
+		self.assertIn("DEBUG:H_conversion:Duplicate word \"aAh\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:H_conversion:Duplicate word \"WALLA\" skipped", case_loggy.output)
+		self.assertIn("INFO:H_conversion:Done conversion for 3/11 words", case_loggy.output)
 		self.assertIn(
-			f"INFO:G_conversion:Shelf \"{self.NAVBOW_SHELF}\" successfully produced", case_loggy.output
+			f"INFO:H_conversion:Shelf \"{self.NAVBOW_SHELF}\" successfully produced", case_loggy.output
 		)
 
 
@@ -472,13 +530,13 @@ class NavbowTest(PygwartsTestCase):
 
 
 
-	def test_H_state_inspect_edge_cases(self):
+	def test_I_state_inspect_edge_cases(self):
 
 		self.test_case = NavbowController(
 
 			LibraryContrib(
 
-				init_name="H_state_inspect_edge_cases",
+				init_name="I_state_inspect_edge_cases",
 				init_level=10,
 				handler=str(self.NAVBOW_LOGGY)
 			)
@@ -490,23 +548,23 @@ class NavbowTest(PygwartsTestCase):
 		self.assertEqual(len(self.test_case.NavbowShelve),8)
 
 
-		with self.assertLogs("H_state_inspect_edge_cases", 10) as case_loggy:
+		with self.assertLogs("I_state_inspect_edge_cases", 10) as case_loggy:
 
 			self.test_case.NavbowShelve[42] = 1
 			case1 = self.test_case.inspect_state(1)
 
 		self.assertIn(
 
-			f"WARNING:H_state_inspect_edge_cases:Invalid key \"42\" in {self.test_case.NavbowShelve}",
+			f"WARNING:I_state_inspect_edge_cases:Invalid key \"42\" in {self.test_case.NavbowShelve}",
 			case_loggy.output
 		)
 
 
-		with self.assertLogs("H_state_inspect_edge_cases", 10) as case_loggy:
+		with self.assertLogs("I_state_inspect_edge_cases", 10) as case_loggy:
 			case2 = self.test_case.inspect_state(2)
 
 		self.assertIn(
-			f"INFO:H_state_inspect_edge_cases:Improper state \"2\" for inspection", case_loggy.output
+			f"INFO:I_state_inspect_edge_cases:Improper state \"2\" for inspection", case_loggy.output
 		)
 
 
@@ -514,19 +572,19 @@ class NavbowTest(PygwartsTestCase):
 		self.assertEqual(len(self.test_case.NavbowShelve),0)
 
 
-		with self.assertLogs("H_state_inspect_edge_cases", 10) as case_loggy:
+		with self.assertLogs("I_state_inspect_edge_cases", 10) as case_loggy:
 			case3 = self.test_case.inspect_state(1)
 
 		self.assertIn(
-			f"INFO:H_state_inspect_edge_cases:No words with known state", case_loggy.output
+			f"INFO:I_state_inspect_edge_cases:No words with known state", case_loggy.output
 		)
 
 
-		with self.assertLogs("H_state_inspect_edge_cases", 10) as case_loggy:
+		with self.assertLogs("I_state_inspect_edge_cases", 10) as case_loggy:
 			case3 = self.test_case.inspect_state(0)
 
 		self.assertIn(
-			f"INFO:H_state_inspect_edge_cases:No words with unknown state", case_loggy.output
+			f"INFO:I_state_inspect_edge_cases:No words with unknown state", case_loggy.output
 		)
 
 
@@ -536,13 +594,13 @@ class NavbowTest(PygwartsTestCase):
 
 
 
-	def test_I_inspect_edge_cases(self):
+	def test_J_inspect_edge_cases(self):
 
 		self.test_case = NavbowController(
 
 			LibraryContrib(
 
-				init_name="I_inspect_edge_cases",
+				init_name="J_inspect_edge_cases",
 				init_level=10,
 				handler=str(self.NAVBOW_LOGGY)
 			)
@@ -554,16 +612,16 @@ class NavbowTest(PygwartsTestCase):
 		self.assertEqual(len(self.test_case.NavbowShelve),8)
 
 
-		with self.assertLogs("I_inspect_edge_cases", 10) as case_loggy:
+		with self.assertLogs("J_inspect_edge_cases", 10) as case_loggy:
 
 			self.test_case.NavbowShelve["OOH"] = 2
 			case1 = self.test_case.inspect("OOH", 1)
 			case2 = self.test_case.inspect()
 
 
-		self.assertIn("WARNING:I_inspect_edge_cases:Invalid state for word \"OOH\"", case_loggy.output)
-		self.assertIn("INFO:I_inspect_edge_cases:Incorrect word \"1\" for inspection", case_loggy.output)
-		self.assertIn("INFO:I_inspect_edge_cases:No words provided for inspection", case_loggy.output)
+		self.assertIn("WARNING:J_inspect_edge_cases:Invalid state for word \"OOH\"", case_loggy.output)
+		self.assertIn("INFO:J_inspect_edge_cases:Incorrect word \"1\" for inspection", case_loggy.output)
+		self.assertIn("INFO:J_inspect_edge_cases:No words provided for inspection", case_loggy.output)
 
 
 		self.assertIsNotNone(case1.get("known"))
@@ -594,13 +652,13 @@ class NavbowTest(PygwartsTestCase):
 
 
 
-	def test_J_convert_edge_cases(self):
+	def test_K_convert_edge_cases(self):
 
 		self.test_case = NavbowController(
 
 			LibraryContrib(
 
-				init_name="J_convert_edge_cases",
+				init_name="K_convert_edge_cases",
 				init_level=10,
 				handler=str(self.NAVBOW_LOGGY)
 			)
@@ -614,7 +672,7 @@ class NavbowTest(PygwartsTestCase):
 		self.assertEqual(len(self.test_case.NavbowShelve),8)
 
 
-		with self.assertLogs("J_convert_edge_cases", 10) as case_loggy:
+		with self.assertLogs("K_convert_edge_cases", 10) as case_loggy:
 
 			self.test_case.NavbowShelve["OOH"] = 2
 			case1 = self.test_case.convert("OOH", 1, state=1)
@@ -622,10 +680,10 @@ class NavbowTest(PygwartsTestCase):
 			case3 = self.test_case.convert(state=0)
 
 
-		self.assertIn("WARNING:J_convert_edge_cases:Invalid state for word \"OOH\"", case_loggy.output)
-		self.assertIn("INFO:J_convert_edge_cases:Incorrect word \"1\" for conversion", case_loggy.output)
-		self.assertIn("INFO:J_convert_edge_cases:Improper conversion state \"2\"", case_loggy.output)
-		self.assertIn("INFO:J_convert_edge_cases:No words provided for conversion", case_loggy.output)
+		self.assertIn("WARNING:K_convert_edge_cases:Invalid state for word \"OOH\"", case_loggy.output)
+		self.assertIn("INFO:K_convert_edge_cases:Incorrect word \"1\" for conversion", case_loggy.output)
+		self.assertIn("INFO:K_convert_edge_cases:Improper conversion state \"2\"", case_loggy.output)
+		self.assertIn("INFO:K_convert_edge_cases:No words provided for conversion", case_loggy.output)
 
 
 		self.assertIsNotNone(case1.get("converted"))
@@ -667,13 +725,13 @@ class NavbowTest(PygwartsTestCase):
 
 
 
-	def test_K_call_edge_cases(self):
+	def test_L_call_edge_cases(self):
 
 		self.test_case = NavbowController(
 
 			LibraryContrib(
 
-				init_name="K_call_edge_cases",
+				init_name="L_call_edge_cases",
 				init_level=10,
 				handler=str(self.NAVBOW_LOGGY)
 			)
@@ -687,15 +745,15 @@ class NavbowTest(PygwartsTestCase):
 		self.assertEqual(len(self.test_case.NavbowShelve),8)
 
 
-		with self.assertLogs("K_call_edge_cases", 10) as case_loggy:
+		with self.assertLogs("L_call_edge_cases", 10) as case_loggy:
 
 			self.test_case.NavbowShelve["OOH"] = 2
 			self.test_case.NavbowShelve[2] = "OOH"
 			case1 = self.test_case()
 
 
-		self.assertIn("WARNING:K_call_edge_cases:Incorrect word \"2\" encountered", case_loggy.output)
-		self.assertIn("INFO:K_call_edge_cases:Total 7/9 stated words", case_loggy.output)
+		self.assertIn("WARNING:L_call_edge_cases:Incorrect word \"2\" encountered", case_loggy.output)
+		self.assertIn("INFO:L_call_edge_cases:Total 7/9 stated words", case_loggy.output)
 		self.assertIsInstance(case1, dict)
 		self.assertIsNotNone(case1.get("known"))
 		self.assertIsInstance(case1["known"], list)
@@ -708,13 +766,13 @@ class NavbowTest(PygwartsTestCase):
 		self.assertEqual(case1["undefined"], [ "OOH" ])
 
 
-		with self.assertLogs("K_call_edge_cases", 10) as case_loggy:
+		with self.assertLogs("L_call_edge_cases", 10) as case_loggy:
 
 			self.test_case.NavbowShelve.unload()
 			case2 = self.test_case()
 
 
-		self.assertIn("INFO:K_call_edge_cases:No words in total", case_loggy.output)
+		self.assertIn("INFO:L_call_edge_cases:No words in total", case_loggy.output)
 		self.assertIsInstance(case2, dict)
 		self.assertIsNotNone(case2.get("known"))
 		self.assertIsInstance(case2["known"], list)

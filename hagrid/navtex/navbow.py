@@ -28,7 +28,7 @@ class NavbowController(Transmutable):
 
 		"""
 			Inspection of certain state words.
-			Accepts "state" integer that represents:
+			Accepts "state" integer or string that represents:
 				1 - "known" state words;
 				0 - "unknown" state words.
 			Every word that is string obtained from "NavbowShelve" that mapped to "state" will be
@@ -63,16 +63,20 @@ class NavbowController(Transmutable):
 							current.append(word)
 						else:
 							self.loggy.warning(f"Invalid key \"{word}\" in {self.NavbowShelve}")
-
 					else:
 
 						self.loggy.info(f"Done state inspection for {counter}/{original} words")
 						inspection[f"{'' if state else 'un'}known"] = current
+
 				else:	self.loggy.info(f"No words with {'' if state else 'un'}known state")
 			else:		self.loggy.info(f"Improper state \"{state}\" for inspection")
 
 
 		return	inspection
+
+
+
+
 
 
 
@@ -115,9 +119,9 @@ class NavbowController(Transmutable):
 						target	= self.NavbowShelve[current]
 
 
-						if		target is None:		inspection["undefined"].append(current)
-						elif	target == 0:		inspection["unknown"].append(current)
-						elif	target == 1:		inspection["known"].append(current)
+						if		target is None:	inspection["undefined"].append(current)
+						elif	target == 0:	inspection["unknown"].append(current)
+						elif	target == 1:	inspection["known"].append(current)
 
 
 						else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
@@ -132,10 +136,20 @@ class NavbowController(Transmutable):
 
 
 
+
+
+
+
 	def erase_state(self, state :int | str) -> Dict[str,List[str]] :
 
 		"""
-			Erase certain state words
+			Erasion of certain state words.
+			Accepts "state" integer or string that represents:
+				1 - "known" state words;
+				0 - "unknown" state words.
+			Every word that is string obtained from "NavbowShelve" that mapped to "state" will be deleted
+			from "NavbowShelve", gathered to a list and returned in dictionary with corresponding mapping.
+			If no words found empty dictionary will be returned.
 		"""
 
 		counter	= 0
@@ -167,16 +181,80 @@ class NavbowController(Transmutable):
 							del self.NavbowShelve[word]
 						else:
 							self.loggy.warning(f"Invalid key \"{word}\" in {self.NavbowShelve}")
-
 					else:
 
 						self.loggy.info(f"Done state erasion for {counter}/{original} words")
 						erasion[f"{'' if state else 'un'}known"] = current
+
 				else:	self.loggy.info(f"No words with {'' if state else 'un'}known state")
 			else:		self.loggy.info(f"Improper state \"{state}\" for erasion")
 
 
 		return	erasion
+
+
+
+
+
+
+
+
+	def erase(self, *words :Tuple[str,]) -> Dict[str,List[str]] :
+
+		"""
+			Erasion of words.
+			Accepts "words" strings, that must represent words to be erased. The result of erasion is a
+			dictionary with corresponding keys. Every word that is string will be searched in Shelf by the
+			"NavbowShelve" object, every valid state word will be deleted, every word found will be placed
+			to the list mapped with:
+				"known" if current word state is 1 in Shelf,
+				"unknown" if current word state is 0 in Shelf,
+				"undefined" if Shelf doesn't content such word as a key mapping.
+			Returns populated or empty empty-lists values dictionary.
+		"""
+
+		original	= len(words)
+		processed	= set()
+		counter		= 0
+		erasion		= {
+
+			"known":		list(),
+			"unknown":		list(),
+			"undefined":	list(),
+		}
+
+
+		if	original:
+			for word in words:
+
+
+				if	isinstance(word, str):
+					if	(current := word.upper()) not in processed:
+
+
+						counter += 1
+						processed.add(current)
+						target	= self.NavbowShelve[current]
+						del self.NavbowShelve[current]
+
+
+						if		target is None:	erasion["undefined"].append(current)
+						elif	target == 0:	erasion["unknown"].append(current)
+						elif	target == 1:	erasion["known"].append(current)
+
+
+						else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
+					else:		self.loggy.debug(f"Duplicate word \"{word}\" skipped")
+				else:			self.loggy.info(f"Incorrect word \"{word}\" for erasion")
+			else:				self.loggy.info(f"Done erasion for {counter}/{original} words")
+		else:					self.loggy.info("No words provided for erasion")
+
+
+		return	erasion
+
+
+
+
 
 
 
@@ -241,6 +319,10 @@ class NavbowController(Transmutable):
 
 
 		return	conversion
+
+
+
+
 
 
 
