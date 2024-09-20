@@ -156,8 +156,8 @@ class NavbowController(Transmutable):
 		current	= list()
 		erasion	= {
 
-			"known":	list(),
-			"unknown":	list(),
+			"known erased":		list(),
+			"unknown erased":	list(),
 		}
 
 
@@ -184,7 +184,7 @@ class NavbowController(Transmutable):
 					else:
 
 						self.loggy.info(f"Done state erasion for {counter}/{original} words")
-						erasion[f"{'' if state else 'un'}known"] = current
+						erasion[f"{'' if state else 'un'}known erased"] = current
 
 				else:	self.loggy.info(f"No words with {'' if state else 'un'}known state")
 			else:		self.loggy.info(f"Improper state \"{state}\" for erasion")
@@ -218,9 +218,9 @@ class NavbowController(Transmutable):
 		counter		= 0
 		erasion		= {
 
-			"known":		list(),
-			"unknown":		list(),
-			"undefined":	list(),
+			"known erased":		list(),
+			"unknown erased":	list(),
+			"undefined":		list(),
 		}
 
 
@@ -239,8 +239,8 @@ class NavbowController(Transmutable):
 
 
 						if		target is None:	erasion["undefined"].append(current)
-						elif	target == 0:	erasion["unknown"].append(current)
-						elif	target == 1:	erasion["known"].append(current)
+						elif	target == 0:	erasion["unknown erased"].append(current)
+						elif	target == 1:	erasion["known erased"].append(current)
 
 
 						else:	self.loggy.warning(f"Invalid state for word \"{word}\"")
@@ -309,7 +309,10 @@ class NavbowController(Transmutable):
 
 									counter	+= 1
 									self.NavbowShelve[current] = state
-									conversion["converted"].append(current)
+
+									conversion_string = f"{current} -> {'' if state else 'un'}known"
+									conversion["converted"].append(conversion_string)
+
 									self.loggy.debug(
 										f"Converted \"{current}\" to {'' if state else 'un'}known"
 									)
@@ -332,7 +335,7 @@ class NavbowController(Transmutable):
 
 
 
-	def __call__(self):
+	def __call__(self) -> Dict[str,List[str]] :
 
 		"""
 			Inspection of every single word in Shelf and it's corresponding state.

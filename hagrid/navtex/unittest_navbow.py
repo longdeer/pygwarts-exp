@@ -98,7 +98,7 @@ class NavbowTest(PygwartsTestCase):
 
 		self.assertIsInstance(result, dict)
 		self.assertIsInstance(result.get("converted"), list)
-		self.assertEqual(result["converted"], [ "OOH", "EEH" ])
+		self.assertEqual(result["converted"], [ "OOH -> known", "EEH -> known" ])
 		self.assertIsInstance(result.get("skipped"), list)
 		self.assertFalse(result["skipped"])
 		self.assertIsInstance(result.get("undefined"), list)
@@ -277,10 +277,10 @@ class NavbowTest(PygwartsTestCase):
 
 
 		self.assertIsInstance(result, dict)
-		self.assertIsNotNone(result.get("known"))
-		self.assertEqual(result["known"], [ "OOH", "EEH" ])
-		self.assertIsNotNone(result.get("unknown"))
-		self.assertEqual(result["unknown"], [ "AAH" ])
+		self.assertIsNotNone(result.get("known erased"))
+		self.assertEqual(result["known erased"], [ "OOH", "EEH" ])
+		self.assertIsNotNone(result.get("unknown erased"))
+		self.assertEqual(result["unknown erased"], [ "AAH" ])
 		self.assertIsNotNone(result.get("undefined"))
 		self.assertEqual(result["undefined"], [ "HE", "SAID" ])
 
@@ -326,15 +326,15 @@ class NavbowTest(PygwartsTestCase):
 
 
 		self.assertIsInstance(result1, dict)
-		self.assertIsInstance(result1.get("unknown"), list)
-		self.assertCountEqual(result1["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
-		self.assertIsInstance(result1.get("known"), list)
-		self.assertCountEqual(result1["known"], [])
+		self.assertIsInstance(result1.get("unknown erased"), list)
+		self.assertCountEqual(result1["unknown erased"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
+		self.assertIsInstance(result1.get("known erased"), list)
+		self.assertCountEqual(result1["known erased"], [])
 		self.assertIsInstance(result2, dict)
-		self.assertIsInstance(result2.get("unknown"), list)
-		self.assertCountEqual(result2["known"], [ "OOH", "EEH" ])
-		self.assertIsInstance(result2.get("known"), list)
-		self.assertCountEqual(result2["unknown"], [])
+		self.assertIsInstance(result2.get("unknown erased"), list)
+		self.assertCountEqual(result2["known erased"], [ "OOH", "EEH" ])
+		self.assertIsInstance(result2.get("known erased"), list)
+		self.assertCountEqual(result2["unknown erased"], [])
 
 
 		with self.assertLogs("E_state_erasion", 10) as case_loggy:
@@ -352,15 +352,15 @@ class NavbowTest(PygwartsTestCase):
 
 
 		self.assertIsInstance(result1, dict)
-		self.assertIsInstance(result1.get("unknown"), list)
-		self.assertCountEqual(result1["unknown"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
-		self.assertIsInstance(result1.get("known"), list)
-		self.assertCountEqual(result1["known"], [])
+		self.assertIsInstance(result1.get("unknown erased"), list)
+		self.assertCountEqual(result1["unknown erased"], [ "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ])
+		self.assertIsInstance(result1.get("known erased"), list)
+		self.assertCountEqual(result1["known erased"], [])
 		self.assertIsInstance(result2, dict)
-		self.assertIsInstance(result2.get("unknown"), list)
-		self.assertCountEqual(result2["known"], [ "OOH", "EEH" ])
-		self.assertIsInstance(result2.get("known"), list)
-		self.assertCountEqual(result2["unknown"], [])
+		self.assertIsInstance(result2.get("unknown erased"), list)
+		self.assertCountEqual(result2["known erased"], [ "OOH", "EEH" ])
+		self.assertIsInstance(result2.get("known erased"), list)
+		self.assertCountEqual(result2["unknown erased"], [])
 
 
 
@@ -450,7 +450,7 @@ class NavbowTest(PygwartsTestCase):
 
 		self.assertIsInstance(result, dict)
 		self.assertIsInstance(result.get("converted"), list)
-		self.assertEqual(result["converted"], [ "AAH" ])
+		self.assertEqual(result["converted"], [ "AAH -> known" ])
 		self.assertIsInstance(result.get("skipped"), list)
 		self.assertEqual(result["skipped"], [ "OOH", "EEH" ])
 		self.assertIsInstance(result.get("undefined"), list)
@@ -517,7 +517,7 @@ class NavbowTest(PygwartsTestCase):
 
 		self.assertIsInstance(result, dict)
 		self.assertIsInstance(result.get("converted"), list)
-		self.assertEqual(result["converted"], [ "OOH", "EEH", "AAH" ])
+		self.assertEqual(result["converted"], [ "OOH -> unknown", "EEH -> unknown", "AAH -> unknown" ])
 		self.assertIsInstance(result.get("skipped"), list)
 		self.assertEqual(result["skipped"], [ "TING", "TANG", "WALLA", "BING", "BANG" ])
 		self.assertIsInstance(result.get("undefined"), list)
@@ -863,15 +863,15 @@ class NavbowTest(PygwartsTestCase):
 			case2 = self.test_case.erase_state("1")
 
 		self.assertIsInstance(case1, dict)
-		self.assertIsInstance(case1.get("unknown"), list)
-		self.assertCountEqual(case1["unknown"], [])
-		self.assertIsInstance(case1.get("known"), list)
-		self.assertCountEqual(case1["known"], [])
+		self.assertIsInstance(case1.get("unknown erased"), list)
+		self.assertCountEqual(case1["unknown erased"], [])
+		self.assertIsInstance(case1.get("known erased"), list)
+		self.assertCountEqual(case1["known erased"], [])
 		self.assertIsInstance(case2, dict)
-		self.assertIsInstance(case2.get("unknown"), list)
-		self.assertCountEqual(case2["unknown"], [])
-		self.assertIsInstance(case2.get("known"), list)
-		self.assertCountEqual(case2["known"], [])
+		self.assertIsInstance(case2.get("unknown erased"), list)
+		self.assertCountEqual(case2["unknown erased"], [])
+		self.assertIsInstance(case2.get("known erased"), list)
+		self.assertCountEqual(case2["known erased"], [])
 		self.assertIn(
 
 			f"WARNING:L_state_erase_edge_cases:Invalid key \"42\" in {self.test_case.NavbowShelve}",
@@ -893,17 +893,17 @@ class NavbowTest(PygwartsTestCase):
 			case4 = self.test_case.erase_state("0")
 
 		self.assertIsInstance(case3, dict)
-		self.assertIsInstance(case3.get("unknown"), list)
+		self.assertIsInstance(case3.get("unknown erased"), list)
 		self.assertCountEqual(
-			case3["unknown"], [ "OOH", "EEH", "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ]
+			case3["unknown erased"], [ "OOH", "EEH", "AAH", "TING", "TANG", "WALLA", "BING", "BANG" ]
 		)
-		self.assertIsInstance(case3.get("known"), list)
-		self.assertCountEqual(case3["known"], [])
+		self.assertIsInstance(case3.get("known erased"), list)
+		self.assertCountEqual(case3["known erased"], [])
 		self.assertIsInstance(case4, dict)
-		self.assertIsInstance(case4.get("unknown"), list)
-		self.assertCountEqual(case4["unknown"], [])
-		self.assertIsInstance(case4.get("known"), list)
-		self.assertCountEqual(case4["known"], [])
+		self.assertIsInstance(case4.get("unknown erased"), list)
+		self.assertCountEqual(case4["unknown erased"], [])
+		self.assertIsInstance(case4.get("known erased"), list)
+		self.assertCountEqual(case4["known erased"], [])
 		self.assertIn(
 
 			f"WARNING:L_state_erase_edge_cases:Invalid key \"42\" in {self.test_case.NavbowShelve}",
@@ -924,15 +924,15 @@ class NavbowTest(PygwartsTestCase):
 			case6 = self.test_case.erase_state("2")
 
 		self.assertIsInstance(case5, dict)
-		self.assertIsInstance(case5.get("unknown"), list)
-		self.assertCountEqual(case5["unknown"], [])
-		self.assertIsInstance(case5.get("known"), list)
-		self.assertCountEqual(case5["known"], [])
+		self.assertIsInstance(case5.get("unknown erased"), list)
+		self.assertCountEqual(case5["unknown erased"], [])
+		self.assertIsInstance(case5.get("known erased"), list)
+		self.assertCountEqual(case5["known erased"], [])
 		self.assertIsInstance(case6, dict)
-		self.assertIsInstance(case6.get("unknown"), list)
-		self.assertCountEqual(case6["unknown"], [])
-		self.assertIsInstance(case6.get("known"), list)
-		self.assertCountEqual(case6["known"], [])
+		self.assertIsInstance(case6.get("unknown erased"), list)
+		self.assertCountEqual(case6["unknown erased"], [])
+		self.assertIsInstance(case6.get("known erased"), list)
+		self.assertCountEqual(case6["known erased"], [])
 		self.assertIn(
 			f"INFO:L_state_erase_edge_cases:Improper state \"2\" for erasion", case_loggy.output
 		)
@@ -956,15 +956,15 @@ class NavbowTest(PygwartsTestCase):
 			case8 = self.test_case.erase_state("1")
 
 		self.assertIsInstance(case7, dict)
-		self.assertIsInstance(case7.get("unknown"), list)
-		self.assertCountEqual(case7["unknown"], [])
-		self.assertIsInstance(case7.get("known"), list)
-		self.assertCountEqual(case7["known"], [])
+		self.assertIsInstance(case7.get("unknown erased"), list)
+		self.assertCountEqual(case7["unknown erased"], [])
+		self.assertIsInstance(case7.get("known erased"), list)
+		self.assertCountEqual(case7["known erased"], [])
 		self.assertIsInstance(case8, dict)
-		self.assertIsInstance(case8.get("unknown"), list)
-		self.assertCountEqual(case8["unknown"], [])
-		self.assertIsInstance(case8.get("known"), list)
-		self.assertCountEqual(case8["known"], [])
+		self.assertIsInstance(case8.get("unknown erased"), list)
+		self.assertCountEqual(case8["unknown erased"], [])
+		self.assertIsInstance(case8.get("known erased"), list)
+		self.assertCountEqual(case8["known erased"], [])
 		self.assertIn(
 			f"INFO:L_state_erase_edge_cases:No words with known state", case_loggy.output
 		)
@@ -979,15 +979,15 @@ class NavbowTest(PygwartsTestCase):
 			case10= self.test_case.erase_state("0")
 
 		self.assertIsInstance(case9, dict)
-		self.assertIsInstance(case9.get("unknown"), list)
-		self.assertCountEqual(case9["unknown"], [])
-		self.assertIsInstance(case9.get("known"), list)
-		self.assertCountEqual(case9["known"], [])
+		self.assertIsInstance(case9.get("unknown erased"), list)
+		self.assertCountEqual(case9["unknown erased"], [])
+		self.assertIsInstance(case9.get("known erased"), list)
+		self.assertCountEqual(case9["known erased"], [])
 		self.assertIsInstance(case10, dict)
-		self.assertIsInstance(case10.get("unknown"), list)
-		self.assertCountEqual(case10["unknown"], [])
-		self.assertIsInstance(case10.get("known"), list)
-		self.assertCountEqual(case10["known"], [])
+		self.assertIsInstance(case10.get("unknown erased"), list)
+		self.assertCountEqual(case10["unknown erased"], [])
+		self.assertIsInstance(case10.get("known erased"), list)
+		self.assertCountEqual(case10["known erased"], [])
 		self.assertIn(
 			f"INFO:L_state_erase_edge_cases:No words with unknown state", case_loggy.output
 		)
@@ -1003,15 +1003,15 @@ class NavbowTest(PygwartsTestCase):
 
 
 		self.assertIsInstance(case11, dict)
-		self.assertIsInstance(case11.get("unknown"), list)
-		self.assertCountEqual(case11["unknown"], [])
-		self.assertIsInstance(case11.get("known"), list)
-		self.assertCountEqual(case11["known"], [])
+		self.assertIsInstance(case11.get("unknown erased"), list)
+		self.assertCountEqual(case11["unknown erased"], [])
+		self.assertIsInstance(case11.get("known erased"), list)
+		self.assertCountEqual(case11["known erased"], [])
 		self.assertIsInstance(case12, dict)
-		self.assertIsInstance(case12.get("unknown"), list)
-		self.assertCountEqual(case12["unknown"], [])
-		self.assertIsInstance(case12.get("known"), list)
-		self.assertCountEqual(case12["known"], [])
+		self.assertIsInstance(case12.get("unknown erased"), list)
+		self.assertCountEqual(case12["unknown erased"], [])
+		self.assertIsInstance(case12.get("known erased"), list)
+		self.assertCountEqual(case12["known erased"], [])
 		self.assertIn(
 
 			"INFO:L_state_erase_edge_cases:State \"None\" not an integer or numeric string",
@@ -1063,19 +1063,19 @@ class NavbowTest(PygwartsTestCase):
 
 
 		self.assertIsInstance(case1, dict)
-		self.assertIsInstance(case1.get("known"), list)
-		self.assertFalse(case1["known"])
-		self.assertIsInstance(case1.get("unknown"), list)
-		self.assertFalse(case1["unknown"])
+		self.assertIsInstance(case1.get("known erased"), list)
+		self.assertFalse(case1["known erased"])
+		self.assertIsInstance(case1.get("unknown erased"), list)
+		self.assertFalse(case1["unknown erased"])
 		self.assertIsInstance(case1.get("undefined"), list)
 		self.assertFalse(case1["undefined"])
 
 
 		self.assertIsInstance(case2, dict)
-		self.assertIsInstance(case2.get("known"), list)
-		self.assertFalse(case2["known"])
-		self.assertIsInstance(case2.get("unknown"), list)
-		self.assertFalse(case2["unknown"])
+		self.assertIsInstance(case2.get("known erased"), list)
+		self.assertFalse(case2["known erased"])
+		self.assertIsInstance(case2.get("unknown erased"), list)
+		self.assertFalse(case2["unknown erased"])
 		self.assertIsInstance(case2.get("undefined"), list)
 		self.assertFalse(case2["undefined"])
 
