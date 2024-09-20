@@ -123,7 +123,7 @@ class ARPWatchdog(Transmutation):
 				if hasattr(super(), "inspect") : return super().inspect(message)
 
 
-		return TriggerForARP
+		return TimerInSeconds
 
 
 
@@ -181,7 +181,7 @@ class UptimeWatchdog(Transmutation):
 				if hasattr(super(), "inspect") : return super().inspect(message)
 
 
-		return TriggerForTrap
+		return TimerInSeconds
 
 
 
@@ -232,7 +232,7 @@ class TrapWatchdog(Transmutation):
 				if hasattr(super(), "inspect") : return super().inspect(message)
 
 
-		return AnyTrapTrigger
+		return TimerInSeconds
 
 
 
@@ -284,7 +284,7 @@ class PolykomWatchdog(Transmutation):
 				if hasattr(super(), "inspect") : return super().inspect(message)
 
 
-		return TriggerForTrap
+		return TimerInSeconds
 
 
 

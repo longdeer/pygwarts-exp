@@ -1,3 +1,4 @@
+from collections						import defaultdict
 from pygwarts.filch.houses.apppuf.snmp	import MIBResolver
 from pygwarts.filch.houses.apppuf.snmp	import I_inject
 
