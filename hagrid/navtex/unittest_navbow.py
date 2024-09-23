@@ -1195,88 +1195,56 @@ class NavbowTest(PygwartsTestCase):
 		self.assertRaises(TypeError, self.test_case.convert, "OOH", 1)
 		self.assertEqual(len(self.test_case.NavbowShelve),0)
 		self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
+		self.test_case.NavbowShelve["OOH"] = 2
 		self.assertEqual(len(self.test_case.NavbowShelve),8)
 
 
-		with self.assertLogs("O_convert_edge_cases", 10) as case_loggy:
+		for s1,s2,s3 in (( 1,2,0 ),( "1","2","0" )):
+			with(
 
-			self.test_case.NavbowShelve["OOH"] = 2
-			case1 = self.test_case.convert("OOH", 1, state=1)
-			case2 = self.test_case.convert("EEH", state=2)
-			case3 = self.test_case.convert(state=0)
-
-
-		self.assertIn("WARNING:O_convert_edge_cases:Invalid state for word \"OOH\"", case_loggy.output)
-		self.assertIn("INFO:O_convert_edge_cases:Incorrect word \"1\" for conversion", case_loggy.output)
-		self.assertIn("INFO:O_convert_edge_cases:Improper conversion state \"2\"", case_loggy.output)
-		self.assertIn("INFO:O_convert_edge_cases:No words provided for conversion", case_loggy.output)
+				self.subTest(s1=s1, s2=s2, s3=s3) as _,
+				self.assertLogs("O_convert_edge_cases", 10) as case_loggy
+			):
+				case1 = self.test_case.convert("OOH", 1, state=s1)
+				case2 = self.test_case.convert("EEH", state=s2)
+				case3 = self.test_case.convert(state=s3)
 
 
-		self.assertIsInstance(case1, dict)
-		self.assertIsInstance(case1.get("converted"), list)
-		self.assertFalse(case1["converted"])
-		self.assertIsInstance(case1.get("skipped"), list)
-		self.assertFalse(case1["skipped"])
-		self.assertIsInstance(case1.get("undefined"), list)
-		self.assertFalse(case1["undefined"])
+				self.assertIn(
+					"WARNING:O_convert_edge_cases:Invalid state for word \"OOH\"", case_loggy.output
+				)
+				self.assertIn(
+					"INFO:O_convert_edge_cases:Incorrect word \"1\" for conversion", case_loggy.output
+				)
+				self.assertIn("INFO:O_convert_edge_cases:Improper conversion state \"2\"", case_loggy.output)
+				self.assertIn("INFO:O_convert_edge_cases:No words provided for conversion", case_loggy.output)
 
 
-		self.assertIsInstance(case2, dict)
-		self.assertIsNotNone(case2.get("converted"))
-		self.assertFalse(case2["converted"])
-		self.assertIsInstance(case2.get("skipped"), list)
-		self.assertFalse(case2["skipped"])
-		self.assertIsInstance(case2.get("undefined"), list)
-		self.assertFalse(case2["undefined"])
+				self.assertIsInstance(case1, dict)
+				self.assertIsInstance(case1.get("converted"), list)
+				self.assertFalse(case1["converted"])
+				self.assertIsInstance(case1.get("skipped"), list)
+				self.assertFalse(case1["skipped"])
+				self.assertIsInstance(case1.get("undefined"), list)
+				self.assertFalse(case1["undefined"])
 
 
-		self.assertIsInstance(case3, dict)
-		self.assertIsInstance(case3.get("converted"), list)
-		self.assertFalse(case3["converted"])
-		self.assertIsInstance(case3.get("skipped"), list)
-		self.assertFalse(case3["skipped"])
-		self.assertIsInstance(case3.get("undefined"), list)
-		self.assertFalse(case3["undefined"])
+				self.assertIsInstance(case2, dict)
+				self.assertIsNotNone(case2.get("converted"))
+				self.assertFalse(case2["converted"])
+				self.assertIsInstance(case2.get("skipped"), list)
+				self.assertFalse(case2["skipped"])
+				self.assertIsInstance(case2.get("undefined"), list)
+				self.assertFalse(case2["undefined"])
 
 
-		with self.assertLogs("O_convert_edge_cases", 10) as case_loggy:
-
-			case4 = self.test_case.convert("OOH", 1, state="1")
-			case5 = self.test_case.convert("EEH", state="2")
-			case6 = self.test_case.convert(state="0")
-
-
-		self.assertIn("WARNING:O_convert_edge_cases:Invalid state for word \"OOH\"", case_loggy.output)
-		self.assertIn("INFO:O_convert_edge_cases:Incorrect word \"1\" for conversion", case_loggy.output)
-		self.assertIn("INFO:O_convert_edge_cases:Improper conversion state \"2\"", case_loggy.output)
-		self.assertIn("INFO:O_convert_edge_cases:No words provided for conversion", case_loggy.output)
-
-
-		self.assertIsInstance(case4, dict)
-		self.assertIsInstance(case4.get("converted"), list)
-		self.assertFalse(case4["converted"])
-		self.assertIsInstance(case4.get("skipped"), list)
-		self.assertFalse(case4["skipped"])
-		self.assertIsInstance(case4.get("undefined"), list)
-		self.assertFalse(case4["undefined"])
-
-
-		self.assertIsInstance(case5, dict)
-		self.assertIsNotNone(case5.get("converted"))
-		self.assertFalse(case5["converted"])
-		self.assertIsInstance(case5.get("skipped"), list)
-		self.assertFalse(case5["skipped"])
-		self.assertIsInstance(case5.get("undefined"), list)
-		self.assertFalse(case5["undefined"])
-
-
-		self.assertIsInstance(case6, dict)
-		self.assertIsInstance(case6.get("converted"), list)
-		self.assertFalse(case6["converted"])
-		self.assertIsInstance(case6.get("skipped"), list)
-		self.assertFalse(case6["skipped"])
-		self.assertIsInstance(case6.get("undefined"), list)
-		self.assertFalse(case6["undefined"])
+				self.assertIsInstance(case3, dict)
+				self.assertIsInstance(case3.get("converted"), list)
+				self.assertFalse(case3["converted"])
+				self.assertIsInstance(case3.get("skipped"), list)
+				self.assertFalse(case3["skipped"])
+				self.assertIsInstance(case3.get("undefined"), list)
+				self.assertFalse(case3["undefined"])
 
 
 		with self.assertLogs("O_convert_edge_cases", 10) as case_loggy:
@@ -1402,14 +1370,14 @@ class NavbowTest(PygwartsTestCase):
 
 
 		for s1,s2,s3 in (( 1,2,0 ),( "1","2","0" )):
-			with (
+			with(
 
 				self.subTest(s1=1, s2=2, s3=0) as _,
 				self.assertLogs("Q_addition_edge_cases", 10) as case_loggy
 			):
-				case1 = self.test_case.add(1, state=1)
-				case2 = self.test_case.add("SAY", state=2)
-				case3 = self.test_case.add(state=0)
+				case1 = self.test_case.add(1, state=s1)
+				case2 = self.test_case.add("SAY", state=s2)
+				case3 = self.test_case.add(state=s3)
 
 
 				self.assertIn("INFO:Q_addition_edge_cases:Incorrect word \"1\" for addition", case_loggy.output)
