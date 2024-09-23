@@ -410,7 +410,6 @@ class NavbowTest(PygwartsTestCase):
 
 	def test_G_conversion(self):
 
-		sleep(1)
 		self.assertTrue(self.NAVBOW_SHELF.is_file())
 		self.test_case = NavbowController(
 
@@ -472,7 +471,6 @@ class NavbowTest(PygwartsTestCase):
 
 	def test_H_conversion(self):
 
-		sleep(1)
 		self.assertTrue(self.NAVBOW_SHELF.is_file())
 		self.test_case = NavbowController(
 
@@ -536,7 +534,6 @@ class NavbowTest(PygwartsTestCase):
 
 	def test_I_conversion(self):
 
-		sleep(1)
 		self.assertTrue(self.NAVBOW_SHELF.is_file())
 		self.test_case = NavbowController(
 
@@ -582,6 +579,101 @@ class NavbowTest(PygwartsTestCase):
 
 		for word,state in self.test_case.NavbowShelve:
 			with self.subTest(word=word, state=state): self.assertEqual(state,0)
+
+
+
+
+
+
+
+
+	def test_J_addition(self):
+
+		self.test_case = NavbowController(
+
+			LibraryContrib(
+
+				init_name="J_addition",
+				init_level=10,
+				handler=str(self.NAVBOW_LOGGY)
+			)
+		)
+
+
+		self.assertEqual(len(self.test_case.NavbowShelve),0)
+		self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
+		self.assertEqual(len(self.test_case.NavbowShelve),8)
+
+
+		with self.assertLogs("J_addition", 10) as case_loggy:
+			case1 = self.test_case.add("I", "SAY", "i", "say", state=1)
+
+
+		self.assertIn("DEBUG:J_addition:Duplicate word \"i\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:J_addition:Duplicate word \"say\" skipped", case_loggy.output)
+		self.assertIn("INFO:J_addition:Done addition for 2/4 words", case_loggy.output)
+
+
+		self.assertIsInstance(case1, dict)
+		self.assertIsInstance(case1.get("added to known"), list)
+		self.assertCountEqual(case1["added to known"], [ "I", "SAY" ])
+		self.assertIsInstance(case1.get("added to unknown"), list)
+		self.assertCountEqual(case1["added to unknown"], [])
+		self.assertIsInstance(case1.get("skipped"), list)
+		self.assertCountEqual(case1["skipped"], [])
+
+
+		with self.assertLogs("J_addition", 10) as case_loggy:
+			case1 = self.test_case.add("i", "say", "I", "SAY", state="1")
+
+
+		self.assertIn("DEBUG:J_addition:Duplicate word \"I\" skipped", case_loggy.output)
+		self.assertIn("DEBUG:J_addition:Duplicate word \"SAY\" skipped", case_loggy.output)
+		self.assertIn("INFO:J_addition:Done addition for 0/4 words", case_loggy.output)
+
+
+		self.assertIsInstance(case1, dict)
+		self.assertIsInstance(case1.get("added to known"), list)
+		self.assertCountEqual(case1["added to known"], [])
+		self.assertIsInstance(case1.get("added to unknown"), list)
+		self.assertCountEqual(case1["added to unknown"], [])
+		self.assertIsInstance(case1.get("skipped"), list)
+		self.assertCountEqual(case1["skipped"], [ "I", "SAY" ])
+
+
+		del self.test_case.NavbowShelve["I"]
+		del self.test_case.NavbowShelve["SAY"]
+
+
+
+		with self.assertLogs("J_addition", 10) as case_loggy:
+			case1 = self.test_case.add("I", "SAY", state=0)
+
+		self.assertIn("INFO:J_addition:Done addition for 2/2 words", case_loggy.output)
+
+
+		self.assertIsInstance(case1, dict)
+		self.assertIsInstance(case1.get("added to known"), list)
+		self.assertCountEqual(case1["added to known"], [])
+		self.assertIsInstance(case1.get("added to unknown"), list)
+		self.assertCountEqual(case1["added to unknown"], [ "I", "SAY" ])
+		self.assertIsInstance(case1.get("skipped"), list)
+		self.assertCountEqual(case1["skipped"], [])
+
+
+		with self.assertLogs("J_addition", 10) as case_loggy:
+			case1 = self.test_case.add("i", "say", state="0")
+
+		self.assertIn("INFO:J_addition:Done addition for 0/2 words", case_loggy.output)
+
+
+		self.assertIsInstance(case1, dict)
+		self.assertIsInstance(case1.get("added to known"), list)
+		self.assertCountEqual(case1["added to known"], [])
+		self.assertIsInstance(case1.get("added to unknown"), list)
+		self.assertCountEqual(case1["added to unknown"], [])
+		self.assertIsInstance(case1.get("skipped"), list)
+		self.assertCountEqual(case1["skipped"], [ "I", "SAY" ])
 
 
 
