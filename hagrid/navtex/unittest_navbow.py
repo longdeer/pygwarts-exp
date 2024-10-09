@@ -1191,8 +1191,13 @@ class NavbowTest(PygwartsTestCase):
 		)
 
 
-		# RaisesRegex version doesn't work...
-		self.assertRaises(TypeError, self.test_case.convert, "OOH", 1)
+		self.assertRaisesRegex(
+
+			TypeError,
+			r"NavbowController.convert\(\) missing 1 required keyword-only argument: 'state'",
+			self.test_case.convert,
+			"OOH",1
+		)
 		self.assertEqual(len(self.test_case.NavbowShelve),0)
 		self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
 		self.test_case.NavbowShelve["OOH"] = 2
@@ -1302,8 +1307,13 @@ class NavbowTest(PygwartsTestCase):
 		)
 
 
-		# RaisesRegex version doesn't work...
-		self.assertRaises(TypeError, self.test_case, "OOH")
+		self.assertRaisesRegex(
+
+			TypeError,
+			r"NavbowController.__call__\(\) takes 1 positional argument but 2 were given",
+			self.test_case,
+			"OOH"
+		)
 		self.assertEqual(len(self.test_case.NavbowShelve),0)
 		self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
 		self.assertEqual(len(self.test_case.NavbowShelve),8)
@@ -1362,8 +1372,13 @@ class NavbowTest(PygwartsTestCase):
 		)
 
 
-		# RaisesRegex version doesn't work...
-		self.assertRaises(TypeError, self.test_case.add, "OOH", 1)
+		self.assertRaisesRegex(
+
+			TypeError,
+			r"NavbowController.add\(\) missing 1 required keyword-only argument: 'state'",
+			self.test_case.add,
+			"OOH",1
+		)
 		self.assertEqual(len(self.test_case.NavbowShelve),0)
 		self.test_case.NavbowShelve.grab(str(self.NAVBOW_SHELF))
 		self.assertEqual(len(self.test_case.NavbowShelve),8)
