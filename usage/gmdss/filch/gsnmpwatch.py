@@ -1,26 +1,27 @@
-from typing								import Any
-from typing								import List
-from typing								import Dict
-from typing								import Tuple
-from typing								import Callable
-from sys								import exc_info
-from time								import time
-from asyncore							import loop
-from traceback							import format_exception
-from pygwarts.irma.contrib				import LibraryContrib
-from pygwarts.filch.apppuf.snmp			import SNMPtrap
-from pysnmp.entity						import config
-from pysnmp.entity.engine				import SnmpEngine
-from pysnmp.entity.rfc3413				import ntfrcv
-from pysnmp.carrier.asyncore.dgram		import udp
-from pysnmp.carrier.asyncore.dispatch	import AsyncoreDispatcher as ScapyDispatcher
-from pysnmp.smi							import builder
-from pysnmp.smi							import view
-from pysnmp.smi.rfc1902					import ObjectType
-from pysnmp.smi.rfc1902					import ObjectIdentity
-from pysnmp.proto.rfc1902				import ObjectName
-from pysnmp.proto.rfc1902				import OctetString
-from pysnmp.error						import PySnmpError
+from typing									import Any
+from typing									import List
+from typing									import Dict
+from typing									import Tuple
+from typing									import Callable
+from sys									import exc_info
+from time									import time
+from asyncore								import loop
+from traceback								import format_exception
+from pygwarts.magical.philosophers_stone	import Transmutable
+from pygwarts.irma.contrib					import LibraryContrib
+from pygwarts.filch.apppuf.snmp				import SNMPtrap
+from pysnmp.entity							import config
+from pysnmp.entity.engine					import SnmpEngine
+from pysnmp.entity.rfc3413					import ntfrcv
+from pysnmp.carrier.asyncore.dgram			import udp
+from pysnmp.carrier.asyncore.dispatch		import AsyncoreDispatcher as ScapyDispatcher
+from pysnmp.smi								import builder
+from pysnmp.smi								import view
+from pysnmp.smi.rfc1902						import ObjectType
+from pysnmp.smi.rfc1902						import ObjectIdentity
+from pysnmp.proto.rfc1902					import ObjectName
+from pysnmp.proto.rfc1902					import OctetString
+from pysnmp.error							import PySnmpError
 
 
 
@@ -32,8 +33,6 @@ from pysnmp.error						import PySnmpError
 class Filch(SNMPtrap):
 	class loggy(LibraryContrib):
 
-		# handler		= "file handler path (optional)"
-		# init_name	= "filch (optional)"
 		init_name	= "filch"
 		init_level	= 10
 
@@ -90,14 +89,6 @@ class Filch(SNMPtrap):
 			ENGINE.transportDispatcher.closeDispatcher()
 
 
-	def add_handler(self, handler :Callable[[Tuple[str,str,str,str,str,str,str]],None]):
-
-		if	callable(handler):
-
-			self.handlers.append(handler)
-			self.loggy.debug(f"Appended handler {handler}")
-
-
 	def get_modules(self, sources :List[str], modules :List[str]):
 
 		self.builder.addMibSources(*( builder.DirMibSource(S) for S in sources ))
@@ -146,11 +137,15 @@ class Filch(SNMPtrap):
 			)
 
 			self.loggy.debug(f"Trap summary: {current}")
+			self.handler(current)
 
-			for handler in self.handlers:
 
-				self.loggy.debug(f"Invoking handler {handler}")
-				handler(current)
+
+
+	class Handler(Transmutable):
+		def __call__(self, chunk :Tuple[str,str,str,str,str,str,str]):
+
+			pass
 
 
 
