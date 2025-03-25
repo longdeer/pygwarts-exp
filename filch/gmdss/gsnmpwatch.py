@@ -2,12 +2,12 @@ from typing									import Any
 from typing									import List
 from typing									import Dict
 from typing									import Tuple
-from typing									import Callable
 from sys									import exc_info
 from time									import time
 from asyncore								import loop
 from traceback								import format_exception
 from pygwarts.magical.philosophers_stone	import Transmutable
+from pygwarts.magical.time_turner			import TimeTurner
 from pygwarts.irma.contrib					import LibraryContrib
 from pygwarts.filch.marauders_map			import MaraudersMap
 from pygwarts.filch.apppuf.snmp				import SNMPtrap
@@ -31,12 +31,24 @@ from pysnmp.error							import PySnmpError
 
 
 
+root	= "/srv/lcontainer/filch"
+point	= TimeTurner()
+
+
+
+
+
+
+
+
 class Filch(SNMPtrap):
 	class loggy(LibraryContrib):
 
-		init_name	= "filch"
+		handler		= f"{root}/snmpwatch/{point.Ym_aspath}/gsnmpwatch{point.dmY_asjoin}.loggy"
 		init_level	= 10
+		init_name	= "filch"
 		force_info	= "*filchmap*",
+		watchdog	= "*.Handler",
 
 	def __init__(self):
 		super().__init__()
@@ -150,35 +162,35 @@ class Filch(SNMPtrap):
 	class filchmap(MaraudersMap): pass
 	class Handler(Transmutable):
 
-			dsx1LoopbackStatus = {
+		dsx1LoopbackStatus = {
 
-				"2":	"Near end payload loopback",
-				"4":	"Near end line loopback",
-				"8":	"Near end other loopback",
-				"16":	"Near end inward loopback",
-				"32":	"Far end payload loopback",
-				"64":	"Far end line loopback",
-			}
-			dsx1LineStatus = {
+			"2":	"Near end payload loopback",
+			"4":	"Near end line loopback",
+			"8":	"Near end other loopback",
+			"16":	"Near end inward loopback",
+			"32":	"Far end payload loopback",
+			"64":	"Far end line loopback",
+		}
+		dsx1LineStatus = {
 
-				"1":		"No alarm present",
-				"2":		"Far end LOF (a.k.a., Yellow Alarm)",
-				"4":		"Near end sending LOF Indication",
-				"8":		"Far end sending AIS",
-				"16":		"Near end sending AIS",
-				"32":		"Near end LOF (a.k.a., Red Alarm)",
-				"64":		"Near end Loss Of Signal",
-				"128":		"Near end is looped",
-				"256":		"E1 TS16 AIS",
-				"512":		"Far End Sending TS16 LOMF",
-				"1024":		"Near End Sending TS16 LOMF",
-				"2048":		"Near End detects a test code",
-				"4096":		"any line status not defined here",
-				"8192":		"Near End in Unavailable Signal State",
-				"16384":	"Carrier Equipment Out of Service",
-				"32768":	"DS2 Payload AIS",
-				"65536":	"DS2 Performance Threshold Exceeded",
-			}
+			"1":		"No alarm present",
+			"2":		"Far end LOF (a.k.a., Yellow Alarm)",
+			"4":		"Near end sending LOF Indication",
+			"8":		"Far end sending AIS",
+			"16":		"Near end sending AIS",
+			"32":		"Near end LOF (a.k.a., Red Alarm)",
+			"64":		"Near end Loss Of Signal",
+			"128":		"Near end is looped",
+			"256":		"E1 TS16 AIS",
+			"512":		"Far End Sending TS16 LOMF",
+			"1024":		"Near End Sending TS16 LOMF",
+			"2048":		"Near End detects a test code",
+			"4096":		"any line status not defined here",
+			"8192":		"Near End in Unavailable Signal State",
+			"16384":	"Carrier Equipment Out of Service",
+			"32768":	"DS2 Payload AIS",
+			"65536":	"DS2 Performance Threshold Exceeded",
+		}
 
 		def name(self, addr :str) -> str :
 
@@ -211,6 +223,10 @@ class Filch(SNMPtrap):
 						f"{self.name(src)} port {P} line status: {self.dsx1LineStatus.get(S)}"
 					)
 
+				case ( src, "SNMPv2-SMI", "enterprises", "935", _, S, _ ):
+
+					self.loggy.info(f"{self.name(src)} status: {S}")
+
 				case ( src, MIB, *details ):
 
 					self.loggy.info(f"{self.name(src)} {MIB}: {details}")
@@ -223,24 +239,25 @@ class Filch(SNMPtrap):
 
 
 if	__name__ == "__main__":
+	if	(kill := point.diff(subtrahend=TimeTurner(timepoint="2359"))) <0:
 
-	filch = Filch()
-	filch.filchmap.CSV(
+		filch = Filch()
+		filch.filchmap.CSV(
 
-		"/mnt/container/ArrestedDevelopment/pygwarts/development/loggy/broadmap.csv",
-		";",
-		IP4=0,
-		MAC=1,
-		NAME=2,
-		DESC=3
-	)
-	filch.get_modules(
+			f"{root}/broadmap.csv",
+			";",
+			IP4=0,
+			MAC=1,
+			NAME=2,
+			DESC=3
+		)
+		filch.get_modules(
 
-		[ "~/.pysnmp/mibs" ],
-		[ "SNMPv2-MIB", "IF-MIB", "SNMP-COMMUNITY-MIB", "XPPC-MIB", "POLYGON-MIB", "POLYCOM740-MIB" ]
-	)
+			[ "~/.pysnmp/mibs" ],
+			[ "SNMPv2-MIB", "IF-MIB", "SNMP-COMMUNITY-MIB", "XPPC-MIB", "POLYGON-MIB", "POLYCOM740-MIB" ]
+		)
 
-	filch("127.0.0.18", 54321, filch.trap, listen_time=100, community="trap", community_i="area")
+		filch("192.168.162.111", 162, filch.trap, listen_time=-kill, community="trap", community_i="area")
 
 
 
