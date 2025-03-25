@@ -1,7 +1,6 @@
 from pygwarts.magical.time_turner				import TimeTurner
 from pygwarts.magical.time_turner.timers		import Callstamp
 from pygwarts.irma.contrib						import LibraryContrib
-# from pygwarts.irma.contrib.intercept			import ContribInterceptor
 from pygwarts.irma.shelve						import LibraryShelf
 from pygwarts.irma.access.utils					import byte_size_string
 from pygwarts.hagrid.thrivables					import Tree
@@ -18,9 +17,6 @@ from pygwarts.hagrid.planting.weeds				import SprigTrimmer
 from pygwarts.hagrid.cultivation.sifting		import SiftingController
 from pygwarts.hagrid.cultivation.registering	import PlantRegister
 from pygwarts.hagrid.cultivation.registering	import PlantRegisterQuerier as PRQ
-# from pygwarts.hedwig.telegram.announce_decor	import Announcer
-from gopcredo									import mrma2tech
-from gopcredo									import gmdssA2mrmENGbot
 
 
 
@@ -29,7 +25,6 @@ from gopcredo									import gmdssA2mrmENGbot
 
 
 
-# Date point for logging
 point	= TimeTurner()
 root	= "/srv/lcontainer/hagrid"
 
@@ -42,12 +37,10 @@ root	= "/srv/lcontainer/hagrid"
 
 class Ghardsync(Tree):
 
-	# @ContribInterceptor
-	# @Announcer(gmdssA2mrmENGbot(), mrma2tech())
 	class loggy(LibraryContrib):
 
-		init_name	= "hagrid"
 		handler		= f"{root}/hardsync/{point.Ym_aspath}/ghardsync{point.dmY_asjoin}.loggy"
+		init_name	= "hagrid"
 
 	class leafs(SiftingController): include = r".+",
 	class twigs(SiftingController):
@@ -80,24 +73,26 @@ class Ghardsync(Tree):
 
 
 
-hardsync = Ghardsync(bough="/mnt/H")
-hardsync.perform()
-hardsync.stats.produce(
+if	__name__ == "__main__":
 
-	f"{root}/replicas/{point.Ym_aspath}/greplica{point.dmY_asjoin}.Shelf",
-	strict_mode=False,
-)
+	hardsync = Ghardsync(bough="/mnt/H")
+	hardsync.perform()
+	hardsync.stats.produce(
 
-prq = PRQ(hardsync.stats)
+		f"{root}/replicas/{point.Ym_aspath}/greplica{point.dmY_asjoin}.Shelf",
+		strict_mode=False,
+	)
 
-gsize		= byte_size_string(prq.WG(apparent=True))
-gfiles		= prq.TG()
-gfolders	= prq.LG()
+	prq = PRQ(hardsync.stats)
 
-hardsync.loggy.info(f"Sprout \"/srv/A2/R\" stats:")
-hardsync.loggy.info(f"Size: {gsize}")
-hardsync.loggy.info(f"Twigs: {gfolders}")
-hardsync.loggy.info(f"Leafs: {gfiles}")
+	gsize		= byte_size_string(prq.WG(apparent=True))
+	gfiles		= prq.TG()
+	gfolders	= prq.LG()
+
+	hardsync.loggy.info(f"Sprout \"/srv/A2/R\" stats:")
+	hardsync.loggy.info(f"Size: {gsize}")
+	hardsync.loggy.info(f"Twigs: {gfolders}")
+	hardsync.loggy.info(f"Leafs: {gfiles}")
 
 
 
