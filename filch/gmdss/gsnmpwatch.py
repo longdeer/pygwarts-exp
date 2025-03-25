@@ -9,6 +9,7 @@ from asyncore								import loop
 from traceback								import format_exception
 from pygwarts.magical.philosophers_stone	import Transmutable
 from pygwarts.irma.contrib					import LibraryContrib
+from pygwarts.filch.marauders_map			import MaraudersMap
 from pygwarts.filch.apppuf.snmp				import SNMPtrap
 from pysnmp.entity							import config
 from pysnmp.entity.engine					import SnmpEngine
@@ -35,6 +36,7 @@ class Filch(SNMPtrap):
 
 		init_name	= "filch"
 		init_level	= 10
+		force_info	= "*filchmap*",
 
 	def __init__(self):
 		super().__init__()
@@ -58,6 +60,9 @@ class Filch(SNMPtrap):
 		self.builder	= builder.MibBuilder()
 		self.viewer		= view.MibViewController(self.builder)
 		self.handlers	= list()
+
+
+
 
 	def trap(self, listen_ip :str, listen_port :int, listen_time :int, community :str, community_i :str):
 
@@ -137,15 +142,78 @@ class Filch(SNMPtrap):
 			)
 
 			self.loggy.debug(f"Trap summary: {current}")
-			self.handler(current)
+			self.Handler(current)
 
 
 
 
+	class filchmap(MaraudersMap): pass
 	class Handler(Transmutable):
+
+			dsx1LoopbackStatus = {
+
+				"2":	"Near end payload loopback",
+				"4":	"Near end line loopback",
+				"8":	"Near end other loopback",
+				"16":	"Near end inward loopback",
+				"32":	"Far end payload loopback",
+				"64":	"Far end line loopback",
+			}
+			dsx1LineStatus = {
+
+				"1":		"No alarm present",
+				"2":		"Far end LOF (a.k.a., Yellow Alarm)",
+				"4":		"Near end sending LOF Indication",
+				"8":		"Far end sending AIS",
+				"16":		"Near end sending AIS",
+				"32":		"Near end LOF (a.k.a., Red Alarm)",
+				"64":		"Near end Loss Of Signal",
+				"128":		"Near end is looped",
+				"256":		"E1 TS16 AIS",
+				"512":		"Far End Sending TS16 LOMF",
+				"1024":		"Near End Sending TS16 LOMF",
+				"2048":		"Near End detects a test code",
+				"4096":		"any line status not defined here",
+				"8192":		"Near End in Unavailable Signal State",
+				"16384":	"Carrier Equipment Out of Service",
+				"32768":	"DS2 Payload AIS",
+				"65536":	"DS2 Performance Threshold Exceeded",
+			}
+
+		def name(self, addr :str) -> str :
+
+			try:
+				if	(host_name := self.filchmap.ip4map_name(addr)) is not None:
+					return host_name
+			except:	return addr
+			else:	return addr
+
 		def __call__(self, chunk :Tuple[str,str,str,str,str,str,str]):
 
-			pass
+			match chunk:
+
+				case ( src, "SNMPv2-MIB", "sysUpTime", *_ ):					return
+				case ( src, "SNMPv2-MIB", "snmpTrapOID", *_ ):					return
+				case ( src, "SNMPv2-MIB", "snmpTrapEnterprise", *_):			return
+				case ( src, "SNMP-COMMUNITY-MIB", "snmpTrapAddress", *_ ):		return
+				case ( src, "SNMP-COMMUNITY-MIB", "snmpTrapCommunity", *_ ):	return
+				case ( src, "DS1-MIB", "dsx1LoopbackStatus", P, _, S, _ ):
+
+					if	S != "1":
+
+						self.loggy.info(
+							f"{self.name(src)} port {P} loopback status: {self.dsx1LoopbackStatus.get(S)}"
+						)
+
+				case ( src, "DS1-MIB", "dsx1LineStatus", P, _, S, _ ):
+
+					self.loggy.info(
+						f"{self.name(src)} port {P} line status: {self.dsx1LineStatus.get(S)}"
+					)
+
+				case ( src, MIB, *details ):
+
+					self.loggy.info(f"{self.name(src)} {MIB}: {details}")
 
 
 
@@ -157,9 +225,18 @@ class Filch(SNMPtrap):
 if	__name__ == "__main__":
 
 	filch = Filch()
+	filch.filchmap.CSV(
+
+		"/mnt/container/ArrestedDevelopment/pygwarts/development/loggy/broadmap.csv",
+		";",
+		IP4=0,
+		MAC=1,
+		NAME=2,
+		DESC=3
+	)
 	filch.get_modules(
 
-		[ "/home/vla/.pysnmp/mibs" ],
+		[ "~/.pysnmp/mibs" ],
 		[ "SNMPv2-MIB", "IF-MIB", "SNMP-COMMUNITY-MIB", "XPPC-MIB", "POLYGON-MIB", "POLYCOM740-MIB" ]
 	)
 
