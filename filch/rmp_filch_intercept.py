@@ -130,3 +130,30 @@ class Discoverywatch(TelegramTechHoist):
 
 
 
+
+class SNMPwatch(TelegramTechHoist):
+	def __call__(self):
+
+
+		class Interceptor(super().__call__()):
+			def info(self, message :str):
+
+				if	isinstance(getattr(self, "watchdog_map", None), set):
+					for pattern in self.watchdog_map:
+
+						if	isinstance(pattern, re.Pattern):
+							if	pattern.fullmatch(self.handover_name):
+
+								self.buffer_insert(f"snmpwatch: {message}")
+
+				return super().info(message)
+
+
+		return	Interceptor
+
+
+
+
+
+
+
