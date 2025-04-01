@@ -77,7 +77,7 @@ class TelegramTechHoist(PoolHoist):
 
 
 
-class BroadwatchHoist(TelegramTechHoist):
+class BroadHoist(TelegramTechHoist):
 	def __call__(self):
 
 
@@ -104,7 +104,7 @@ class BroadwatchHoist(TelegramTechHoist):
 
 
 
-class Discoverywatch(TelegramTechHoist):
+class DiscoveryHoist(TelegramTechHoist):
 	def __call__(self):
 
 
@@ -131,7 +131,7 @@ class Discoverywatch(TelegramTechHoist):
 
 
 
-class SNMPwatch(TelegramTechHoist):
+class SNMPHoist(TelegramTechHoist):
 	def __call__(self):
 
 
