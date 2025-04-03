@@ -11,6 +11,7 @@ from pygwarts.magical.time_turner			import TimeTurner
 from pygwarts.irma.contrib					import LibraryContrib
 from pygwarts.filch.marauders_map			import MaraudersMap
 from pygwarts.filch.apppuf.snmp				import SNMPtrap
+from rmp_filch_intercept					import SNMPHoist
 from pysnmp.entity							import config
 from pysnmp.entity.engine					import SnmpEngine
 from pysnmp.entity.rfc3413					import ntfrcv
@@ -41,14 +42,14 @@ point	= TimeTurner()
 
 
 
-class Filch(SNMPtrap):
+class SNMPWatch(SNMPtrap):
+
+	@SNMPHoist
 	class loggy(LibraryContrib):
 
 		handler		= f"{root}/snmpwatch/{point.Ym_aspath}/gsnmpwatch{point.dmY_asjoin}.loggy"
-		init_level	= 10
 		init_name	= "filch"
-		force_info	= "*filchmap*",
-		watchdog	= "*.Handler",
+		watchdog	= "SNMPWatch.Handler",
 
 	def __init__(self):
 		super().__init__()
@@ -241,7 +242,7 @@ class Filch(SNMPtrap):
 if	__name__ == "__main__":
 	if	(kill := point.diff(subtrahend=TimeTurner(timepoint="2359"))) <0:
 
-		filch = Filch()
+		filch = SNMPWatch()
 		filch.filchmap.CSV(
 
 			f"{root}/broadmap.csv",
