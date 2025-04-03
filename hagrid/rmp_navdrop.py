@@ -31,11 +31,11 @@ root	= "/srv/lcontainer/hagrid"
 
 
 
-class Gnavdrop(Copse):
+class Navdrop(Copse):
 
 	class loggy(LibraryContrib):
 
-		handler		= f"{root}/navdrop/{point.Ym_aspath}/gnavdrop{point.dmY_asjoin}.loggy"
+		handler		= f"{root}/navdrop/{point.Ym_aspath}/navdrop{point.dmY_asjoin}.loggy"
 		init_name	= "hagrid"
 		pool_timer	= .5
 
@@ -67,12 +67,12 @@ class Gnavdrop(Copse):
 		class Navfiles(SiftingController):	include = r".+/[Kk][A-Za-z]\d\d\.[tT][lL][xX]",
 		class Navbow(LibraryShelf):
 
-			grabbing	= f"{root}/gnavbag.Shelf"
+			grabbing	= f"{root}/Navbag.Shelf"
 			reclaiming	= True
 
 		class Navshelf(LibraryShelf):
 
-			grabbing	= f"{root}/gnavdrop.Shelf"
+			grabbing	= f"{root}/Navdrop.Shelf"
 			reclaiming	= True
 
 
@@ -84,7 +84,7 @@ class Gnavdrop(Copse):
 
 if	__name__ == "__main__":
 
-	navdrop = Gnavdrop()
+	navdrop = Navdrop()
 	navdrop.perform()
 	navdrop.perform.Navbow.produce(magical=True)
 	navdrop.perform.Navshelf.produce(

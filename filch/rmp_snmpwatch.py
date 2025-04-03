@@ -47,7 +47,7 @@ class SNMPWatch(SNMPtrap):
 	@SNMPHoist
 	class loggy(LibraryContrib):
 
-		handler		= f"{root}/snmpwatch/{point.Ym_aspath}/gsnmpwatch{point.dmY_asjoin}.loggy"
+		handler		= f"{root}/snmpwatch/{point.Ym_aspath}/snmpwatch{point.dmY_asjoin}.loggy"
 		init_name	= "filch"
 		watchdog	= "SNMPWatch.Handler",
 

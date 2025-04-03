@@ -29,11 +29,11 @@ root	= "/srv/lcontainer/hagrid"
 
 
 
-class Garch(Copse):
+class Arch(Copse):
 
 	class loggy(LibraryContrib):
 
-		handler		= f"{root}/arch/{point.Ym_aspath}/harch{point.dmY_asjoin}.loggy"
+		handler		= f"{root}/arch/{point.Ym_aspath}/arch{point.dmY_asjoin}.loggy"
 		init_name	= "hagrid"
 
 	class cparchive(Copse):
@@ -105,7 +105,7 @@ class Garch(Copse):
 
 
 
-if	__name__ == "__main__" : Garch().perform()
+if	__name__ == "__main__" : Arch().perform()
 
 
 

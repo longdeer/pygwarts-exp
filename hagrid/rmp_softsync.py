@@ -32,12 +32,12 @@ class Softsync(Tree):
 
 	class loggy(LibraryContrib):
 
-		handler		= f"{root}/softsync/{point.Ym_aspath}/gsoftsync{point.dmY_asjoin}.loggy"
+		handler		= f"{root}/softsync/{point.Ym_aspath}/softsync{point.dmY_asjoin}.loggy"
 		init_name	= "hagrid"
 
 	class seeds(LibraryShelf):
 
-		grabbing	= f"{root}/gsoftsync.Shelf"
+		grabbing	= f"{root}/softsync.Shelf"
 		reclaiming	= True
 
 	@GrowingPeel

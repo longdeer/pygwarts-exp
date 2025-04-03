@@ -53,17 +53,18 @@ froot	= "/srv/lcontainer/filch"
 
 
 
-class Irma(LibraryAccess):
+class Library(LibraryAccess):
+
 	class loggy(LibraryContrib):
 
-		handler		= f"{iroot}/library/{tpoint.Ym_aspath}/glibrary{tpoint.dmY_asjoin}.loggy"
+		handler		= f"{iroot}/library/{tpoint.Ym_aspath}/library{tpoint.dmY_asjoin}.loggy"
 		init_name	= "irma"
 
 	class filchmap(MaraudersMap):	pass
 	class library_shelf(LibraryShelf):
 
-		grabbing	= f"{iroot}/xshelf/{yypoint.Ym_aspath}/gfilch{yypoint.dmY_asjoin}.xshelf"
-		producing	= f"{iroot}/xshelf/{ypoint.Ym_aspath}/gfilch{ypoint.dmY_asjoin}.xshelf"
+		grabbing	= f"{iroot}/xshelf/{yypoint.Ym_aspath}/library{yypoint.dmY_asjoin}.xshelf"
+		producing	= f"{iroot}/xshelf/{ypoint.Ym_aspath}/library{ypoint.dmY_asjoin}.xshelf"
 
 	case_link	= "library_shelf"
 	unique		= True
@@ -257,28 +258,28 @@ class Irma(LibraryAccess):
 	class SoftSync(LibraryVolume):
 
 		inrange		= ypoint.dmY_aspath
-		location	= f"{iroot}/softsync/{ypoint.Ym_aspath}/gsoftsync{ypoint.dmY_asjoin}.loggy"
+		location	= f"{iroot}/softsync/{ypoint.Ym_aspath}/softsync{ypoint.dmY_asjoin}.loggy"
 		@TextWrapper("\n\thagrid-softsync\n","\n")
 		class Annex(VolumeAnnex):		pass
 
 	class HardSync(LibraryVolume):
 
 		inrange		= tpoint.dmY_aspath
-		location	= f"{iroot}/hardsync/{tpoint.Ym_aspath}/ghardsync{tpoint.dmY_asjoin}.loggy"
+		location	= f"{iroot}/hardsync/{tpoint.Ym_aspath}/hardsync{tpoint.dmY_asjoin}.loggy"
 		@TextWrapper("\n\thagrid-hardsync\n","\n")
 		class Annex(VolumeAnnex):		pass
 
 	class Arch(LibraryVolume):
 
 		inrange		= ypoint.dmY_aspath
-		location	= f"/srv/lcontainer/hagrid/arch/{ypoint.Ym_aspath}/garch{ypoint.dmY_asjoin}.loggy"
+		location	= f"/srv/lcontainer/hagrid/arch/{ypoint.Ym_aspath}/arch{ypoint.dmY_asjoin}.loggy"
 		@TextWrapper("\n\thagrid-arch\n","\n")
 		class Annex(VolumeAnnex):		pass
 
 	class Discovery(LibraryVolume):
 
 		inrange		= ypoint.dmY_aspath
-		location	= f"{froot}/discovery/{ypoint.Ym_aspath}/gdiscovery{ypoint.dmY_asjoin}.loggy"
+		location	= f"{froot}/discovery/{ypoint.Ym_aspath}/discovery{ypoint.dmY_asjoin}.loggy"
 		@TextWrapper("\n\tfilch-discovery\n","\n")
 		class Annex(VolumeAnnex):		pass
 		class filchmap(MaraudersMap):	pass
@@ -289,7 +290,7 @@ class Irma(LibraryAccess):
 		plotdate	= ypoint
 		inrange		= ypoint.dmY_aspath
 		plotdir		= f"/srv/dump/bwvisual/{ypoint.Ymd_aspath}"
-		location	= f"{froot}/broadwatch/{ypoint.Ym_aspath}/gbroadwatch{ypoint.dmY_asjoin}.loggy"
+		location	= f"{froot}/broadwatch/{ypoint.Ym_aspath}/broadwatch{ypoint.dmY_asjoin}.loggy"
 		@TextWrapper("\n\tfilch-broadwatch\n","\n")
 		class Annex(VolumeAnnex):		pass
 		class Watch(BroadWatch):		pass
@@ -303,7 +304,7 @@ class Irma(LibraryAccess):
 
 if	__name__ == "__main__":
 
-	irma = Irma()
+	irma = Library()
 	irma.filchmap.CSV(
 
 		f"{froot}/broadmap.csv",
@@ -326,7 +327,7 @@ if	__name__ == "__main__":
 	irma.library_shelf.produce(ignore_mod=True, strict_mode=False)
 
 	if	len(annex):
-		with open(f"{iroot}/annex/{ypoint.Ym_aspath}/glibrary{ypoint.dmY_asjoin}.annex", "w") as dump:
+		with open(f"{iroot}/annex/{ypoint.Ym_aspath}/library{ypoint.dmY_asjoin}.annex", "w") as dump:
 			dump.write(annex)
 
 

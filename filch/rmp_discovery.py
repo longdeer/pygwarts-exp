@@ -33,7 +33,7 @@ class Discoverywatch(HostDiscovery):
 	@DiscoveryHoist
 	class loggy(LibraryContrib):
 
-		handler		= f"{root}/discovery/{point.Ym_aspath}/gdiscovery{point.dmY_asjoin}.loggy"
+		handler		= f"{root}/discovery/{point.Ym_aspath}/discovery{point.dmY_asjoin}.loggy"
 		init_name	= "filch"
 		watchdog	= "Discoverywatch.Inspector",
 

@@ -29,7 +29,7 @@ if	__name__ == "__main__":
 			@BroadHoist
 			class loggy(LibraryContrib):
 
-				handler		= f"{root}/broadwatch/{point.Ym_aspath}/gbroadwatch{point.dmY_asjoin}.loggy"
+				handler		= f"{root}/broadwatch/{point.Ym_aspath}/broadwatch{point.dmY_asjoin}.loggy"
 				init_name	= "filch"
 				watchdog	= "Broadwatch.Inspector",
 

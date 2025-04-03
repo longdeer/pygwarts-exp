@@ -26,16 +26,16 @@ if	__name__ == "__main__":
 	hroot	= "/srv/lcontainer/hedwig"
 
 
-	with open(f"{iroot}/annex/{ypoint.Ym_aspath}/glibrary{ypoint.dmY_asjoin}.annex") as r:
+	with open(f"{iroot}/annex/{ypoint.Ym_aspath}/library{ypoint.dmY_asjoin}.annex") as r:
 		daliy_report = r.read()
 
 
-	class Greport(SMTPBuilder):
+	class Report(SMTPBuilder):
 
 		@TelegramWECHoist
 		class loggy(LibraryContrib):
 
-			handler		= f"{hroot}/report/{point.Ym_aspath}/greport{point.dmY_asjoin}.loggy"
+			handler		= f"{hroot}/report/{point.Ym_aspath}/report{point.dmY_asjoin}.loggy"
 			init_name	= "hedwig"
 
 		class validator(EmailValidator):	pass
@@ -50,7 +50,7 @@ if	__name__ == "__main__":
 	if	daliy_report:
 
 
-		hedwig = Greport()
+		hedwig = Report()
 		try_counter = 1
 
 

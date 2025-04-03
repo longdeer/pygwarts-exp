@@ -35,11 +35,11 @@ root	= "/srv/lcontainer/hagrid"
 
 
 
-class Ghardsync(Tree):
+class Hardsync(Tree):
 
 	class loggy(LibraryContrib):
 
-		handler		= f"{root}/hardsync/{point.Ym_aspath}/ghardsync{point.dmY_asjoin}.loggy"
+		handler		= f"{root}/hardsync/{point.Ym_aspath}/hardsync{point.dmY_asjoin}.loggy"
 		init_name	= "hagrid"
 
 	class leafs(SiftingController): include = r".+",
@@ -75,7 +75,7 @@ class Ghardsync(Tree):
 
 if	__name__ == "__main__":
 
-	hardsync = Ghardsync(bough="/mnt/H")
+	hardsync = Hardsync(bough="/mnt/H")
 	hardsync.perform()
 	hardsync.stats.produce(
 
@@ -89,7 +89,7 @@ if	__name__ == "__main__":
 	gfiles		= prq.TG()
 	gfolders	= prq.LG()
 
-	hardsync.loggy.info(f"Sprout \"/srv/A2/R\" stats:")
+	hardsync.loggy.info(f"\"/srv/A2/R\" stats:")
 	hardsync.loggy.info(f"Size: {gsize}")
 	hardsync.loggy.info(f"Twigs: {gfolders}")
 	hardsync.loggy.info(f"Leafs: {gfiles}")
