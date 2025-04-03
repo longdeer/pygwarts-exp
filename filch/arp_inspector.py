@@ -36,9 +36,9 @@ class ARPRequestInspector(Transmutable):
 			state ^= bool(maced_name := self.filchmap.macmap_name(srcmac)) <<6
 			state ^= bool(mapped_dst_mac := self.filchmap.ip4map_mac(dstip)) <<7
 			state ^= bool(mapped_dst_name := self.filchmap.ip4map_name(dstip)) <<8
-			state ^= bool(srcmac != mapped_mac) <<9
-			state ^= bool(dstip != maced_ip) <<10
-			state ^= bool(dstip == srcip) <<11
+			state ^= (srcmac != mapped_mac) <<9
+			state ^= (dstip != maced_ip) <<10
+			state ^= (dstip == srcip) <<11
 
 			return	{
 
@@ -65,7 +65,9 @@ class ARPResponseInspector(Transmutable):
 
 	"""
 		Utility object, that implements processing of ip4 and MAC addresses, that are taken as a response
-		to ARP request.
+		to ARP request. Returns a dictionary with response state integer, that describes "filchmap"
+		inspection result, along with such result. If response parsing failed or valid "filchmap"
+		is absent, returns None.
 	"""
 
 	filchmap :MaraudersMap
@@ -79,9 +81,9 @@ class ARPResponseInspector(Transmutable):
 			state ^= bool(mapped_name := self.filchmap.ip4map_name(srcip)) <<2
 			state ^= bool(maced_ip := self.filchmap.macmap_ip4(srcmac)) <<3
 			state ^= bool(maced_name := self.filchmap.macmap_name(srcmac)) <<4
-			state ^= mapped_name != maced_name <<5
-			state ^= srcmac != mapped_mac <<6
-			state ^= srcip != maced_ip <<7
+			state ^= (mapped_name == maced_name) <<5
+			state ^= (srcmac != mapped_mac) <<6
+			state ^= (srcip != maced_ip) <<7
 
 		except:	return
 		else:	return	{
