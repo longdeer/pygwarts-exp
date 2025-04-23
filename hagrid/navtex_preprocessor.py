@@ -1,4 +1,5 @@
 from typing												import List
+from typing												import Dict
 from typing												import Tuple
 from typing												import Literal
 from typing												import Optional
@@ -41,7 +42,7 @@ class NavtexPreprocessor(Transmutation):
 		of report message sending via "loggy.pool" tool.
 
 		Navshelf:
-			/path/to/file : mtime
+			/path/to/file : { air :air, mtime :int }
 	"""
 
 	def _mutable_chain_injection(self, layer :Transmutable) -> Transmutable :
@@ -68,6 +69,7 @@ class NavtexPreprocessor(Transmutation):
 				*_, navtex_files = plant
 				navtex_files = self.Navfiles(navtex_files)
 
+
 				fl = len(navtex_files)
 				self.loggy.debug(f"Considering {len(fl)} file{flagrate(len(fl))}")
 
@@ -75,19 +77,26 @@ class NavtexPreprocessor(Transmutation):
 				for file in navtex_files:
 
 
-					if	isinstance(last := self.Navshelf[str(file)], int):
-						if	int(file.stat().st_mtime) <= last:
-
-							self.loggy.debug(f"No modification made on \"{file}\"")
-							self.Navshelf(str(file), last, silent=True)
-
-							continue
-
-
-					current	= self.analyzer.with_mapping(file)
-					state	= current["state"]
+					last	= self.Navshelf[str(file)] or dict()
+					mtime	= last.get("mtime",0)
 					fname	= file.name
 					buffer	= list()
+
+
+					if	int(file.stat().st_mtime) <= mtime:
+
+						self.loggy.debug(f"No modification made on \"{file}\"")
+						self.Navshelf(str(file), last, silent=True)
+
+						continue
+
+
+					# At this point "mtime" is either zero or less than actual file, so analyzing proceed.
+					# "is_new" flag will be derived as either zero "mtime" or "air" inequality. If both
+					# "air" mappings are None, the "state" must be zero with corresponding handling.
+					current	= self.analyzer.with_mapping(file)
+					is_new	= not mtime or current.get("air") != last.get("air")
+					state	= current["state"]
 
 
 					# Zero "state" might mean two cases:
@@ -98,15 +107,15 @@ class NavtexPreprocessor(Transmutation):
 					# mapping, any other processing is redundant.
 					if	not state:
 						if	(msg := current.get("message")) is not None:
-							if	callable(pool := getattr(self.loggy, "buffer_insert", None)):
 
-								self.loggy.buffer_insert("corrupted message:\n")
-								self.loggy.buffer_insert(msg)
-								self.loggy.buffer_insert("\n\n* must be checked in original message\n\n")
-
-
+							self.loggy.buffer_insert("corrupted message:\n")
+							self.loggy.buffer_insert(msg)
+							self.loggy.buffer_insert("\n\n* must be checked in original message\n\n")
 							self.loggy.info(f"Message \"{file}\" is corrupted")
+
 						else:
+
+							self.loggy.buffer_insert(f"Message \"{file}\" is invalid")
 							self.loggy.info(f"Message \"{file}\" is invalid")
 
 
@@ -117,6 +126,7 @@ class NavtexPreprocessor(Transmutation):
 					# long variant dictionary with "raw", "air" and "analysis".
 					if	state &2 or self.is_unstructured(current["raw"]):
 						if	not self.rewrite_source(file, current["air"]):
+
 							buffer.append(f"{fname} message not structured")
 
 
@@ -127,20 +137,94 @@ class NavtexPreprocessor(Transmutation):
 						buffer.append(f"{fname} abnormal message numeration")
 
 
-					# Maintaining creation datetime
-					if	state &64:
-						if	isinstance(CDT := current["analysis"].get("cdt"), datetime):
-							if	TimeTurner(CDT).mdY_aspath != TimeTurner().mdY_aspath:
-								buffer.append(f"{fname} message is outdated")
+					# Maintaining creation datetime check. It is assumed, that once message is
+					# created by coordinator and delivered to operator, it is analyzed once.
+					if	isinstance(CDT := current["analysis"].get("cdt"), datetime):
+						if	TimeTurner(CDT).mdY_aspath != TimeTurner().mdY_aspath:
+
+							buffer.append(f"{fname} message is outdated")
 
 
-					# Maintaining unkown words
-					if	state &32:
-
-						unknowns = current["analysis"]["unknowns"]
+					self.process_analysis(current, buffer)
+					self.Navshelf(str(file),{ "air": current["air"], "mtime": int(file.stat().st_mtime) })
 
 
-					for coordinatal in current[""]
+					if	is_new : self.loggy.buffer_insert("new message:\n\n")
+					if	is_new or buffer:
+
+						self.loggy.buffer_insert("\n".join( " ",join(line) for line in current["air"] ))
+					self.loggy.buffer_insert("\n\n""\n".join(buffer))
+
+
+				super().__call__(*plant, **kwargs)
+
+
+
+
+			def format(self, name :str, item :str, count :int, line :int) -> str :
+
+				""" Helper method that serves as an analysis stats formatter. """
+
+				return "%s%s %s at line %s"%(f"{count} " if 1 <count else "", name, item, line)
+
+
+
+
+			def process_analysis(self, stats :Dict[int,Dict[str,int]], buffer :List[str]):
+
+				"""
+					Helper method that processes all lines in "stats"
+				"""
+
+				line = 1
+				done = False
+
+				while not done:
+
+					done = True
+
+					if	(coords := stats["coords"].get(line)) and not (done := False):
+						for coordinate,count in coords.items():
+
+							self.loggy.info(self.format("coordinatal", coordinate, count, line))
+
+					if	(alnums := stats["alnums"].get(line)) and not (done := False):
+						for alnum,count in alnums.items():
+
+							self.loggy.info(self.format("alphanumerical", alnum, count, line))
+
+					if	(nums := stats["nums"].get(line)) and not (done := False):
+						for numeric,count in nums.items():
+
+							self.loggy.info(self.format("numerical", numeric, count, line))
+
+					if	(known := stats["known"].get(line)) and not (done := False):
+						for word,count in known.items():
+
+							self.loggy.info(self.format("known", word, count, line))
+
+					if	(unknown := stats["unknown"].get(line)) and not (done := False):
+						for word,count in unknown.items():
+
+							msg = self.format("unknown", word, count, line)
+							self.loggy.info(msg)
+							buffer.append(msg)
+
+					if	(pendings := stats["pending"].get(line)) and not (done := False):
+						for word,count in pendings.items():
+
+							msg = self.format("pending", word, count, line)
+							self.loggy.info(msg)
+							buffer.append(msg)
+
+					if	(puncts := stats["punct"].get(line)) and not (done := False):
+						for char,count in pendings.items():
+
+							msg = self.format("unmatched", char, count, line)
+							self.loggy.info(msg)
+							buffer.append(msg)
+
+					line += 1
 
 
 
@@ -204,3 +288,10 @@ class NavtexPreprocessor(Transmutation):
 
 
 		return	Preprocessor
+
+
+
+
+
+
+
