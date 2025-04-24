@@ -6,6 +6,8 @@ from	pygwarts.irma.contrib.intercept	import PoolHoist
 from	pygwarts.magical.spells			import patronus
 from	goperator_credistr				import gmdssA2mrmENGbot
 from	goperator_credistr				import mrma2tech
+from	goperator_credistr				import gmdssa2mrm_announcer_bot
+from	goperator_credistr				import GMDSSA2MRM
 
 
 
@@ -14,7 +16,7 @@ from	goperator_credistr				import mrma2tech
 
 
 
-class TelegramTechHoist(PoolHoist):
+class TelegramHoist(PoolHoist):
 	def __call__(self):
 
 
@@ -42,7 +44,23 @@ class TelegramTechHoist(PoolHoist):
 				self.buffer_insert(f"{self.handover_name} CRITICAL: {message}")
 				return super().critical(message)
 
+
+		return	Interceptor
+
+
+
+
+
+
+
+
+class TelegramTechHoist(TelegramHoist):
+	def __call__(self):
+
+
+		class Interceptor(super().__call__()):
 			def buffer_release(self, *args, **kwargs) -> List[str] :
+
 
 				buffer_dump = super().buffer_release(*args, **kwargs)
 				dump_message = "\n".join(buffer_dump)
@@ -78,79 +96,37 @@ class TelegramTechHoist(PoolHoist):
 
 
 
-class BroadHoist(TelegramTechHoist):
+class TelegramOperatorHoist(TelegramHoist):
 	def __call__(self):
 
 
 		class Interceptor(super().__call__()):
-			def info(self, message :str):
+			def buffer_release(self, *args, **kwargs) -> List[str] :
 
 
-				if	isinstance(getattr(self, "watchdog_map", None), set):
-					for pattern in self.watchdog_map:
+				buffer_dump = super().buffer_release(*args, **kwargs)
+				dump_message = "\n".join(buffer_dump)
+				delay = 0
 
-						if	isinstance(pattern, re.Pattern):
-							if	pattern.fullmatch(self.handover_name):
+				try:
 
-								self.buffer_insert(f"broadwatch: {message}")
+					for i in range(0, len(dump_message), 4096):
+						sleep(delay)
 
-				return super().info(message)
+						GET(
 
+							f"https://api.telegram.org/bot{gmdssa2mrm_announcer_bot()}/sendMessage",
+							{
+								"chat_id":	GMDSSA2MRM(),
+								"text":		dump_message[i:i+4096],
+							}
+						)
 
-		return	Interceptor
-
-
-
-
-
-
-
-
-class DiscoveryHoist(TelegramTechHoist):
-	def __call__(self):
+						delay += 1
 
 
-		class Interceptor(super().__call__()):
-			def info(self, message :str):
-
-
-				if	isinstance(getattr(self, "watchdog_map", None), set):
-					for pattern in self.watchdog_map:
-
-						if	isinstance(pattern, re.Pattern):
-							if	pattern.fullmatch(self.handover_name):
-
-								self.buffer_insert(f"discoverywatch: {message}")
-
-				return super().info(message)
-
-
-		return	Interceptor
-
-
-
-
-
-
-
-
-class SNMPHoist(TelegramTechHoist):
-	def __call__(self):
-
-
-		class Interceptor(super().__call__()):
-			def info(self, message :str):
-
-
-				if	isinstance(getattr(self, "watchdog_map", None), set):
-					for pattern in self.watchdog_map:
-
-						if	isinstance(pattern, re.Pattern):
-							if	pattern.fullmatch(self.handover_name):
-
-								self.buffer_insert(f"snmpwatch: {message}")
-
-				return super().info(message)
+				except	Exception as E : self.pool_debug(f"Buffer chunk {delay} failed due to {patronus(E)}")
+				return	buffer_dump
 
 
 		return	Interceptor
