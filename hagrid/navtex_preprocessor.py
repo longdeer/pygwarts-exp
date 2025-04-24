@@ -25,24 +25,16 @@ from NavtexBoWAnalyzer									import Navanalyzer
 class NavtexPreprocessor(Transmutation):
 
 	"""
-		old:
-		pygwarts.hagrid utility decorator, that serves as a planting dispatching interceptor for files
-		preprocessing purposes.
-		This class is designed to process NAVTEX messages in the way that comply with UDK2 station.
+		Decorator, that serves as a planting dispatching interceptor for files preprocessing purposes.
+		This class is designed to process Navtex messages in the way that comply with UDK2 (3744) station.
 		The processing relies on Navanalyzer class tool (https://github.com/longdeer/NavtexBoWAnalyzer).
-		As ControlledTransmutation class, accepts following arguments:
-			"station"	-	positional argument that is used by Navanalyzer class;
-			"categories"-	key-word argument that is used by Navanalyzer class (defaulted to None);
-			"separator"	-	key-word argument that in used by preprocessor to reconstruct messages.
 		In mutable chain acts as a mutation - takes decorated planting dispatching class and extends it by
-		declaring meta __call__ to invoke decorated __call__. Meat __call__ will act as a planting dispatching
-		in terms of accepting "plant", processing it and pass it to the decorated dispatcher.
-		It is assumed, that this dispatching layer will only receive NAVTEX messages files, which are to be
-		filtered out before processing start. The preprocessing may result source file rewriting and some sort
-		of report message sending via "loggy.pool" tool.
-
-		Navshelf:
-			/path/to/file : { air :air, mtime :int }
+		declaring meta __call__ to invoke decorated __call__. Meat __call__ will act as a planting
+		dispatching in terms of accepting "plant", processing it and pass it to the decorated dispatcher.
+		It is assumed, that this dispatching layer will have it's own SiftingController "Navfiles" to
+		assure only Navtex files will be processed. During processing, source files will have structure
+		check and might be rewritten. Also "Navshelf" will maintain files state, peeking and inspecting
+		the content. As a "Bag of Words" for Navanalyzer the "Navbow" LibraryShelf will be used.
 	"""
 
 	def _mutable_chain_injection(self, layer :Transmutable) -> Transmutable :
@@ -79,12 +71,13 @@ class NavtexPreprocessor(Transmutation):
 
 
 					last	= self.Navshelf[str(file)] or dict()
-					mtime	= last.get("mtime",0)
+					ltime	= last.get("mtime",0)
+					ntime	= int(file.stat().st_mtime)
 					fname	= file.name
 					buffer	= list()
 
 
-					if	int(file.stat().st_mtime) <= mtime:
+					if	ntime <= ltime:
 
 						self.loggy.debug(f"No modification made on \"{file}\"")
 						self.Navshelf(str(file), last, silent=True)
@@ -92,11 +85,11 @@ class NavtexPreprocessor(Transmutation):
 						continue
 
 
-					# At this point "mtime" is either zero or less than actual file, so analyzing proceed.
-					# "is_new" flag will be derived as either zero "mtime" or "air" inequality. If both
+					# At this point "ltime" is either zero or less than actual file, so analyzing proceed.
+					# "is_new" flag will be derived as either zero "ltime" or "air" inequality. If both
 					# "air" mappings are None, the "state" must be zero with corresponding handling.
 					current	= self.analyzer.with_mapping(file, self.Navbow)
-					is_new	= not mtime or current.get("air") != last.get("air")
+					is_new	= not ltime or current.get("air") != last.get("air")
 					state	= current["state"]
 
 
@@ -109,16 +102,20 @@ class NavtexPreprocessor(Transmutation):
 					if	not state:
 						if	(msg := current.get("message")) is not None:
 
-							self.loggy.buffer_insert("corrupted message:\n")
-							self.loggy.buffer_insert(msg)
-							self.loggy.buffer_insert("\n\n* must be checked in original message\n\n")
+							self.Navshelf(str(file),{ "air": msg, "mtime": ntime })
 							self.loggy.info(f"Message \"{file}\" is corrupted")
+							self.loggy.buffer_insert(
+
+								f"\ncorrupted message {fname}\n"
+								+ msg.strip("\n") +
+								"\n\n* must be checked in original file"
+							)
 
 						else:
 
-							self.loggy.buffer_insert(f"Message \"{file}\" is invalid")
+							self.Navshelf(str(file),{ "air": None, "mtime": ntime })
 							self.loggy.info(f"Message \"{file}\" is invalid")
-
+							self.loggy.buffer_insert(f"\nfile \"{file}\" is invalid")
 
 						continue
 
@@ -148,7 +145,7 @@ class NavtexPreprocessor(Transmutation):
 
 					self.process_analysis(fname, current["analysis"], buffer)
 					self.process_buffer(fname, is_new, buffer, current["air"])
-					self.Navshelf(str(file),{ "air": current["air"], "mtime": int(file.stat().st_mtime) })
+					self.Navshelf(str(file),{ "air": current["air"], "mtime": ntime })
 
 
 				super().__call__(*plant, **kwargs)
@@ -158,7 +155,10 @@ class NavtexPreprocessor(Transmutation):
 
 			def format(self, file :str, name :str, item :str, count :int, line :int) -> str :
 
-				""" Helper method that serves as an analysis stats formatter. """
+				"""
+					Helper method that serves as an analysis stats formatter.
+					Returns string that represents how many items found at which line.
+				"""
 
 				return "%s %s%s %s at line %s"%(file, f"{count} " if 1 <count else "", name, item, line)
 
@@ -167,7 +167,12 @@ class NavtexPreprocessor(Transmutation):
 
 			def process_buffer(self, file :str, flag :bool, buffer :List[str], message :List[List[str]]):
 
-				""" Pushes to hoist buffer """
+				"""
+					Helper method to actually hoist information via Telegram, by ContribInterceptor.
+					If "flag" is True, which is "is_new", hoists the message, marked as new, and
+					"buffer" content. Otherwise, if "buffer" is not empty, hoists message and
+					"buffer" content.
+				"""
 
 				send = str()
 
@@ -189,7 +194,20 @@ class NavtexPreprocessor(Transmutation):
 
 			def process_analysis(self, file :str, stats :Dict[int,Dict[str,int]], buffer :List[str]):
 
-				""" Helper method that processes all lines in "stats" """
+				"""
+					Helper method that processes all lines in "stats", inspecting it line by line.
+					Logs at INFO level:
+						- coordinates;
+						- numerical;
+						- alphanumerical;
+						- known words;
+						- unknown words;
+						- pending words;
+						- unmatched punctuation;
+					Also hoists:
+						- unknown words;
+						- unmatched punctuation;
+				"""
 
 				line = 1
 				done = False
@@ -201,43 +219,43 @@ class NavtexPreprocessor(Transmutation):
 					if	(coords := stats["coords"].get(line)) and not (done := False):
 						for coordinate,count in coords.items():
 
-							self.loggy.info(self.format(file, "coordinatal", coordinate, count, line))
+							self.loggy.info(self.format(file, "coordinatal", coordinate, count, line +1))
 
 					if	(alnums := stats["alnums"].get(line)) and not (done := False):
 						for alnum,count in alnums.items():
 
-							self.loggy.info(self.format(file, "alphanumerical", alnum, count, line))
+							self.loggy.info(self.format(file, "alphanumerical", alnum, count, line +1))
 
 					if	(nums := stats["nums"].get(line)) and not (done := False):
 						for numeric,count in nums.items():
 
-							self.loggy.info(self.format(file, "numerical", numeric, count, line))
+							self.loggy.info(self.format(file, "numerical", numeric, count, line +1))
 
 					if	(known := stats["known"].get(line)) and not (done := False):
 						for word,count in known.items():
 
 							self.loggy.info(
-								self.format(file, f"known word{flagrate(count)}", word, count, line)
+								self.format(file, f"known word{flagrate(count)}", word, count, line +1)
+							)
+
+					if	(pendings := stats["pending"].get(line)) and not (done := False):
+						for word,count in pendings.items():
+
+							self.loggy.info(
+								self.format(file, f"pending word{flagrate(count)}", word, count, line +1)
 							)
 
 					if	(unknown := stats["unknown"].get(line)) and not (done := False):
 						for word,count in unknown.items():
 
-							msg = self.format(file, f"unknown word{flagrate(count)}", word, count, line)
-							self.loggy.info(msg)
-							buffer.append(msg)
-
-					if	(pendings := stats["pending"].get(line)) and not (done := False):
-						for word,count in pendings.items():
-
-							msg = self.format(file, f"pending word{flagrate(count)}", word, count, line)
+							msg = self.format(file, f"unknown word{flagrate(count)}", word, count, line +1)
 							self.loggy.info(msg)
 							buffer.append(msg)
 
 					if	(puncts := stats["punct"].get(line)) and not (done := False):
 						for char,count in puncts.items():
 
-							msg = self.format(file, "unmatched", char, count, line)
+							msg = self.format(file, "unmatched", char, count, line +1)
 							self.loggy.info(msg)
 							buffer.append(msg)
 
