@@ -49,7 +49,7 @@ class NavtexPreprocessor(Transmutation):
 		class Preprocessor(geminio(layer)):
 
 
-			NavBoW		:LibraryShelf
+			Navbow		:LibraryShelf
 			Navshelf	:LibraryShelf
 			Navfiles	:SiftingController
 			MSG_SEP		:Optional[str]
@@ -66,12 +66,13 @@ class NavtexPreprocessor(Transmutation):
 				# Assuming "Navfiles" is reachable "SiftingController" that will ensure only
 				# Navtex messages will be handled. This is crucial cause current preprocessing
 				# goes before "Flourish" main sifting.
+				if not plant : return
 				*_, navtex_files = plant
 				navtex_files = self.Navfiles(navtex_files)
 
 
 				fl = len(navtex_files)
-				self.loggy.debug(f"Considering {len(fl)} file{flagrate(len(fl))}")
+				self.loggy.debug(f"Considering {fl} file{flagrate(fl)}")
 
 
 				for file in navtex_files:
@@ -94,7 +95,7 @@ class NavtexPreprocessor(Transmutation):
 					# At this point "mtime" is either zero or less than actual file, so analyzing proceed.
 					# "is_new" flag will be derived as either zero "mtime" or "air" inequality. If both
 					# "air" mappings are None, the "state" must be zero with corresponding handling.
-					current	= self.analyzer.with_mapping(file)
+					current	= self.analyzer.with_mapping(file, self.Navbow)
 					is_new	= not mtime or current.get("air") != last.get("air")
 					state	= current["state"]
 
@@ -145,15 +146,9 @@ class NavtexPreprocessor(Transmutation):
 							buffer.append(f"{fname} message is outdated")
 
 
-					self.process_analysis(current, buffer)
+					self.process_analysis(fname, current["analysis"], buffer)
+					self.process_buffer(fname, is_new, buffer, current["air"])
 					self.Navshelf(str(file),{ "air": current["air"], "mtime": int(file.stat().st_mtime) })
-
-
-					if	is_new : self.loggy.buffer_insert("new message:\n\n")
-					if	is_new or buffer:
-
-						self.loggy.buffer_insert("\n".join( " ",join(line) for line in current["air"] ))
-					self.loggy.buffer_insert("\n\n""\n".join(buffer))
 
 
 				super().__call__(*plant, **kwargs)
@@ -161,20 +156,40 @@ class NavtexPreprocessor(Transmutation):
 
 
 
-			def format(self, name :str, item :str, count :int, line :int) -> str :
+			def format(self, file :str, name :str, item :str, count :int, line :int) -> str :
 
 				""" Helper method that serves as an analysis stats formatter. """
 
-				return "%s%s %s at line %s"%(f"{count} " if 1 <count else "", name, item, line)
+				return "%s %s%s %s at line %s"%(file, f"{count} " if 1 <count else "", name, item, line)
 
 
 
 
-			def process_analysis(self, stats :Dict[int,Dict[str,int]], buffer :List[str]):
+			def process_buffer(self, file :str, flag :bool, buffer :List[str], message :List[List[str]]):
 
-				"""
-					Helper method that processes all lines in "stats"
-				"""
+				""" Pushes to hoist buffer """
+
+				send = str()
+
+				if	flag:	send += f"\nnew message {file}\n\n"
+				if	flag or buffer:
+					for i,line in enumerate(message,1):
+
+						send += str(i).ljust(5)
+						send += " ".join(line)
+						send += "\n"
+
+				send += "\n"
+				send += "\n".join(buffer)
+
+				self.loggy.buffer_insert(send)
+
+
+
+
+			def process_analysis(self, file :str, stats :Dict[int,Dict[str,int]], buffer :List[str]):
+
+				""" Helper method that processes all lines in "stats" """
 
 				line = 1
 				done = False
@@ -186,41 +201,43 @@ class NavtexPreprocessor(Transmutation):
 					if	(coords := stats["coords"].get(line)) and not (done := False):
 						for coordinate,count in coords.items():
 
-							self.loggy.info(self.format("coordinatal", coordinate, count, line))
+							self.loggy.info(self.format(file, "coordinatal", coordinate, count, line))
 
 					if	(alnums := stats["alnums"].get(line)) and not (done := False):
 						for alnum,count in alnums.items():
 
-							self.loggy.info(self.format("alphanumerical", alnum, count, line))
+							self.loggy.info(self.format(file, "alphanumerical", alnum, count, line))
 
 					if	(nums := stats["nums"].get(line)) and not (done := False):
 						for numeric,count in nums.items():
 
-							self.loggy.info(self.format("numerical", numeric, count, line))
+							self.loggy.info(self.format(file, "numerical", numeric, count, line))
 
 					if	(known := stats["known"].get(line)) and not (done := False):
 						for word,count in known.items():
 
-							self.loggy.info(self.format("known", word, count, line))
+							self.loggy.info(
+								self.format(file, f"known word{flagrate(count)}", word, count, line)
+							)
 
 					if	(unknown := stats["unknown"].get(line)) and not (done := False):
 						for word,count in unknown.items():
 
-							msg = self.format("unknown", word, count, line)
+							msg = self.format(file, f"unknown word{flagrate(count)}", word, count, line)
 							self.loggy.info(msg)
 							buffer.append(msg)
 
 					if	(pendings := stats["pending"].get(line)) and not (done := False):
 						for word,count in pendings.items():
 
-							msg = self.format("pending", word, count, line)
+							msg = self.format(file, f"pending word{flagrate(count)}", word, count, line)
 							self.loggy.info(msg)
 							buffer.append(msg)
 
 					if	(puncts := stats["punct"].get(line)) and not (done := False):
-						for char,count in pendings.items():
+						for char,count in puncts.items():
 
-							msg = self.format("unmatched", char, count, line)
+							msg = self.format(file, "unmatched", char, count, line)
 							self.loggy.info(msg)
 							buffer.append(msg)
 
@@ -276,13 +293,13 @@ class NavtexPreprocessor(Transmutation):
 
 				try:
 
-					text = getattr(self, "MSG_SEP", "\n").join( " ".join(lin) for line in message )
+					text = getattr(self, "MSG_SEP", "\n").join( " ".join(line) for line in message )
 					path.write_text(f"\n{text}\n")
 
 					self.loggy.info(f"Source file \"{path}\" rewritten")
 					return True
 
-				except Exception as E : self.loggy.info(f"Falid to write \"{file}\" due to {patronus(E)}")
+				except Exception as E : self.loggy.info(f"Falid to rewrite \"{path}\" due to {patronus(E)}")
 
 
 
