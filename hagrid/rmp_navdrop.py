@@ -12,7 +12,8 @@ from pygwarts.hagrid.planting.leafs			import LeafGrowth
 from pygwarts.hagrid.planting.peeks			import DraftPeek
 from pygwarts.hagrid.planting.weeds			import SprigTrimmer
 from pygwarts.hagrid.cultivation.sifting	import SiftingController
-from navtex_preprocessor					import Navpreprocessor
+from navtex_preprocessor					import NavtexPreprocessor
+from rmp_hagrid_intercept					import TelegramOperatorHoist
 
 
 
@@ -33,6 +34,7 @@ root	= "/srv/lcontainer/hagrid"
 
 class Navdrop(Copse):
 
+	@TelegramOperatorHoist
 	class loggy(LibraryContrib):
 
 		handler		= f"{root}/navdrop/{point.Ym_aspath}/navdrop{point.dmY_asjoin}.loggy"
@@ -61,7 +63,7 @@ class Navdrop(Copse):
 
 	@Callstamp
 	@fssprout("/srv/A2/R/CKS/ARQ/NAVTEX")
-	@Navpreprocessor("K")
+	@NavtexPreprocessor
 	class perform(Flourish):
 
 		class Navfiles(SiftingController):	include = r".+/[Kk][A-Za-z]\d\d\.[tT][lL][xX]",
@@ -87,11 +89,13 @@ if	__name__ == "__main__":
 	navdrop = Navdrop()
 	navdrop.perform()
 	navdrop.perform.Navbow.produce(magical=True)
+	diff = navdrop.perform.Navshelf.real_diff
+	for tracker in diff : navdrop.perform.Navshelf.loggy.info(f"Discarded tracker for \"{tracker}\"")
 	navdrop.perform.Navshelf.produce(
 
 		rewrite=True,
 		magical=True,
-		ignore_mod=navdrop.perform.Navshelf.diff,
+		ignore_mod=len(diff),
 	)
 
 
