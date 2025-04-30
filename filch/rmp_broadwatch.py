@@ -5,8 +5,8 @@ from pygwarts.filch.marauders_map			import MaraudersMap
 from pygwarts.filch.linkindor				import EUI48_format
 from pygwarts.filch.linkindor				import P_ARP_REQ
 from pygwarts.filch.linkindor.sniffing		import ARPSniffer
-from rmp_filch_intercept					import BroadHoist
-from arp_inspector							import ARPRequestInspector
+from irma_local								import TelegramTechHoist
+from filch_local							import ARPRequestInspector
 from scapy.all								import sniff
 from scapy.all								import Ether
 from scapy.all								import ARP
@@ -26,7 +26,7 @@ if	__name__ == "__main__":
 		@DIRTtimer(T=-kill)
 		class Broadwatch(ARPSniffer):
 
-			@BroadHoist
+			@TelegramTechHoist
 			class loggy(LibraryContrib):
 
 				handler		= f"{root}/broadwatch/{point.Ym_aspath}/broadwatch{point.dmY_asjoin}.loggy"

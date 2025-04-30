@@ -5,8 +5,8 @@ from pygwarts.irma.contrib				import LibraryContrib
 from pygwarts.filch.marauders_map		import MaraudersMap
 from pygwarts.filch.linkindor			import EUI48_format
 from pygwarts.filch.linkindor.discovery	import HostDiscovery
-from rmp_filch_intercept				import DiscoveryHoist
-from arp_inspector						import ARPResponseInspector
+from irma_local							import TelegramTechHoist
+from filch_local						import ARPResponseInspector
 from scapy.all							import srp
 from scapy.all							import Ether
 from scapy.all							import ARP
@@ -30,7 +30,7 @@ point	= TimeTurner()
 
 class Discoverywatch(HostDiscovery):
 
-	@DiscoveryHoist
+	@TelegramTechHoist
 	class loggy(LibraryContrib):
 
 		handler		= f"{root}/discovery/{point.Ym_aspath}/discovery{point.dmY_asjoin}.loggy"

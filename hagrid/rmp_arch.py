@@ -11,6 +11,7 @@ from pygwarts.hagrid.planting.leafs			import LeafGrowth
 from pygwarts.hagrid.planting.leafs			import LeafMove
 from pygwarts.hagrid.planting.peels			import ThrivingPeel
 from pygwarts.hagrid.cultivation.sifting	import SiftingController
+from irma_local								import TelegramTechHoist
 
 
 
@@ -31,6 +32,7 @@ root	= "/srv/lcontainer/hagrid"
 
 class Arch(Copse):
 
+	@TelegramTechHoist
 	class loggy(LibraryContrib):
 
 		handler		= f"{root}/arch/{point.Ym_aspath}/arch{point.dmY_asjoin}.loggy"

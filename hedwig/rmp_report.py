@@ -8,6 +8,7 @@ from pygwarts.hedwig.mail.letter.fields	import SubjectField
 from pygwarts.hedwig.mail.letter.fields	import BodyField
 from pygwarts.hedwig.mail.builder.smtp	import SMTPBuilder
 from pygwarts.hedwig.mail.utils			import EmailValidator
+from irma_local							import TelegramTechHoist
 from credistr							import mtfudk
 
 
@@ -32,7 +33,7 @@ if	__name__ == "__main__":
 
 	class Report(SMTPBuilder):
 
-		@TelegramWECHoist
+		@TelegramTechHoist
 		class loggy(LibraryContrib):
 
 			handler		= f"{hroot}/report/{point.Ym_aspath}/report{point.dmY_asjoin}.loggy"

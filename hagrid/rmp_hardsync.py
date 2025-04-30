@@ -17,6 +17,7 @@ from pygwarts.hagrid.planting.weeds				import SprigTrimmer
 from pygwarts.hagrid.cultivation.sifting		import SiftingController
 from pygwarts.hagrid.cultivation.registering	import PlantRegister
 from pygwarts.hagrid.cultivation.registering	import PlantRegisterQuerier as PRQ
+from irma_local									import TelegramTechHoist
 
 
 
@@ -37,6 +38,7 @@ root	= "/srv/lcontainer/hagrid"
 
 class Hardsync(Tree):
 
+	@TelegramTechHoist
 	class loggy(LibraryContrib):
 
 		handler		= f"{root}/hardsync/{point.Ym_aspath}/hardsync{point.dmY_asjoin}.loggy"

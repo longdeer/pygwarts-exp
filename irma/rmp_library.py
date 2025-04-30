@@ -29,6 +29,7 @@ from pygwarts.irma.access.annex					import VolumeAnnex
 from pygwarts.irma.access.annex					import LibraryAnnex
 from pygwarts.irma.access.utils					import TextWrapper
 from pygwarts.filch.marauders_map				import MaraudersMap
+from irma_local									import TelegramTechHoist
 from bookmarks									import DiscoveryWatch
 from bookmarks									import BroadWatch
 from inducers									import DiffCaseRegisterRecapAccumulatorInducer
@@ -55,6 +56,7 @@ froot	= "/srv/lcontainer/filch"
 
 class Library(LibraryAccess):
 
+	@TelegramTechHoist
 	class loggy(LibraryContrib):
 
 		handler		= f"{iroot}/library/{tpoint.Ym_aspath}/library{tpoint.dmY_asjoin}.loggy"
