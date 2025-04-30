@@ -4,6 +4,8 @@ from pygwarts.irma.contrib						import LibraryContrib
 from pygwarts.irma.shelve						import LibraryShelf
 from pygwarts.irma.shelve.casing				import is_num
 from pygwarts.irma.shelve.casing				import num_diff
+from pygwarts.irma.shelve.casing				import mostsec_diff
+from pygwarts.irma.shelve.casing				import byte_size_diff
 from pygwarts.irma.access						import LibraryAccess
 from pygwarts.irma.access.volume				import LibraryVolume
 from pygwarts.irma.access.bookmarks				import VolumeBookmark
@@ -27,8 +29,6 @@ from pygwarts.irma.access.annex					import VolumeAnnex
 from pygwarts.irma.access.annex					import LibraryAnnex
 from pygwarts.irma.access.utils					import TextWrapper
 from pygwarts.filch.marauders_map				import MaraudersMap
-from casing										import mostsec_diff
-from casing										import byte_size_diff
 from bookmarks									import DiscoveryWatch
 from bookmarks									import BroadWatch
 from inducers									import DiffCaseRegisterRecapAccumulatorInducer

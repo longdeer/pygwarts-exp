@@ -137,8 +137,8 @@ class NavtexPreprocessor(Transmutation):
 
 					# Maintaining creation datetime check. It is assumed, that once message is
 					# created by coordinator and delivered to operator, it is analyzed once.
-					if	isinstance(CDT := current["analysis"].get("cdt"), datetime):
-						if	TimeTurner(CDT).mdY_aspath != TimeTurner().mdY_aspath:
+					if	isinstance(DTG := current["analysis"].get("DTG"), datetime):
+						if	TimeTurner(DTG).mdY_aspath != TimeTurner().mdY_aspath:
 
 							buffer.append(f"{fname} message is outdated")
 
