@@ -4,9 +4,9 @@ from ipaddress							import ip_network
 from pygwarts.irma.contrib				import LibraryContrib
 from pygwarts.filch.marauders_map		import MaraudersMap
 from pygwarts.filch.linkindor			import EUI48_format
-from pygwarts.filch.linkindor.discovery	import HostDiscovery
+from pygwarts.filch.linkindor.arp		import ARPDiscovery
+from pygwarts.filch.linkindor.arp		import ARPResponseInspector
 from irma_local							import TelegramTechHoist
-from filch_local						import ARPResponseInspector
 from scapy.all							import srp
 from scapy.all							import Ether
 from scapy.all							import ARP
@@ -28,7 +28,7 @@ point	= TimeTurner()
 
 
 
-class Discoverywatch(HostDiscovery):
+class Discoverywatch(ARPDiscovery):
 
 	@TelegramTechHoist
 	class loggy(LibraryContrib):

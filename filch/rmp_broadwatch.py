@@ -4,9 +4,9 @@ from pygwarts.irma.contrib					import LibraryContrib
 from pygwarts.filch.marauders_map			import MaraudersMap
 from pygwarts.filch.linkindor				import EUI48_format
 from pygwarts.filch.linkindor				import P_ARP_REQ
-from pygwarts.filch.linkindor.sniffing		import ARPSniffer
+from pygwarts.filch.linkindor.arp			import ARPSniffer
+from pygwarts.filch.linkindor.arp			import ARPRequestInspector
 from irma_local								import TelegramTechHoist
-from filch_local							import ARPRequestInspector
 from scapy.all								import sniff
 from scapy.all								import Ether
 from scapy.all								import ARP
@@ -69,6 +69,7 @@ if	__name__ == "__main__":
 							case 2045:	self.loggy.info(f"{maced_name} requested {mapped_dst_name} from {mapped_name} ip4")
 							case 3584:	self.loggy.info(f"unknown {srcmac} gratuitous request from unknown {dstip}")
 							case 3680:	self.loggy.info(f"unknown {dstip} gratuitous request from {maced_name} mac")
+							case 3997:	self.loggy.info(f"unknown {srcmac} gratuitous request from {mapped_name} ip4")
 							case 4093:	self.loggy.info(f"{maced_name} gratuitous request from {mapped_name} ip4")
 
 							case _:		self.loggy.info(f"unknown request state {state} for {dstip} request from {srcip}")
