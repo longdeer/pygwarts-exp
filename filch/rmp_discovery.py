@@ -68,10 +68,10 @@ class Discoverywatch(ARPDiscovery):
 
 		if len(R) and len(R[0]):
 
-			respone_mac = EUI48_format(getattr(getattr(getitem(getitem(R,0),0),"answer"),"src"))
-			self.Inspector(addr, respone_mac)
+			response_mac = EUI48_format(getattr(getattr(getitem(getitem(R,0),0),"answer"),"src"))
+			self.Inspector(addr, response_mac)
 
-			return respone_mac
+			return response_mac
 
 
 
