@@ -50,10 +50,11 @@ if	__name__ == "__main__":
 
 						match state:
 
-							case 1533:	return
-							case 2557:	return
+							case 3581 | 2557 | 1533 | 509 : return
 
+							case 996:	self.loggy.info(f"{maced_name} requested {maced_name} ip4 from unknown {dstip}")
 							case 998:	self.loggy.info(f"{maced_name} ip4 lookup")
+							case 1021:	self.loggy.info(f"{maced_name} requested {maced_name} ip4 from {mapped_name} ip4")
 							case 1145:	self.loggy.info(f"{mapped_name} requested unknown {dstip}")
 							case 1536:	self.loggy.info(f"unknown {srcmac} requested unknown {dstip} from unknown {srcip}")
 							case 1538:	self.loggy.info(f"unknown {srcmac} lookup for unknown {dstip}")

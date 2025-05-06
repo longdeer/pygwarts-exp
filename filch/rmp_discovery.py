@@ -52,7 +52,7 @@ class Discoverywatch(ARPDiscovery):
 
 				match state:
 
-					case 63:	return
+					case 159 | 63 : return
 
 					case 199:	self.loggy.info(f"unknown {srcmac} responded from {mapped_name} ip4")
 					case 216:	self.loggy.info(f"{maced_name} responded from unknown {srcip}")
