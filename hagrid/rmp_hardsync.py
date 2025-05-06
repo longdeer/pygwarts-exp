@@ -17,7 +17,7 @@ from pygwarts.hagrid.planting.weeds				import SprigTrimmer
 from pygwarts.hagrid.cultivation.sifting		import SiftingController
 from pygwarts.hagrid.cultivation.registering	import PlantRegister
 from pygwarts.hagrid.cultivation.registering	import PlantRegisterQuerier as PRQ
-from irma_local									import TelegramTechHoist
+from irma_local_intercept						import TelegramTechHoist
 
 
 

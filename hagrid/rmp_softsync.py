@@ -10,7 +10,7 @@ from pygwarts.hagrid.planting.leafs			import LeafGrowth
 from pygwarts.hagrid.planting.peels			import GrowingPeel
 from pygwarts.hagrid.planting.peeks			import BlindPeek
 from pygwarts.hagrid.cultivation.sifting	import SiftingController
-from irma_local								import TelegramTechHoist
+from irma_local_intercept					import TelegramTechHoist
 
 
 

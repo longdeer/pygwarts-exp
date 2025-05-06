@@ -13,7 +13,7 @@ from pygwarts.hagrid.planting.peeks			import DraftPeek
 from pygwarts.hagrid.planting.weeds			import SprigTrimmer
 from pygwarts.hagrid.cultivation.sifting	import SiftingController
 from navtex_preprocessor					import NavtexPreprocessor
-from irma_local								import TelegramOperatorHoist
+from irma_local_intercept					import TelegramOperatorHoist
 
 
 

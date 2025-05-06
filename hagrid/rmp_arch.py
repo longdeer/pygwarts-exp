@@ -11,7 +11,7 @@ from pygwarts.hagrid.planting.leafs			import LeafGrowth
 from pygwarts.hagrid.planting.leafs			import LeafMove
 from pygwarts.hagrid.planting.peels			import ThrivingPeel
 from pygwarts.hagrid.cultivation.sifting	import SiftingController
-from irma_local								import TelegramTechHoist
+from irma_local_intercept					import TelegramTechHoist
 
 
 

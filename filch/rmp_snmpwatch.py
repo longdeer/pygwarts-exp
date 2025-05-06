@@ -11,7 +11,7 @@ from pygwarts.magical.time_turner			import TimeTurner
 from pygwarts.irma.contrib					import LibraryContrib
 from pygwarts.filch.marauders_map			import MaraudersMap
 from pygwarts.filch.apppuf.snmp				import SNMPtrap
-from irma_local								import TelegramTechHoist
+from irma_local_intercept					import TelegramTechHoist
 from pysnmp.entity							import config
 from pysnmp.entity.engine					import SnmpEngine
 from pysnmp.entity.rfc3413					import ntfrcv

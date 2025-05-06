@@ -6,7 +6,7 @@ from pygwarts.filch.marauders_map		import MaraudersMap
 from pygwarts.filch.linkindor			import EUI48_format
 from pygwarts.filch.linkindor.arp		import ARPDiscovery
 from pygwarts.filch.linkindor.arp		import ARPResponseInspector
-from irma_local							import TelegramTechHoist
+from irma_local_intercept				import TelegramTechHoist
 from scapy.all							import srp
 from scapy.all							import Ether
 from scapy.all							import ARP

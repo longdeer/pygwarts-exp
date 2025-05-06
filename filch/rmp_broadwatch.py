@@ -6,7 +6,7 @@ from pygwarts.filch.linkindor				import EUI48_format
 from pygwarts.filch.linkindor				import P_ARP_REQ
 from pygwarts.filch.linkindor.arp			import ARPSniffer
 from pygwarts.filch.linkindor.arp			import ARPRequestInspector
-from irma_local								import TelegramTechHoist
+from irma_local_intercept					import TelegramTechHoist
 from scapy.all								import sniff
 from scapy.all								import Ether
 from scapy.all								import ARP
