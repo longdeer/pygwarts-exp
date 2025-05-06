@@ -285,13 +285,22 @@ class Library(LibraryAccess):
 
 
 
+	class NavDrop(LibraryVolume):
+
+		inrange		= ypoint.dmY_aspath
+		location	= f"{hroot}/navdrop/{ypoint.Ym_aspath}/navdrop{ypoint.dmY_asjoin}.loggy"
+
+		@TextWrapper("\n\thagrid-navdrop\n","\n")
+		class Annex(VolumeAnnex): pass
+
+
 	class SoftSync(LibraryVolume):
 
 		inrange		= ypoint.dmY_aspath
 		location	= f"{hroot}/softsync/{ypoint.Ym_aspath}/softsync{ypoint.dmY_asjoin}.loggy"
 
 		@TextWrapper("\n\thagrid-softsync\n","\n")
-		class Annex(VolumeAnnex):		pass
+		class Annex(VolumeAnnex): pass
 
 
 	class HardSync(LibraryVolume):
@@ -300,7 +309,7 @@ class Library(LibraryAccess):
 		location	= f"{hroot}/hardsync/{tpoint.Ym_aspath}/hardsync{tpoint.dmY_asjoin}.loggy"
 
 		@TextWrapper("\n\thagrid-hardsync\n","\n")
-		class Annex(VolumeAnnex):		pass
+		class Annex(VolumeAnnex): pass
 
 
 	class Arch(LibraryVolume):
@@ -309,7 +318,7 @@ class Library(LibraryAccess):
 		location	= f"{hroot}/arch/{ypoint.Ym_aspath}/arch{ypoint.dmY_asjoin}.loggy"
 
 		@TextWrapper("\n\thagrid-arch\n","\n")
-		class Annex(VolumeAnnex):		pass
+		class Annex(VolumeAnnex): pass
 
 
 
