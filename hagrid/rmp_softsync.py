@@ -61,7 +61,7 @@ class Softsync(Tree):
 
 if	__name__ == "__main__":
 
-	softsync = Softsync(bough="/mnt/H")
+	softsync = Softsync(bough="/mnt/R")
 	softsync.perform()
 	softsync.seeds.produce(rewrite=True, magical=True)
 

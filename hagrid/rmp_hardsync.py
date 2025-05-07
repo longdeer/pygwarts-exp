@@ -48,7 +48,7 @@ class Hardsync(Tree):
 	class twigs(SiftingController):
 
 		include		= r".+",
-		exclude		= "/mnt/H/CKS/ARC", "/mnt/H/SHARE",
+		exclude		= "/mnt/R/CKS/ARC", "/mnt/R/SHARE",
 
 	@GrowingPeel
 	class thrive(TwigThrive):	pass
@@ -60,7 +60,7 @@ class Hardsync(Tree):
 	class files(Rejuvenation):	pass
 	class stats(LibraryShelf):	pass
 	class trim(SprigTrimmer):	pass
-	class trash(Efflorescence):	branches = { "/mnt/H" : ( "/srv/A2/R", )}
+	class trash(Efflorescence):	branches = { "/mnt/R" : ( "/srv/A2/R", )}
 
 	@Callstamp
 	@fssprout("/srv/A2/R")
@@ -77,11 +77,11 @@ class Hardsync(Tree):
 
 if	__name__ == "__main__":
 
-	hardsync = Hardsync(bough="/mnt/H")
+	hardsync = Hardsync(bough="/mnt/R")
 	hardsync.perform()
 	hardsync.stats.produce(
 
-		f"{root}/replicas/{point.Ym_aspath}/greplica{point.dmY_asjoin}.Shelf",
+		f"{root}/replicas/{point.Ym_aspath}/replica{point.dmY_asjoin}.Shelf",
 		strict_mode=False,
 	)
 

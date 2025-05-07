@@ -129,7 +129,7 @@ class Library(LibraryAccess):
 
 	class ShelfTrackers(VolumeBookmark):
 
-		trigger	= "cleaned out from original shelf"
+		trigger	= "Discarded tracker for"
 
 		class Counter(AccessCounter):
 
@@ -377,7 +377,7 @@ class Library(LibraryAccess):
 
 				@TextWrapper("\nhosts mapped: ")
 				@InducerCase("library_shelf", prep=is_num, post=num_diff)
-				class MappedHosts(AccessInducer):
+				class MappedHostsInducer(AccessInducer):
 
 					def __call__(self, volume :LibraryVolume) -> str | None :
 
@@ -633,8 +633,6 @@ class Library(LibraryAccess):
 
 							if	(amount := len(requests)):
 
-								# In case attributes not provided Exception
-								# raise will stop whole procedure for sure
 								ndate = self.plotdate.dmY_aspath
 								pdate = self.plotdate.dmY_asjoin
 								fsdir = self.plotdir
