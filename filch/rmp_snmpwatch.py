@@ -254,7 +254,7 @@ if	__name__ == "__main__":
 		)
 		filch.get_modules(
 
-			[ "~/.pysnmp/mibs" ],
+			[ "/srv/lcontainer/filch/MIB" ],
 			[ "SNMPv2-MIB", "IF-MIB", "SNMP-COMMUNITY-MIB", "XPPC-MIB", "POLYGON-MIB", "POLYCOM740-MIB" ]
 		)
 
