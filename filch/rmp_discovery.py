@@ -1,15 +1,19 @@
-from pygwarts.magical.time_turner		import TimeTurner
-from operator							import getitem
-from ipaddress							import ip_network
-from pygwarts.irma.contrib				import LibraryContrib
-from pygwarts.filch.marauders_map		import MaraudersMap
-from pygwarts.filch.linkindor			import EUI48_format
-from pygwarts.filch.linkindor.arp		import ARPDiscovery
-from pygwarts.filch.linkindor.arp		import ARPResponseInspector
-from irma_local_intercept				import TelegramTechHoist
-from scapy.all							import srp
-from scapy.all							import Ether
-from scapy.all							import ARP
+from typing									import List
+from pygwarts.magical.philosophers_stone	import Transmutable
+from pygwarts.magical.time_turner			import TimeTurner
+from pygwarts.magical.time_turner.timers 	import Callstamp
+from operator								import getitem
+from ipaddress								import ip_network
+from ipaddress								import IPv4Address
+from pygwarts.irma.contrib					import LibraryContrib
+from pygwarts.filch.marauders_map			import MaraudersMap
+from pygwarts.filch.linkindor				import EUI48_format
+from pygwarts.filch.linkindor.arp			import ARPDiscovery
+from pygwarts.filch.linkindor.arp			import ARPResponseInspector
+from irma_local_intercept					import TelegramTechHoist
+from scapy.all								import srp
+from scapy.all								import Ether
+from scapy.all								import ARP
 
 
 
@@ -28,7 +32,8 @@ point	= TimeTurner()
 
 
 
-class Discoverywatch(ARPDiscovery):
+@Callstamp
+class Discoverywatch(Transmutable):
 
 	@TelegramTechHoist
 	class loggy(LibraryContrib):
@@ -45,7 +50,7 @@ class Discoverywatch(ARPDiscovery):
 			if	(result := super().__call__(ip4, mac)) is not None:
 
 				state			= result["state"]
-				srcip			= result["source ip4"] 
+				srcip			= result["source ip4"]
 				srcmac			= result["source MAC"]
 				mapped_name		= result["source ip4 to name"]
 				maced_name		= result["source MAC to name"]
@@ -61,17 +66,20 @@ class Discoverywatch(ARPDiscovery):
 
 					case _:		self.loggy.info(f"{srcip} response unknown state {state}")
 
+	class Discover(ARPDiscovery):
+		def ip4(self, addr :str, **kwargs) -> str | None :
 
-	def discoverer(self, addr :str, **kwargs) -> str | None :
+			R = srp(Ether(dst="ff:ff:ff:ff:ff:ff") /ARP(pdst=addr), **kwargs)
 
-		R = srp(Ether(dst="ff:ff:ff:ff:ff:ff") /ARP(pdst=addr), **kwargs)
+			if len(R) and len(R[0]):
 
-		if len(R) and len(R[0]):
+				response_mac = EUI48_format(getattr(getattr(getitem(getitem(R,0),0),"answer"),"src"))
+				self.Inspector(addr, response_mac)
 
-			response_mac = EUI48_format(getattr(getattr(getitem(getitem(R,0),0),"answer"),"src"))
-			self.Inspector(addr, response_mac)
+				return response_mac
 
-			return response_mac
+	def __call__(self, network :List[IPv4Address], *args, **kwargs):
+		for IP4 in network : self.Discover(str(IP4), self.Discover.ip4, *args, **kwargs)
 
 
 
@@ -92,9 +100,7 @@ if	__name__ == "__main__":
 			NAME=2,
 			DESC=3
 		)
-
-	for ip4 in list(ip_network("192.168.160.0/22"))[1:-1]:
-		filch(str(ip4), filch.discoverer, retry=0, timeout=1, verbose=0)
+	filch(list(ip_network("192.168.160.0/22"))[1:-1], retry=0, timeout=1, verbose=0)
 
 
 

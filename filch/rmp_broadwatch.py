@@ -1,5 +1,6 @@
 from pygwarts.magical.time_turner			import TimeTurner
 from pygwarts.magical.time_turner.timers	import DIRTtimer
+from pygwarts.magical.time_turner.timers 	import Callstamp
 from pygwarts.irma.contrib					import LibraryContrib
 from pygwarts.filch.marauders_map			import MaraudersMap
 from pygwarts.filch.linkindor				import EUI48_format
@@ -19,10 +20,11 @@ from scapy.all								import ARP
 
 
 if	__name__ == "__main__":
-	if	(kill := (point := TimeTurner()).diff(subtrahend=TimeTurner(timepoint="2300"))) <0:
+	if	(kill := (point := TimeTurner()).diff(subtrahend=TimeTurner(timepoint="235930"))) <0:
 
 		root = "/srv/lcontainer/filch"
 
+		@Callstamp
 		@DIRTtimer(T=-kill)
 		class Broadwatch(ARPSniffer):
 
@@ -41,8 +43,8 @@ if	__name__ == "__main__":
 					if	(result := super().__call__(request)) is not None:
 
 						state			= result["state"]
-						srcip			= result["source ip4"] 
-						dstip			= result["target ip4"] 
+						srcip			= result["source ip4"]
+						dstip			= result["target ip4"]
 						srcmac			= result["source MAC"]
 						mapped_name		= result["source ip4 to name"]
 						maced_name		= result["source MAC to name"]

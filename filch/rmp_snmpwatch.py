@@ -8,6 +8,7 @@ from asyncore								import loop
 from traceback								import format_exception
 from pygwarts.magical.philosophers_stone	import Transmutable
 from pygwarts.magical.time_turner			import TimeTurner
+from pygwarts.magical.time_turner.timers 	import Callstamp
 from pygwarts.irma.contrib					import LibraryContrib
 from pygwarts.filch.marauders_map			import MaraudersMap
 from pygwarts.filch.apppuf.snmp				import SNMPtrap
@@ -42,6 +43,7 @@ point	= TimeTurner()
 
 
 
+@Callstamp
 class SNMPWatch(SNMPtrap):
 
 	@TelegramTechHoist
@@ -240,7 +242,7 @@ class SNMPWatch(SNMPtrap):
 
 
 if	__name__ == "__main__":
-	if	(kill := point.diff(subtrahend=TimeTurner(timepoint="2359"))) <0:
+	if	(kill := point.diff(subtrahend=TimeTurner(timepoint="235930"))) <0:
 
 		filch = SNMPWatch()
 		filch.filchmap.CSV(
