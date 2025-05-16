@@ -31,18 +31,18 @@ class TelegramHoist(PoolHoist):
 
 			def warning(self, message :str):
 
+				super().warning(message)
 				self.buffer_insert(f"{self.handover_name} WARNING: {message}")
-				return super().warning(message)
 
 			def error(self, message :str):
 
+				super().error(message)
 				self.buffer_insert(f"{self.handover_name} ERROR: {message}")
-				return super().error(message)
 
 			def critical(self, message :str):
 
+				super().critical(message)
 				self.buffer_insert(f"{self.handover_name} CRITICAL: {message}")
-				return super().critical(message)
 
 
 		return	Interceptor
@@ -61,6 +61,7 @@ class TelegramTechHoist(TelegramHoist):
 		class Interceptor(super().__call__()):
 			def info(self, message :str):
 
+				super().info(message)
 
 				if	isinstance(getattr(self, "watchdog_map", None), set):
 					for pattern in self.watchdog_map:
@@ -69,8 +70,6 @@ class TelegramTechHoist(TelegramHoist):
 							if	pattern.fullmatch(self.handover_name):
 
 								self.buffer_insert(f"{self.handover_name}: {message}")
-
-				return super().info(message)
 
 
 			def buffer_release(self, *args, **kwargs) -> List[str] :
