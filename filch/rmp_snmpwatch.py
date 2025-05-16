@@ -50,11 +50,12 @@ class SNMPWatch(SNMPtrap):
 	class loggy(LibraryContrib):
 
 		handler		= f"{root}/snmpwatch/{point.Ym_aspath}/snmpwatch{point.dmY_asjoin}.loggy"
-		watchdog	= "SNMPWatch", "SNMPWatch.Handler",
+		watchdog	= "SNMPWatch.Handler",
 		init_name	= "filch"
 
-	def __init__(self):
-		super().__init__()
+	def __init__(self, *args, **kwargs):
+
+		super().__init__(*args, **kwargs)
 
 		class AsyncoreDispatcher(ScapyDispatcher):
 			def runDispatcher(self, kill_timer :int):
@@ -260,6 +261,7 @@ if	__name__ == "__main__":
 			[ "SNMPv2-MIB", "IF-MIB", "SNMP-COMMUNITY-MIB", "XPPC-MIB", "POLYGON-MIB", "POLYCOM740-MIB" ]
 		)
 
+		filch.Handler.loggy.info(f"Starting SNMPv1 server")
 		filch("192.168.162.111", 162, filch.trap, listen_time=-kill, community="trap", community_i="area")
 
 

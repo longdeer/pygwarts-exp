@@ -32,7 +32,7 @@ if	__name__ == "__main__":
 			class loggy(LibraryContrib):
 
 				handler		= f"{root}/broadwatch/{point.Ym_aspath}/broadwatch{point.dmY_asjoin}.loggy"
-				watchdog	= "Broadwatch", "Broadwatch.Inspector",
+				watchdog	= "Broadwatch.Inspector",
 				init_name	= "filch"
 
 			class filchmap(MaraudersMap): pass
@@ -109,6 +109,7 @@ if	__name__ == "__main__":
 			NAME=2,
 			DESC=3
 		)
+		filch.Inspector.loggy.info(f"Commencing ARP sniffing")
 		filch(sniff, filter="arp", prn=filch.trap)
 
 
