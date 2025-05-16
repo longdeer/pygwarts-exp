@@ -39,8 +39,8 @@ class Discoverywatch(Transmutable):
 	class loggy(LibraryContrib):
 
 		handler		= f"{root}/discovery/{point.Ym_aspath}/discovery{point.dmY_asjoin}.loggy"
+		watchdog	= "Discoverywatch", "Discoverywatch.Inspector",
 		init_name	= "filch"
-		watchdog	= "Discoverywatch.Inspector",
 
 	class filchmap(MaraudersMap): pass
 	class Inspector(ARPResponseInspector):
@@ -100,6 +100,7 @@ if	__name__ == "__main__":
 			NAME=2,
 			DESC=3
 		)
+	filch.loggy.info(f"Commencing network scan")
 	filch(list(ip_network("192.168.160.0/22"))[1:-1], retry=0, timeout=1, verbose=0)
 
 

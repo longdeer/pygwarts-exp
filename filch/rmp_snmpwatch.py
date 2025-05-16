@@ -50,8 +50,8 @@ class SNMPWatch(SNMPtrap):
 	class loggy(LibraryContrib):
 
 		handler		= f"{root}/snmpwatch/{point.Ym_aspath}/snmpwatch{point.dmY_asjoin}.loggy"
+		watchdog	= "SNMPWatch", "SNMPWatch.Handler",
 		init_name	= "filch"
-		watchdog	= "SNMPWatch.Handler",
 
 	def __init__(self):
 		super().__init__()

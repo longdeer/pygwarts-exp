@@ -32,8 +32,8 @@ if	__name__ == "__main__":
 			class loggy(LibraryContrib):
 
 				handler		= f"{root}/broadwatch/{point.Ym_aspath}/broadwatch{point.dmY_asjoin}.loggy"
+				watchdog	= "Broadwatch", "Broadwatch.Inspector",
 				init_name	= "filch"
-				watchdog	= "Broadwatch.Inspector",
 
 			class filchmap(MaraudersMap): pass
 			class Inspector(ARPRequestInspector):

@@ -4,10 +4,10 @@ from	time							import sleep
 from	requests						import get as GET
 from	pygwarts.irma.contrib.intercept	import PoolHoist
 from	pygwarts.magical.spells			import patronus
-from	credistr						import gmdssA2mrmENGbot
-from	credistr						import gmdssa2mrm_announcer_bot
-from	credistr						import GMDSSA2MRM
-from	credistr						import mrma2tech
+from	credistr						import tlg_bot_RMPMRMTECHBOT
+from	credistr						import tlg_bot_RMPMRMGMDSSBOT
+from	credistr						import tlg_channel_RMPMRMTECH
+from	credistr						import tlg_channel_RMPMRMGMDSS
 
 
 
@@ -87,9 +87,9 @@ class TelegramTechHoist(TelegramHoist):
 
 						GET(
 
-							f"https://api.telegram.org/bot{gmdssA2mrmENGbot()}/sendMessage",
+							f"https://api.telegram.org/bot{tlg_bot_RMPMRMTECHBOT()}/sendMessage",
 							{
-								"chat_id":	mrma2tech(),
+								"chat_id":	tlg_channel_RMPMRMTECH(),
 								"text":		dump_message[i:i+4096],
 							}
 						)
@@ -129,9 +129,9 @@ class TelegramOperatorHoist(TelegramHoist):
 
 						GET(
 
-							f"https://api.telegram.org/bot{gmdssa2mrm_announcer_bot()}/sendMessage",
+							f"https://api.telegram.org/bot{tlg_bot_RMPMRMGMDSSBOT()}/sendMessage",
 							{
-								"chat_id":	GMDSSA2MRM(),
+								"chat_id":	tlg_channel_RMPMRMGMDSS(),
 								"text":		dump_message[i:i+4096],
 							}
 						)
