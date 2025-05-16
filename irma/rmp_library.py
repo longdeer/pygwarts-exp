@@ -1,3 +1,4 @@
+from os											import makedirs
 from re											import Pattern
 from typing										import Literal
 from collections								import defaultdict
@@ -917,7 +918,10 @@ if	__name__ == "__main__":
 	irma.library_shelf.produce(ignore_mod=True, strict_mode=False)
 
 	if	len(annex):
+
+		makedirs(f"{iroot}/annex/{ypoint.Ym_aspath}", exist_ok=True)
 		with open(f"{iroot}/annex/{ypoint.Ym_aspath}/library{ypoint.dmY_asjoin}.annex", "w") as dump:
+
 			dump.write(annex)
 
 

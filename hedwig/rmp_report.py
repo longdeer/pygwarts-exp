@@ -9,7 +9,8 @@ from pygwarts.hedwig.mail.letter.fields	import BodyField
 from pygwarts.hedwig.mail.builder.smtp	import SMTPBuilder
 from pygwarts.hedwig.mail.utils			import EmailValidator
 from irma_local_intercept				import TelegramTechHoist
-from credistr							import mtfudk
+from lngd_local_scanner					import byte_scan
+from credistr							import token_mail_mtfudk
 
 
 
@@ -27,8 +28,7 @@ if	__name__ == "__main__":
 	hroot	= "/srv/lcontainer/hedwig"
 
 
-	with open(f"{iroot}/annex/{ypoint.Ym_aspath}/library{ypoint.dmY_asjoin}.annex") as r:
-		daliy_report = r.read()
+	daliy_report = byte_scan(f"{iroot}/annex/{ypoint.Ym_aspath}/library{ypoint.dmY_asjoin}.annex")[1]
 
 
 	class Report(SMTPBuilder):
@@ -63,7 +63,7 @@ if	__name__ == "__main__":
 					{
 						"endpoint": "smtp.mail.ru",
 						"port":		465,
-						"password":	mtfudk(),
+						"password":	token_mail_mtfudk(),
 					}
 				)
 				break
