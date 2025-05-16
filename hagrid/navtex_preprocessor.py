@@ -145,7 +145,7 @@ class NavtexPreprocessor(Transmutation):
 
 					self.process_analysis(fname, current["analysis"], buffer)
 					self.process_buffer(fname, is_new, buffer, current["air"])
-					self.Navshelf(str(file),{ "air": current["air"], "mtime": ntime })
+					self.Navshelf(str(file),{ "air": current["air"], "mtime": int(file.stat().st_mtime) })
 
 
 				super().__call__(*plant, **kwargs)
@@ -174,20 +174,23 @@ class NavtexPreprocessor(Transmutation):
 					"buffer" content.
 				"""
 
-				send = str()
+				if	callable(hoist := getattr(self.loggy, "buffer_insert", None)) and not (send := str()):
 
-				if	flag:	send += f"\nnew message {file}\n\n"
-				if	flag or buffer:
-					for i,line in enumerate(message,1):
+					if	flag:	send += f"\nnew message {file}\n\n"
+					if	flag or buffer:
 
-						send += str(i).ljust(5)
-						send += " ".join(line)
-						send += "\n"
+						for i,line in enumerate(message,1):
 
-				send += "\n"
-				send += "\n".join(buffer)
+							send += str(i).ljust(5)
+							send += " ".join(line)
+							send += "\n"
 
-				self.loggy.buffer_insert(send)
+					send += "\n"
+					send += "\n".join(buffer)
+
+					self.loggy.buffer_insert(send)
+				else:
+					self.loggy.debug("Buffer not hoisted")
 
 
 
