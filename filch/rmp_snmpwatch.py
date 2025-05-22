@@ -260,7 +260,6 @@ if	__name__ == "__main__":
 			[ "/srv/lcontainer/filch/MIB" ],
 			[ "SNMPv2-MIB", "IF-MIB", "SNMP-COMMUNITY-MIB", "XPPC-MIB", "POLYGON-MIB", "POLYCOM740-MIB" ]
 		)
-
 		filch.Handler.loggy.info(f"Starting SNMPv1 server")
 		filch("192.168.162.111", 162, filch.trap, listen_time=-kill, community="trap", community_i="area")
 

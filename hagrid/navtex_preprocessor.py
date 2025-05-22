@@ -314,8 +314,8 @@ class NavtexPreprocessor(Transmutation):
 
 				try:
 
-					text = getattr(self, "MSG_SEP", "\n").join( " ".join(line) for line in message )
-					path.write_text(f"\n{text}\n")
+					text = "\r\n".join( " ".join(line) for line in message )
+					path.write_text(f"\r\n{text}\r\n")
 
 					self.loggy.info(f"Source file \"{path}\" rewritten")
 					return True
