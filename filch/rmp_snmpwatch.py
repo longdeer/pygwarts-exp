@@ -244,7 +244,7 @@ class SNMPWatch(SNMPtrap):
 
 					self.loggy.info(f"(v1 trap) {self.name(src)}: {S}")
 
-				case ( src, MIB, *details ):XPPC-MIB
+				case ( src, MIB, *details ):
 
 					self.loggy.info(f"(v1 trap) {self.name(src)} {MIB}: {details}")
 
