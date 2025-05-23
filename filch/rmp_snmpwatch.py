@@ -222,7 +222,7 @@ class SNMPWatch(SNMPtrap):
 							f"(v1 trap) {self.name(src)} port {P} loopback status: {self.dsx1LoopbackStatus.get(S)}"
 						)
 
-				case ( "192.168.162.32", "DS1-MIB", "dsx1LineStatus", P, _, S, _ ):
+				case ( src, "DS1-MIB", "dsx1LineStatus", P, _, S, _ ) if src == "192.168.162.32":
 
 					self._UPPER_LAYER.loggy.info(
 
