@@ -251,7 +251,7 @@ class Library(LibraryAccess):
 	class WieghtCounter(VolumeBookmark):
 
 		trigger	= "INFO : Size:"
-		rpattern= r".+ Size: (?P<target>\d+)$"
+		rpattern= r".+ Size: (?P<target>[0-9TGMKB ]+)$"
 
 		class Handler(TargetHandler):
 

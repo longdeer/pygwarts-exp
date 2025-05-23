@@ -218,22 +218,35 @@ class SNMPWatch(SNMPtrap):
 					if	S != "1":
 
 						self.loggy.info(
-							f"{self.name(src)} port {P} loopback status: {self.dsx1LoopbackStatus.get(S)}"
+
+							f"(v1 trap) {self.name(src)} port {P} loopback status: {self.dsx1LoopbackStatus.get(S)}"
 						)
+
+				case ( "dev-csw-poly3rxcc", "DS1-MIB", "dsx1LineStatus", P, _, S, _ ):
+
+					self._UPPER_LAYER.loggy.info(
+
+						f"(v1 trap) {self.name(src)} port {P} line status: {self.dsx1LineStatus.get(S)}"
+					)
 
 				case ( src, "DS1-MIB", "dsx1LineStatus", P, _, S, _ ):
 
 					self.loggy.info(
-						f"{self.name(src)} port {P} line status: {self.dsx1LineStatus.get(S)}"
+
+						f"(v1 trap) {self.name(src)} port {P} line status: {self.dsx1LineStatus.get(S)}"
 					)
 
 				case ( src, "SNMPv2-SMI", "enterprises", "935", _, S, _ ):
 
-					self.loggy.info(f"{self.name(src)} status: {S}")
+					self.loggy.info(f"(v1 trap) {self.name(src)} status: {S}")
 
-				case ( src, MIB, *details ):
+				case ( src, "XPPC-MIB", *_, S, _ ):
 
-					self.loggy.info(f"{self.name(src)} {MIB}: {details}")
+					self.loggy.info(f"(v1 trap) {self.name(src)}: {S}")
+
+				case ( src, MIB, *details ):XPPC-MIB
+
+					self.loggy.info(f"(v1 trap) {self.name(src)} {MIB}: {details}")
 
 
 
