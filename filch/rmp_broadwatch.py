@@ -20,7 +20,7 @@ from scapy.all								import ARP
 
 
 if	__name__ == "__main__":
-	if	(kill := (point := TimeTurner()).diff(subtrahend=TimeTurner(timepoint="235930"))) <0:
+	if	(kill := (point := TimeTurner()).diff(subtrahend=TimeTurner(timepoint="231457"))) <0:
 
 		root = "/srv/lcontainer/filch"
 
