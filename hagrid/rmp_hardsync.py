@@ -87,14 +87,10 @@ if	__name__ == "__main__":
 
 	prq = PRQ(hardsync.stats)
 
-	gsize		= byte_size_string(prq.WG(apparent=True))
-	gfiles		= prq.TG()
-	gfolders	= prq.LG()
-
 	hardsync.loggy.info(f"\"/srv/A2/R\" stats:")
-	hardsync.loggy.info(f"Size: {gsize}")
-	hardsync.loggy.info(f"Twigs: {gfolders}")
-	hardsync.loggy.info(f"Leafs: {gfiles}")
+	hardsync.loggy.info(f"Size: {byte_size_string(prq.WG(apparent=True))}")
+	hardsync.loggy.info(f"Twigs: {prq.TG()}")
+	hardsync.loggy.info(f"Leafs: {prq.LG()}")
 
 
 

@@ -2,6 +2,7 @@ from os											import makedirs
 from re											import Pattern
 from typing										import Literal
 from collections								import defaultdict
+from collections								import Counter
 from pygwarts.magical.time_turner				import TimeTurner
 from pygwarts.magical.time_turner.timers 		import Callstamp
 from pygwarts.magical.time_turner.utils 		import hundscale
@@ -884,6 +885,62 @@ class Library(LibraryAccess):
 									requests,
 									volume,
 									getattr(self, getattr(self, "case_link", ""), None)
+								)
+
+
+	class SNMP(LibraryVolume):
+
+
+		inrange		= ypoint.dmY_aspath
+		location	= f"/mnt/container/ArrestedDevelopment/pygwarts/development/loggy/snmpwatch{ypoint.dmY_asjoin}.loggy"
+
+
+		@TextWrapper("\n\tfilch-snmpwatch\n","\n")
+		class Annex(VolumeAnnex):		pass
+		class Watch(VolumeBookmark):
+
+
+			trigger		= r"v1 trap"
+			rpattern	= rf"\(v1 trap\) (?P<target>.+)"
+
+
+			@AccessHandlerRegisterCounter
+			class Accumulator(TargetStringAccumulator):
+
+				@TextWrapper("\nv1 traps: ")
+				class Inducer(FilchWatchInducer):
+					def __call__(self, volume :LibraryVolume) -> str | None :
+
+						if	isinstance(recap := self.get_register_recap(volume), list):
+							if	isinstance(counter := self.get_register_counter(volume), int):
+
+								count = Counter(recap)
+								scount = sorted(
+
+									count,
+									key=lambda trap : count[trap],
+									reverse=True
+								)
+
+								return "%s\n\t%s"%(
+
+									self.filch_caseamount(counter, volume),
+									"\n\t".join(
+
+										"%s: %s"%(
+
+											trap,
+											self.filch_casing(
+
+												count[trap],
+												volume,
+												getattr(self, getattr(self, "case_link", ""), None),
+												trap,
+												is_num,
+												num_diff
+											)
+										)	for trap in scount
+									)
 								)
 
 
