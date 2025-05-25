@@ -2,7 +2,6 @@ from pygwarts.magical.time_turner				import TimeTurner
 from pygwarts.magical.time_turner.timers		import Callstamp
 from pygwarts.irma.contrib						import LibraryContrib
 from pygwarts.irma.shelve						import LibraryShelf
-from pygwarts.irma.access.utils					import byte_size_string
 from pygwarts.hagrid.thrivables					import Tree
 from pygwarts.hagrid.sprouts					import fssprout
 from pygwarts.hagrid.planting					import Flourish
@@ -88,7 +87,7 @@ if	__name__ == "__main__":
 	prq = PRQ(hardsync.stats)
 
 	hardsync.loggy.info(f"\"/srv/A2/R\" stats:")
-	hardsync.loggy.info(f"Size: {byte_size_string(prq.WG(apparent=True))}")
+	hardsync.loggy.info(f"Size: {prq.WG(apparent=True)}")
 	hardsync.loggy.info(f"Twigs: {prq.TG()}")
 	hardsync.loggy.info(f"Leafs: {prq.LG()}")
 

@@ -252,7 +252,7 @@ class Library(LibraryAccess):
 	class WieghtCounter(VolumeBookmark):
 
 		trigger	= "INFO : Size:"
-		rpattern= r".+ Size: (?P<target>[0-9TGMKB ]+)$"
+		rpattern= r".+ Size: (?P<target>\d+)$"
 
 		class Handler(TargetHandler):
 
@@ -892,7 +892,7 @@ class Library(LibraryAccess):
 
 
 		inrange		= ypoint.dmY_aspath
-		location	= f"/mnt/container/ArrestedDevelopment/pygwarts/development/loggy/snmpwatch{ypoint.dmY_asjoin}.loggy"
+		location	= f"{froot}/snmpwatch/{ypoint.Ym_aspath}/snmpwatch{ypoint.dmY_asjoin}.loggy"
 
 
 		@TextWrapper("\n\tfilch-snmpwatch\n","\n")
