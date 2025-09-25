@@ -1,13 +1,17 @@
 import	re
+import	json
 from	typing							import List
 from	time							import sleep
 from	requests						import get as GET
+from	requests						import post as POST
 from	pygwarts.irma.contrib.intercept	import PoolHoist
 from	pygwarts.magical.spells			import patronus
 from	credistr						import tlg_bot_RMPMRMTECHBOT
 from	credistr						import tlg_bot_RMPMRMGMDSSBOT
 from	credistr						import tlg_channel_RMPMRMTECH
 from	credistr						import tlg_channel_RMPMRMGMDSS
+from	credistr						import tlg_channel_RMPMRMGMDSS
+from	credistr						import link_overseer_announcer_receiver
 
 
 
@@ -120,6 +124,17 @@ class TelegramOperatorHoist(TelegramHoist):
 				buffer_dump = super().buffer_release(*args, **kwargs)
 				dump_message = "\n".join(buffer_dump)
 				delay = 0
+
+				try:
+
+					POST(
+
+						link_overseer_announcer_receiver(),
+						data=json.dumps({ "message": dump_message })
+					)
+
+				except	Exception as E : self.pool_debug(f"Overseer delivery failed due to {patronus(E)}")
+
 
 				try:
 
