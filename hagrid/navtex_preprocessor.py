@@ -185,12 +185,14 @@ class NavtexPreprocessor(Transmutation):
 							send += " ".join(line)
 							send += "\n"
 
+
 					send += "\n"
 					send += "\n".join(buffer)
 
-					self.loggy.buffer_insert(send)
-				else:
-					self.loggy.debug("Buffer not hoisted")
+
+					if		send != "\n" : self.loggy.buffer_insert(send)
+					else:	self.loggy.debug("Buffer is empty")
+				else:		self.loggy.debug("Buffer not hoisted")
 
 
 
