@@ -300,7 +300,7 @@ class NavtexPreprocessor(Transmutation):
 
 				try:	header,*body,eos = lines
 				except	ValueError : return True
-				else:	return not (header == eos == "")
+				else:	return header != "" or eos != "" or body[0] == "" or body[-1] == ""
 
 
 
