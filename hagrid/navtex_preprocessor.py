@@ -176,8 +176,10 @@ class NavtexPreprocessor(Transmutation):
 
 				if	callable(hoist := getattr(self.loggy, "buffer_insert", None)) and not (send := str()):
 
-					if	flag:	send += f"\nnew message {file}\n\n"
+					if	flag:	send += f"\nnew message {file}\n"
 					if	flag or buffer:
+
+						send += "\n"
 
 						for i,line in enumerate(message,1):
 
@@ -187,10 +189,10 @@ class NavtexPreprocessor(Transmutation):
 
 
 					send += "\n"
-					send += "\n".join(buffer)
+					send += "\n".join(buffer) + "\n"
 
 
-					if		send != "\n" : self.loggy.buffer_insert(send)
+					if		send != "\n" : self.loggy.buffer_insert(send.strip("\n"))
 					else:	self.loggy.debug("Buffer is empty")
 				else:		self.loggy.debug("Buffer not hoisted")
 
