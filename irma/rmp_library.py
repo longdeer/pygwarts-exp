@@ -1,50 +1,51 @@
-from os											import makedirs
-from re											import Pattern
-from typing										import Literal
-from collections								import defaultdict
-from collections								import Counter
-from pygwarts.magical.time_turner				import TimeTurner
-from pygwarts.magical.time_turner.timers 		import Callstamp
-from pygwarts.magical.time_turner.utils 		import hundscale
-from pygwarts.magical.time_turner.utils			import DATETIME_1_P
-from pygwarts.magical.spells					import patronus
-from pygwarts.irma.contrib						import LibraryContrib
-from pygwarts.irma.shelve						import LibraryShelf
-from pygwarts.irma.shelve.casing				import is_num
-from pygwarts.irma.shelve.casing				import num_diff
-from pygwarts.irma.shelve.casing				import mostsec_diff
-from pygwarts.irma.shelve.casing				import byte_size_diff
-from pygwarts.irma.access						import LibraryAccess
-from pygwarts.irma.access.volume				import LibraryVolume
-from pygwarts.irma.access.bookmarks				import VolumeBookmark
-from pygwarts.irma.access.bookmarks.counters	import WarningCount
-from pygwarts.irma.access.bookmarks.counters	import ErrorCount
-from pygwarts.irma.access.bookmarks.counters	import CriticalCount
-from pygwarts.irma.access.bookmarks.viewers		import ViewWrapper
-from pygwarts.irma.access.bookmarks.viewers		import ViewCase
-from pygwarts.irma.access.handlers				import AccessHandlerRegisterCounter
-from pygwarts.irma.access.handlers.counters		import AccessCounter
-from pygwarts.irma.access.handlers.parsers		import GroupParser
-from pygwarts.irma.access.handlers.parsers		import TargetHandler
-from pygwarts.irma.access.handlers.parsers		import TargetNumberAccumulator
-from pygwarts.irma.access.handlers.parsers		import TargetStringAccumulator
-from pygwarts.irma.access.inducers				import AccessInducer
-from pygwarts.irma.access.inducers.counters		import RegisterCounterInducer
-from pygwarts.irma.access.inducers.recap		import RegisterRecapInducer
-from pygwarts.irma.access.inducers.filters		import plurnum
-from pygwarts.irma.access.inducers.filters		import posnum
-from pygwarts.irma.access.inducers.case			import InducerCase
-from pygwarts.irma.access.annex					import VolumeAnnex
-from pygwarts.irma.access.annex					import LibraryAnnex
-from pygwarts.irma.access.utils					import TextWrapper
-from pygwarts.filch.marauders_map				import MaraudersMap
-from pygwarts.filch.nettherin					import VALID_IP4
-from pygwarts.filch.linkindor					import VALID_MAC
-from pygwarts.filch.linkindor.arp				import ARPResponseInspector
-from pygwarts.filch.linkindor.arp				import ARPRequestInspector
-from irma_local_access							import DiffCaseRegisterRecapAccumulatorInducer
-from irma_local_access							import FilchWatchInducer
-from irma_local_intercept						import TelegramTechHoist
+import	re
+from	os										import makedirs
+from	typing									import Literal
+from	collections								import defaultdict
+from	collections								import Counter
+from	pygwarts.magical.time_turner			import TimeTurner
+from	pygwarts.magical.time_turner.timers 	import Callstamp
+from	pygwarts.magical.time_turner.utils 		import hundscale
+from	pygwarts.magical.time_turner.utils		import DATETIME_1_P
+from	pygwarts.magical.spells					import patronus
+from	pygwarts.irma.contrib					import LibraryContrib
+from	pygwarts.irma.shelve					import LibraryShelf
+from	pygwarts.irma.shelve.casing				import shelf_case
+from	pygwarts.irma.shelve.casing				import is_num
+from	pygwarts.irma.shelve.casing				import num_diff
+from	pygwarts.irma.shelve.casing				import mostsec_diff
+from	pygwarts.irma.shelve.casing				import byte_size_diff
+from	pygwarts.irma.access					import LibraryAccess
+from	pygwarts.irma.access.volume				import LibraryVolume
+from	pygwarts.irma.access.bookmarks			import VolumeBookmark
+from	pygwarts.irma.access.bookmarks.counters	import WarningCount
+from	pygwarts.irma.access.bookmarks.counters	import ErrorCount
+from	pygwarts.irma.access.bookmarks.counters	import CriticalCount
+from	pygwarts.irma.access.bookmarks.viewers	import ViewWrapper
+from	pygwarts.irma.access.bookmarks.viewers	import ViewCase
+from	pygwarts.irma.access.handlers			import AccessHandlerRegisterCounter
+from	pygwarts.irma.access.handlers.counters	import AccessCounter
+from	pygwarts.irma.access.handlers.parsers	import GroupParser
+from	pygwarts.irma.access.handlers.parsers	import TargetHandler
+from	pygwarts.irma.access.handlers.parsers	import TargetNumberAccumulator
+from	pygwarts.irma.access.handlers.parsers	import TargetStringAccumulator
+from	pygwarts.irma.access.inducers			import AccessInducer
+from	pygwarts.irma.access.inducers.counters	import RegisterCounterInducer
+from	pygwarts.irma.access.inducers.recap		import RegisterRecapInducer
+from	pygwarts.irma.access.inducers.filters	import plurnum
+from	pygwarts.irma.access.inducers.filters	import posnum
+from	pygwarts.irma.access.inducers.case		import InducerCase
+from	pygwarts.irma.access.annex				import VolumeAnnex
+from	pygwarts.irma.access.annex				import LibraryAnnex
+from	pygwarts.irma.access.utils				import TextWrapper
+from	pygwarts.filch.marauders_map			import MaraudersMap
+from	pygwarts.filch.nettherin				import VALID_IP4
+from	pygwarts.filch.linkindor				import VALID_MAC
+from	pygwarts.filch.linkindor.arp			import ARPResponseInspector
+from	pygwarts.filch.linkindor.arp			import ARPRequestInspector
+from	irma_local_access						import DiffCaseRegisterRecapAccumulatorInducer
+from	irma_local_access						import FilchWatchInducer
+from	irma_local_intercept					import TelegramTechHoist
 
 
 
@@ -347,7 +348,7 @@ class Library(LibraryAccess):
 
 				def __call__(self, line :str, volume :LibraryVolume) -> Literal[True] | None :
 
-					if	isinstance(getattr(self, "rpattern", None), Pattern):
+					if	isinstance(getattr(self, "rpattern", None), re.Pattern):
 						if	(match := self.rpattern.search(line)) and (target := match.group("ip", "mac")):
 							if	(len(target) == 2) and self.registered(volume):
 
@@ -942,6 +943,88 @@ class Library(LibraryAccess):
 										)	for trap in scount
 									)
 								)
+
+
+	class Overseer(LibraryVolume):
+
+
+		inrange		= ypoint.dmY_aspath
+		location	= f"/srv/lcontainer/sndbx/overseer/loggy/{ypoint.dmY_asjoin}.loggy"
+
+
+		@TextWrapper("\n\toverseer\n","\n")
+		class Annex(VolumeAnnex): pass
+		class Watch(VolumeBookmark):
+
+
+			trigger		= "poll response:"
+			rpattern	= re.compile(
+				rf"""
+					(?P<src>{VALID_IP4})\ poll\ response:\ 
+					upsSmartInputLineVoltage:\ (?P<ilv>[\d\.]+)\ V,.+\ 
+					upsSmartOutputLoad:\ (?P<sol>\d\d?)\ %,.+\ 
+					upsSmartBatteryTemperature:\ (?P<sbt>[\d\.]+)\ °C
+				""",
+				re.VERBOSE
+			)
+
+
+			class Accumulator(GroupParser):
+				def __call__(self, line :str, volume :LibraryVolume) -> Literal[True] | None :
+
+					if	isinstance(getattr(self, "rpattern", None), re.Pattern):
+						if	(match := self.rpattern.search(line)):
+							src, ilv, sol, sbt = match.group("src", "ilv", "sol", "sbt")
+
+							if	self.registered(volume):
+								if	src:
+
+									current = volume[self].setdefault("recap",dict()).setdefault(src,dict())
+
+									if ilv : current.setdefault("input, V",list()).append(float(ilv))
+									if sol : current.setdefault("load, %",list()).append(float(sol))
+									if sbt : current.setdefault("temperature, °C",list()).append(float(sbt))
+
+									return bool(ilv) or bool(sol) or bool(sbt)
+
+
+				@TextWrapper("\nupswatch:","\n")
+				class Inducer(AccessInducer):
+
+					def __call__(self, volume :LibraryVolume) -> str | None :
+						if	isinstance(recap := self.get_register_recap(volume), dict):
+							induce = str()
+
+							for src,stat in recap.items():
+								if	isinstance(stat,dict):
+
+									self.library_shelf["overseer"] = self.library_shelf["overseer"] or dict()
+									host = self.filchmap.ip4map_name(src)
+									induce += f"\n\t{host}:\n"
+
+									for item,metrics in stat.items():
+
+										minv = shelf_case(
+
+											min(metrics),
+											key=f"{host} minimum {item}",
+											shelf=self.library_shelf["overseer"],
+											prep=is_num,
+											post=num_diff
+										)
+										maxv = shelf_case(
+
+											max(metrics),
+											key=f"{host} maximum {item}",
+											shelf=self.library_shelf["overseer"],
+											prep=is_num,
+											post=num_diff
+										)
+
+										induce += f"\t\tminimum {item}: {minv}\n"
+										induce += f"\t\tmaximum {item}: {maxv}\n"
+
+							if induce : return induce
 
 
 
