@@ -949,7 +949,7 @@ class Library(LibraryAccess):
 
 
 		inrange		= ypoint.dmY_aspath
-		location	= f"/srv/lcontainer/sndbx/overseer/loggy/{ypoint.Ym_aspath}/goverseer{ypoint.dmY_asjoin}.loggy"
+		location	= f"/srv/lcontainer/sndbx/overseer/loggy/{ypoint.Ym_aspath}/overseer{ypoint.dmY_asjoin}.loggy"
 
 
 		@TextWrapper("\n\n\toverseer-upswatch\n","\n")
