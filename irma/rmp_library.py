@@ -302,7 +302,7 @@ class Library(LibraryAccess):
 		inrange		= ypoint.dmY_aspath
 		location	= f"{hroot}/softsync/{ypoint.Ym_aspath}/softsync{ypoint.dmY_asjoin}.loggy"
 
-		@TextWrapper("\n\thagrid-softsync\n","\n")
+		@TextWrapper("\n\n\thagrid-softsync\n","\n")
 		class Annex(VolumeAnnex): pass
 
 
@@ -311,7 +311,7 @@ class Library(LibraryAccess):
 		inrange		= tpoint.dmY_aspath
 		location	= f"{hroot}/hardsync/{tpoint.Ym_aspath}/hardsync{tpoint.dmY_asjoin}.loggy"
 
-		@TextWrapper("\n\thagrid-hardsync\n","\n")
+		@TextWrapper("\n\n\thagrid-hardsync\n","\n")
 		class Annex(VolumeAnnex): pass
 
 
@@ -320,7 +320,7 @@ class Library(LibraryAccess):
 		inrange		= ypoint.dmY_aspath
 		location	= f"{hroot}/arch/{ypoint.Ym_aspath}/arch{ypoint.dmY_asjoin}.loggy"
 
-		@TextWrapper("\n\thagrid-arch\n","\n")
+		@TextWrapper("\n\n\thagrid-arch\n","\n")
 		class Annex(VolumeAnnex): pass
 
 
@@ -333,7 +333,7 @@ class Library(LibraryAccess):
 		location	= f"{froot}/discovery/{ypoint.Ym_aspath}/discovery{ypoint.dmY_asjoin}.loggy"
 
 
-		@TextWrapper("\n\tfilch-discovery\n","\n")
+		@TextWrapper("\n\n\tfilch-discovery\n","\n")
 		class Annex(VolumeAnnex):		pass
 		class filchmap(MaraudersMap):	pass
 		class Watch(VolumeBookmark):
@@ -532,7 +532,7 @@ class Library(LibraryAccess):
 		location	= f"{froot}/broadwatch/{ypoint.Ym_aspath}/broadwatch{ypoint.dmY_asjoin}.loggy"
 
 
-		@TextWrapper("\n\tfilch-broadwatch\n","\n")
+		@TextWrapper("\n\n\tfilch-broadwatch\n","\n")
 		class Annex(VolumeAnnex): pass
 		class Watch(VolumeBookmark):
 
@@ -896,7 +896,7 @@ class Library(LibraryAccess):
 		location	= f"{froot}/snmpwatch/{ypoint.Ym_aspath}/snmpwatch{ypoint.dmY_asjoin}.loggy"
 
 
-		@TextWrapper("\n\tfilch-snmpwatch\n","\n")
+		@TextWrapper("\n\n\tfilch-snmpwatch\n","\n")
 		class Annex(VolumeAnnex):		pass
 		class Watch(VolumeBookmark):
 
@@ -952,7 +952,7 @@ class Library(LibraryAccess):
 		location	= f"/srv/lcontainer/sndbx/overseer/loggy/{ypoint.Ym_aspath}/goverseer{ypoint.dmY_asjoin}.loggy"
 
 
-		@TextWrapper("\n\toverseer-upswatch\n","\n")
+		@TextWrapper("\n\n\toverseer-upswatch\n","\n")
 		class Annex(VolumeAnnex): pass
 		class Watch(VolumeBookmark):
 

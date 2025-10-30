@@ -210,7 +210,7 @@ class FilchWatchInducer(AccessInducer):
 				is_num,
 				num_diff
 			)
-			return "%s\n%s"%(case_requests_total if 1 <requests_total else "", requests_view)
+			return ("%s\n%s"%(case_requests_total if 1 <requests_total else "", requests_view)).rstrip("\n")
 
 
 
