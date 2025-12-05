@@ -66,12 +66,8 @@ class Navdrop(Copse):
 	@NavtexPreprocessor
 	class perform(Flourish):
 
+		MSG_SEP = "\r\n"
 		class Navfiles(SiftingController):	include = r".+/[Kk][A-Za-z]\d\d\.[tT][lL][xX]",
-		class Navbow(LibraryShelf):
-
-			grabbing	= f"{root}/Navbag.Shelf"
-			reclaiming	= True
-
 		class Navshelf(LibraryShelf):
 
 			grabbing	= f"{root}/Navdrop.Shelf"
@@ -88,7 +84,6 @@ if	__name__ == "__main__":
 
 	navdrop = Navdrop()
 	navdrop.perform()
-	navdrop.perform.Navbow.produce(magical=True)
 	diff = navdrop.perform.Navshelf.real_diff
 	for tracker in diff : navdrop.perform.Navshelf.loggy.info(f"Discarded tracker for \"{tracker}\"")
 	navdrop.perform.Navshelf.produce(
