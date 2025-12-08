@@ -10,6 +10,7 @@ from pygwarts.magical.spells							import flagrate
 from pygwarts.magical.spells							import geminio
 from pygwarts.irma.shelve								import LibraryShelf
 from pygwarts.hagrid.cultivation.sifting				import SiftingController
+from credistr											import link_navbow_receiver
 from requests											import post as POST
 
 
@@ -61,9 +62,9 @@ class NavtexPreprocessor(Transmutation):
 				for file in navtex_files:
 
 
-					ltime	= self.Navshelf[str(file)] or 0
-					ntime	= int(file.stat().st_mtime)
-					fname	= file.name
+					ltime = self.Navshelf[str(file)] or 0
+					ntime = int(file.stat().st_mtime)
+					fname = file.name
 
 
 					if	ntime == ltime:
@@ -81,7 +82,7 @@ class NavtexPreprocessor(Transmutation):
 
 				if	raws:
 
-					try:	response = POST("http://192.168.162.69:16200/ws-cast-receiver",files=raws).json()
+					try:	response = POST(link_navbow_receiver(),files=raws).json()
 					except	Exception as E: self.loggy.error(f"Navtex analyze failed due to {patronus(E)}")
 					else:
 
