@@ -961,9 +961,9 @@ class Library(LibraryAccess):
 			rpattern	= re.compile(
 				rf"""
 					(?P<src>{VALID_IP4})\ poll\ response:\ 
-					upsSmartInputLineVoltage:\ (?P<ilv>[\d\.]+)\ V,.+\ 
-					upsSmartOutputLoad:\ (?P<sol>\d\d?)\ %,.+\ 
-					upsSmartBatteryTemperature:\ (?P<sbt>[\d\.]+)\ °C
+					ups2PhaseAInputVoltage:\ (?P<ilv>[\d\.]+)\ V,.+\ 
+					ups2ShtylLoadPercent:\ (?P<sol>\d\d?)\ %,.+\ 
+					ups2Temperature:\ (?P<sbt>[\d\.]+)\ °C
 				""",
 				re.VERBOSE
 			)
